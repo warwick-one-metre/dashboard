@@ -1,0 +1,84 @@
+---
+layout: default
+title: "Dome View"
+group: "One Metre"
+navorder: 1
+---
+<style>
+.overlaybutton {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+a:hover .overlaybutton {
+  color: #1ca8dd;
+}
+</style>
+<div class="dashhead">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">One Metre Dome</h2>
+  </div>
+</div>
+<hr class="m-t">
+
+<div class="row">
+  <div id="container" class="col-md-12" style="position: relative">
+    <img id="video" src="http://localhost:8090/webcam/jpg/1/image.jpg" width="100%">
+    <div style="position: absolute; left: 30px; top: 15px; text-align: center;">
+      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/video.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
+    </div>
+    <div style="position: absolute; right: 30px; top: 15px; text-align: center;">
+      <audio id="audio" preload="none"></audio>
+      <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/speaker.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
+      <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="1" data-slider-selection="after" data-slider-tooltip="hide">
+    </div>
+  </div>
+  <div id="container" class="col-md-12">
+    <ul>
+      <li>Audio playback requires browser support for streaming mp3 audio</li>
+      <li>Audio and video playback is delayed by a few seconds, and are not synced</li>
+    </ul>
+  </div>
+</div>
+<link href="{{ "/css/slider.css" | prepend: site.baseurl }}" rel="stylesheet">
+<script src="{{ "/js/jquery.min.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/bootstrap-slider.js" | prepend: site.baseurl }}"></script>
+
+<script>
+
+$(document).ready(function () {
+  $('#audio-volume').slider()
+  $('#audio-volume').on('slide', function(ev){
+    $('#audio').prop('volume', ev.value);
+  });
+
+  var videoPlaying = false;
+  $('#video-button').click(function() {
+    if (videoPlaying) {
+      $('#video-button-text').html('Play');
+      $('#video').attr('src', 'http://localhost:8090/webcam/jpg/1/image.jpg?' + Date.now());
+      console.log($('#video').attr('src'));
+      videoPlaying = false;
+    } else {
+      $('#video-button-text').html('Stop');
+      $('#video').attr('src', 'http://localhost:8090/webcam/mjpg/1/video.mjpg?' + Date.now());
+
+      videoPlaying = true;
+    }
+  })
+  
+  var audioPlaying = false;
+  $('#audio-button').click(function() {
+    var player = document.getElementById('audio');
+    if (audioPlaying) {
+      $('#audio-button-text').html('Play');
+      player.src = '';
+      audioPlaying = false;
+    } else {
+      $('#audio-button-text').html('Stop');
+      player.src = 'http://localhost:8090/microphone/dome.mp3';
+      player.play();
+      audioPlaying = true;
+    }
+  })
+});
+</script>

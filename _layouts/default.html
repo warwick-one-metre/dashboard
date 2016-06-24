@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  {% include head.html %}
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3 sidebar">
+        <nav class="sidebar-nav">
+          <div class="sidebar-header">
+            <button class="nav-toggler nav-toggler-sm sidebar-toggler" type="button" data-toggle="collapse" data-target="#nav-toggleable-sm">
+              <span class="sr-only">Toggle nav</span>
+            </button>
+            <a class="sidebar-brand img-responsive" href="index.html">
+              <span class="icon icon-leaf sidebar-brand-icon"></span>
+            </a>
+          </div>
+          <div class="collapse nav-toggleable-sm" id="nav-toggleable-sm">
+            <ul class="nav nav-pills nav-stacked">
+              <li class="nav-header">One Metre</li>
+              {% assign pages = site.pages | sort:"navorder"  %}
+              {% for node in pages %}
+                {% if page.url == node.url %}
+                  <li class="active"><a href="{{node.url}}" class="active">{{node.title}}</a></li>
+                {% else %}
+                  <li><a href="{{node.url}}">{{node.title}}</a></li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+            <hr class="visible-xs m-t">
+          </div>
+        </nav>
+      </div>
+        <div class="col-sm-9 content">
+          {{ content }}
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

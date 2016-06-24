@@ -1,0 +1,103 @@
+---
+layout: default
+title: "Dashboard"
+group: "One Metre"
+navorder: 0
+---
+<div class="dashhead">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">One Metre Overview</h2>
+    <h6 class="dashhead-subtitle">Data from <span id="data-updated"></span> (<span id="data-age"></span> seconds ago)</h6>
+  </div>
+</div>
+<hr class="m-t">
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="list-group">
+      <span id="telescope-status" class="list-group-item">Tel. Status</span>
+      <span id="ops-dome-status" class="list-group-item">Dome Status</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="list-group">
+      <span id="ops-telescope-control" class="list-group-item">Tel. Control</span>
+      <span id="ops-dome-control" class="list-group-item">Dome Control</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="list-group">
+      <span id="ops-status" class="list-group-item">Operations</span>
+      <span id="ops-environment" class="list-group-item">Environment</span>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="list-group">
+      <span id="external-humidity" class="list-group-item" data-units=" %RH">Ext. Humidity</span>
+      <span id="internal-humidity" class="list-group-item" data-units=" %RH">Int. Humidity</span>
+      <span id="external-temperature" class="list-group-item" data-units=" ºC">Ext. Temp.</span>
+      <span id="internal-temperature" class="list-group-item" data-units=" ºC">Int. Temp.</span>
+      <span id="truss-temperature" class="list-group-item" data-units=" ºC">Truss Temp.</span>
+      <span id="sky-temperature" class="list-group-item" data-units=" ºC">Sky Temp.</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="list-group">
+      <span id="peak-wind" class="list-group-item" data-units=" km/h">Peak Wind</span>
+      <span id="median-wind" class="list-group-item" data-units=" km/h">Median Wind</span>
+      <span id="pressure" class="list-group-item" data-units=" hPa">Pressure</span>
+      <span id="dust" class="list-group-item" data-units=" ug/m3">Dust</span>
+      <span id="accumulated-rain" class="list-group-item" data-units=" mm">Accumulated Rain</span>
+      <span id="dewpoint" class="list-group-item" data-units=" ºC">Temp. > Dew</span>
+
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="list-group">
+      <span id="power" class="list-group-item">Power</span>
+      <span id="diskspace" class="list-group-item" data-units=" GB">TCS Disk Space</span>
+      <span id="trapdoor" class="list-group-item">Trap Door</span>
+      <span id="hatch" class="list-group-item">Side Hatch</span>
+      <span id="light" class="list-group-item">Dome Light</span>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="list-group">
+      <h4 class="list-group-header">Telescope</h4>
+      <span id="telescope-ra" class="list-group-item">RA</span>
+      <span id="telescope-dec" class="list-group-item">Dec</span>
+      <span id="telescope-focus" class="list-group-item">Tel. Focus</span>
+      <span id="telescope-red-focus" class="list-group-item">Red Focus</span>
+      <span id="telescope-alt" class="list-group-item">Altitude</span>
+      <span id="telescope-az" class="list-group-item">Azimuth</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="list-group">
+      <h4 class="list-group-header">Blue Camera</h4>
+      <span id="blue-status" class="list-group-item">Status</span>
+      <span id="blue-temperature" class="list-group-item">Temperature</span>
+      <span id="blue-shutter" class="list-group-item">Shutter</span>
+      <span id="blue-exposure" class="list-group-item">Exposure</span>
+      <span id="blue-saving" class="list-group-item">Next Frame</span>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="list-group">
+      <h4 class="list-group-header">Red Camera</h4>
+      <span id="red-status" class="list-group-item">Status</span>
+      <span id="red-temperature" class="list-group-item">Temperature</span>
+      <span id="red-shutter" class="list-group-item">Shutter</span>
+      <span id="red-exposure" class="list-group-item">Exposure</span>
+      <span id="red-saving" class="list-group-item">Next Frame</span>
+    </div>
+  </div>
+</div>
+<script src="{{ "js/jquery.min.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "js/dashboard.js" | prepend: site.baseurl }}"></script>
