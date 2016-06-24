@@ -1,0 +1,76 @@
+---
+layout: default
+title: "Sky Cameras"
+sidebar: "other"
+navorder: 1
+---
+<div class="dashhead">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">Sky Cameras</h2>
+    <h2 class="dashhead-subtitle">Automatically updates every 30 seconds</h2>
+  </div>
+</div>
+<hr class="m-t">
+
+<style>
+.thumb-panel {
+  padding:0; height: 140px; width: 140px; overflow: hidden; margin: auto auto;
+}
+
+</style>
+
+<div class="row">
+    <div class="col-md-3 col-xs-6 m-b">
+      <a class="list-group list-group-item thumb-panel" href="#" onclick="selectCamera(this);">
+        <img src="http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg" data-url="http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg" height="100%">
+      </a>
+    </div>
+    <div class="col-md-3 col-xs-6 m-b">
+      <a class="list-group list-group-item thumb-panel" href="#" onclick="selectCamera(this);">
+        <img src="http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png" data-url="http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png" height="100%">
+      </a>
+    </div>
+    <div class="col-md-3 col-xs-6 m-b">
+      <a class="list-group list-group-item thumb-panel" href="#" onclick="selectCamera(this);">
+        <img src="http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg" data-url="http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg" height="100%">
+      </a>
+    </div>
+    <div class="col-md-3 col-xs-6 m-b">
+      <a class="list-group list-group-item thumb-panel" href="#" onclick="selectCamera(this);">
+        <img src="http://en.sat24.com/image?type=infraPolair&region=ce" data-url="http://en.sat24.com/image?type=infraPolair&region=ce" height="100%">
+      </a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 panel">
+    <div class="list-group list-group-item" style="padding:0">
+      <img id="main" src="http://en.sat24.com/image?type=infraPolair&region=ce" width="100%">
+    </div>
+  </div>
+</div>
+
+
+<script>
+function selectCamera(element) {
+  var url = $(element).children('img').data('url');
+  var main = $('#main');
+  main.attr('src', url);
+  main.data('url', url);
+}
+
+function reloadImages() {
+  $('img').each(function() {
+    var url = $(this).data('url');
+    if (url) {
+      var sep = url.indexOf('?') < 0 ? '?' : '&';
+      $(this).attr('src', url + sep + Date.now());
+    }
+  });
+}
+
+$(document).ready(function () {
+  window.setInterval(reloadImages, 30000)
+});
+</script>
+
