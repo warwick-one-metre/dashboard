@@ -281,9 +281,9 @@ var updateDate = new Date()
 function updateTables() {
   $.ajax({
     type: "GET",
-    url: "http://localhost:8090/dashboard/data",
+    url: "/dashboard/data",
     statusCode: {
-      404: function() { alert("Query failed!") }
+      404: function() { console.log("Query failed!") }
     }
   }).done(function(msg) {
     var data = jQuery.parseJSON(msg);

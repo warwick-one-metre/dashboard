@@ -22,7 +22,7 @@ a:hover .overlaybutton {
 
 <div class="row">
   <div id="container" class="col-md-12" style="position: relative">
-    <img id="video" src="http://localhost:8090/webcam/jpg/1/image.jpg" width="100%">
+    <img id="video" src="/webcam/jpg/1/image.jpg" width="100%">
     <div style="position: absolute; left: 30px; top: 15px; text-align: center;">
       <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/video.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
     </div>
@@ -55,12 +55,12 @@ $(document).ready(function () {
   $('#video-button').click(function() {
     if (videoPlaying) {
       $('#video-button-text').html('Play');
-      $('#video').attr('src', 'http://localhost:8090/webcam/jpg/1/image.jpg?' + Date.now());
+      $('#video').attr('src', '/webcam/jpg/1/image.jpg?' + Date.now());
       console.log($('#video').attr('src'));
       videoPlaying = false;
     } else {
       $('#video-button-text').html('Stop');
-      $('#video').attr('src', 'http://localhost:8090/webcam/mjpg/1/video.mjpg?' + Date.now());
+      $('#video').attr('src', '/webcam/mjpg/1/video.mjpg?' + Date.now());
 
       videoPlaying = true;
     }
@@ -75,7 +75,7 @@ $(document).ready(function () {
       audioPlaying = false;
     } else {
       $('#audio-button-text').html('Stop');
-      player.src = 'http://localhost:8090/microphone/dome.mp3';
+      player.src = '/microphone/dome.mp3';
       player.play();
       audioPlaying = true;
     }

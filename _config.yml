@@ -10,7 +10,7 @@ title: La Palma Telescopes
 email: p.chote@warwick.ac.uk
 description: blah blah blah
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://localhost:8090" # the base hostname & protocol for your site
+url: "http://localhost/" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown
