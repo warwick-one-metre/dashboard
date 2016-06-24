@@ -15,7 +15,8 @@ var environmentFields = {
   '#pressure': ['vaisala_pressure', round],
   '#trapdoor': ['roomalert_trap_closed', closedOrOpen],
   '#hatch': ['roomalert_hatch_closed', closedOrOpen],
-  '#power': ['power_main_ups_status', powerStatus]
+  '#power': ['power_main_ups_status', powerStatus],
+  '#light': ['power_light', onOrOff]
 }
 
 
@@ -34,6 +35,10 @@ function round(field, value) {
 
 function closedOrOpen(field, value) {
   return [value ? 'CLOSED' : 'OPEN', null]
+}
+
+function onOrOff(field, value) {
+  return [value ? 'ON' : 'OFF', null]
 }
 
 function powerStatus(field, value) {
