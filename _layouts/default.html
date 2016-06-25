@@ -13,19 +13,17 @@
           </div>
           <div class="collapse nav-toggleable-sm" id="nav-toggleable-sm">
             <ul class="nav nav-pills nav-stacked">
-              {% for category in site.data.sidebar %}
-                <li class="nav-header">{{category.title}}</li>
-                {% assign pages = site.pages | sort:"navorder" %}
-                {% for node in pages %}
-                  {% if node.sidebar == category.id %}
-                    {% if page.url == node.url %}
-                      <li class="active"><a href="{{node.url}}" class="active">{{node.title}}</a></li>
-                    {% else %}
-                      <li><a href="{{node.url}}">{{node.title}}</a></li>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              {% endfor %}
+{% for category in site.data.sidebar %}
+              <li class="nav-header">{{category.title}}</li>
+  {% assign pages = site.pages | where: "sidebar", category.id | sort:"navorder" %}
+  {% for node in pages %}
+    {% if page.url == node.url %}
+              <li class="active"><a href="{{node.url}}" class="active">{{node.title}}</a></li>
+    {% else %}
+              <li><a href="{{node.url}}">{{node.title}}</a></li>
+    {% endif %}
+  {% endfor %}
+{% endfor %}
             </ul>
             <hr class="visible-xs m-t">
           </div>
