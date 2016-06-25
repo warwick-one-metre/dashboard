@@ -286,7 +286,7 @@ var updateDate = new Date()
 function updateTables() {
   $.ajax({
     type: "GET",
-    url: "/dashboard/data",
+    url: "/dashboard/onemetre",
     statusCode: {
       404: function() { console.log("Query failed!") }
     }
