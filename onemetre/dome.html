@@ -23,6 +23,9 @@ permalink: /onemetre/dome/
       <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/speaker.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
       <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="1" data-slider-selection="after" data-slider-tooltip="hide">
     </div>
+    <div style="position: absolute; left: 30px; bottom: 15px; text-align: center;">
+      <a id="light-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/light.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="light-button-text">Enable</span></a><br />
+    </div>
   </div>
   <div id="container" class="col-md-12">
     <ul>
@@ -70,5 +73,18 @@ $(document).ready(function () {
       audioPlaying = true;
     }
   })
+
+  var lightEnabled = false;
+  $('#light-button').click(function() {
+    if (lightEnabled) {
+      $('#light-button-text').html('Enable');
+      lightEnabled = false;
+    } else {
+      $('#light-button-text').html('Disable');
+      lightEnabled = true;
+      alert('todo')
+    }
+  })
+
 });
 </script>
