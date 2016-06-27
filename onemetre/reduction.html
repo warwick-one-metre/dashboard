@@ -56,7 +56,7 @@ function updateCamera(id) {
     if (date > lastDate[id]) {
       var url = $('#' + id).data('url');
       $('#' + id).attr('src', url + '?' + Date.now());
-      $('#' + id + '-stats').html(date.toUTCString());
+      $('#' + id + '-stats').html('<p>'+date.toUTCString()+'</p><p>'+data['filename']+'</p><p>Saved: '+data['saved']+'</p>');
       lastDate[id] = date;
       console.log('updated ' + id + ' at ' + date.toUTCString())
     }
