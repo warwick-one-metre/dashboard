@@ -176,28 +176,6 @@ function telStatus(data) {
   return telescopeStatus[data['state']];
 }
 
-function sexagesimal(angle) {
-  negative = angle < 0
-  angle = Math.abs(angle)
-
-  degrees = Math.floor(angle)
-  angle = (angle - degrees) * 60
-  minutes = Math.floor(angle)
-  seconds = ((angle - minutes) * 60).toFixed(1)
-
-  if (degrees < 10)
-    degress = '0' + degrees
-  if (minutes < 10)
-    minutes = '0' + minutes
-  if (seconds < 10)
-    seconds = '0' + seconds
-
-  if (negative)
-    degrees = '-' + degrees
-
-  return degrees + ':' + minutes + ':' + seconds
-}
-
 function telRA(data) {
   return [sexagesimal(data['ra'] * 12 / Math.PI)]
 }

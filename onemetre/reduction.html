@@ -17,7 +17,6 @@ a:hover .overlaybutton {
 <div class="dashhead">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">One Metre &raquo; Current Run</h2>
-    <h2 class="dashhead-subtitle">Automatically updates every 10 seconds</h2>
   </div>
 </div>
 <hr class="m-t">
@@ -25,59 +24,31 @@ a:hover .overlaybutton {
 <div class="row">
   <div class="col-md-6">
     <div class="list-group list-group-item panel" style="padding:0">
-      <img id="blue" data-url="/dashboard/onemetre/blue/image" width="100%">
+      <img id="blue-thumb" data-url="http://86.162.46.121/dashboard/onemetre/blue/image" width="100%">
     </div>
-    <div id="blue-stats"></div>
+    <div class="list-group m-b">
+      <h5 class="list-group-header">Blue Camera<span id="blue-updated" class="pull-right dashhead-subtitle">Loading...</span></h5>
+      <span id="blue-date" class="list-group-item">Exposure started: </span>
+      <span id="blue-exposure" class="list-group-item">Exposure length:</span>
+      <span id="blue-saved" class="list-group-item">Saved as:</span>
+    </div>
   </div>
   <div class="col-md-6">
     <div class="list-group list-group-item panel" style="padding:0">
-      <img id="red" data-url="/dashboard/onemetre/red/image" width="100%">
+      <img id="red-thumb" data-url="http://86.162.46.121/dashboard/onemetre/red/image" width="100%">
     </div>
-    <div id="red-stats"></div>
+    <div class="list-group m-b">
+      <h5 class="list-group-header">Red Camera<span id="red-updated" class="pull-right dashhead-subtitle">Loading...</span></h5>
+      <span id="red-date" class="list-group-item">Exposure started: </span>
+      <span id="red-exposure" class="list-group-item">Exposure length:</span>
+      <span id="red-saved" class="list-group-item">Saved as:</span>
+    </div>
   </div>
 </div>
+<hr class="m-t">
 <div class="row">
-  TODO: Display reduction plots
+  <div class="col-md-6">
+    TODO: Display reduction plots
+  </div>
 </div>
-<script>
-
-var lastDate = {'red': 0, 'blue': 0};
-
-function updateCamera(id) {
-  $.ajax({
-    type: "GET",
-    url: "/dashboard/onemetre/" + id + "/json",
-    statusCode: {
-      404: function() { console.log("Query failed!") }
-    }
-  }).done(function(msg) {
-    var data = jQuery.parseJSON(msg);
-    var date = new Date(data['date']);
-    if (date > lastDate[id]) {
-      var url = $('#' + id).data('url');
-      $('#' + id).attr('src', url + '?' + Date.now());
-      $('#' + id + '-stats').html('<p>'+date.toUTCString()+'</p><p>'+data['filename']+'</p><p>Saved: '+data['saved']+'</p>');
-      lastDate[id] = date;
-      console.log('updated ' + id + ' at ' + date.toUTCString())
-    }
-  });
-  window.setTimeout(function() { updateCamera(id) }, 10000);
-}
-
-function reloadData() {
-  $('img').each(function() {
-    var url = $(this).data('url');
-    $(this).attr('src', url + sep + Date.now());
-    if (url) {
-      var sep = url.indexOf('?') < 0 ? '?' : '&';
-      $(this).attr('src', url + sep + Date.now());
-    }
-  });
-}
-
-$(document).ready(function () {
-  updateCamera('blue');
-  updateCamera('red');
-});
-
-</script>
+<script src="{{ "/js/onemetre-reduction.js" | prepend: site.baseurl }}"></script>
