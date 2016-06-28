@@ -158,7 +158,6 @@ var telescopeFields = {
   'ra': telRA,
   'dec': telDec,
   'alt': telAlt,
-  'az': telAz,
   'focus': telFocus
 }
 
@@ -184,10 +183,6 @@ function telDec(data) {
 
 function telAlt(data) {
   return [(data['alt'] * 180 / Math.PI).toFixed(1) + 'º']
-}
-
-function telAz(data) {
-  return [(data['az'] * 180 / Math.PI).toFixed(1) + 'º']
 }
 
 function telFocus(data) {
