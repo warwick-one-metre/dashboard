@@ -35,7 +35,7 @@ function queryCamera(id) {
     statusCode: {
       404: function() {
         updateListGroup(id, cameraFields);
-        lastUpdate[id] = new Date();
+        $('#' + id + '-updated').html(formatUTCDate(new Date()) + ' UTC');
 
         // Remove thumbnail
         $('#' + id + '-thumb').attr('src', '');
@@ -44,7 +44,7 @@ function queryCamera(id) {
   }).done(function(msg) {
     var data = jQuery.parseJSON(msg);
     updateListGroup(id, cameraFields, data);
-    lastUpdate[id] = new Date();
+    $('#' + id + '-updated').html(formatUTCDate(new Date()) + ' UTC');
 
     // Update thumbnail if required
     if (data && 'date' in data) {
@@ -58,20 +58,8 @@ function queryCamera(id) {
   window.setTimeout(function() { queryCamera(id) }, 10000);
 }
 
-var lastUpdate = {}
-function updateTimer() {
-  if ('blue' in lastUpdate) {
-    $('#blue-updated').html(formatUTCDate(lastUpdate['blue']) + ' UTC');
-  }
-
-  if ('red' in lastUpdate) {
-    $('#red-updated').html(formatUTCDate(lastUpdate['red']) + ' UTC');
-  }
-}
-
 $(document).ready(function () {
   queryCamera('blue');
   queryCamera('red');
-  window.setInterval(updateTimer, 500);
 });
 
