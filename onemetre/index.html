@@ -5,13 +5,12 @@ sidebar: "onemetre"
 navorder: 0
 permalink: /onemetre/
 ---
-<div class="dashhead">
+<div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">One Metre &raquo; Dashboard</h2>
-    <h6 class="dashhead-subtitle">Data from <span id="data-updated"></span> (<span id="data-age"></span> seconds ago)</h6>
+    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
   </div>
 </div>
-<hr class="m-t">
 
 <div class="row">
   <div class="col-md-4">
@@ -70,7 +69,7 @@ permalink: /onemetre/
 <div class="row">
   <div class="col-md-4">
     <div class="list-group">
-      <h4 class="list-group-header">Telescope</h4>
+      <h5 class="list-group-header" style="text-align: center">Telescope</h5>
       <span id="telescope-ra" class="list-group-item">RA</span>
       <span id="telescope-dec" class="list-group-item">Dec</span>
       <span id="telescope-alt" class="list-group-item">Altitude</span>
@@ -80,7 +79,7 @@ permalink: /onemetre/
   </div>
   <div class="col-md-4">
     <div class="list-group">
-      <h4 class="list-group-header">Blue Camera</h4>
+      <h5 class="list-group-header" style="text-align: center">Blue Camera</h5>
       <span id="blue-status" class="list-group-item">Status</span>
       <span id="blue-temperature" class="list-group-item">Temperature</span>
       <span id="blue-shutter" class="list-group-item">Shutter</span>
@@ -90,7 +89,7 @@ permalink: /onemetre/
   </div>
   <div class="col-md-4">
     <div class="list-group">
-      <h4 class="list-group-header">Red Camera</h4>
+      <h5 class="list-group-header" style="text-align: center">Red Camera</h5>
       <span id="red-status" class="list-group-item">Status</span>
       <span id="red-temperature" class="list-group-item">Temperature</span>
       <span id="red-shutter" class="list-group-item">Shutter</span>
@@ -100,4 +99,4 @@ permalink: /onemetre/
   </div>
 </div>
 
-<script src="{{ "/js/dashboard.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/onemetre-dashboard.js" | prepend: site.baseurl }}"></script>
