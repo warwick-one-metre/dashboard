@@ -13,16 +13,14 @@ permalink: /nites/dome/
 </div>
 
 <div class="row">
-  <div id="container" class="col-md-12" style="position: relative">
-    <img id="video" src="/webcam/nites/static" width="100%">
-    <div style="position: absolute; left: 30px; top: 15px; text-align: center;">
+  <div id="container" class="col-md-12 m-b" style="position: relative">
+    <img id="video" src="http://86.162.46.121/webcam/nites/static" width="100%">
+    <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
       <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/video.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
     </div>
   </div>
   <div id="container" class="col-md-12">
-    <ul>
-      <li>Video playback is delayed by a few seconds, and my drift over time</li>
-    </ul>
+    <p class="description">Please note that video sync may drift over time. Stop and re-start playback to resync the time.</p>
   </div>
 </div>
 <script src="{{ "/js/jquery.min.js" | prepend: site.baseurl }}"></script>
