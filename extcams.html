@@ -1,0 +1,38 @@
+---
+layout: default
+title: "External Cameras"
+sidebar: "other"
+navorder: 2
+permalink: /extcams/
+---
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">External Cameras</h2>
+    <h2 class="dashhead-subtitle">Automatically updates every 10 seconds</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <img src="http://wasp.warwick.ac.uk/swasp/main/cam1/image.jpg" data-url="http://wasp.warwick.ac.uk/swasp/main/cam1/image.jpg" width="100%">
+  </div>
+  <div class="col-md-6">
+    <img src="http://wasp.warwick.ac.uk/swasp/main/cam2/image.jpg" data-url="http://wasp.warwick.ac.uk/swasp/main/cam2/image.jpg" width="100%">
+  </div>
+</div>
+
+<script>
+function reloadImages() {
+  $('img').each(function() {
+    var url = $(this).data('url');
+    if (url) {
+      var sep = url.indexOf('?') < 0 ? '?' : '&';
+      $(this).attr('src', url + sep + Date.now());
+    }
+  });
+}
+
+$(document).ready(function () {
+  window.setInterval(reloadImages, 10000)
+});
+</script>
