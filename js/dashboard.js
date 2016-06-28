@@ -1,4 +1,3 @@
-
 var environmentFields = {
   '#external-humidity': ['vaisala_relative_humidity', round],
   '#internal-humidity': ['roomalert_internal_humidity', round],
@@ -18,7 +17,6 @@ var environmentFields = {
   '#power': ['power_main_ups_status', powerStatus],
   '#light': ['power_light', onOrOff]
 }
-
 
 function fieldLimitsColor(field, value) {
   if (!('limits' in field))
@@ -66,25 +64,25 @@ function updateEnvironment(data) {
     else if ('latest' in field) {
       var valueDisplay = transform(field, field['latest']);
       value.html(valueDisplay[0] + units);
-      
+
       if ('max' in field && 'min' in field) {
         var maxField = $('<span>');
-	var maxFieldDisplay = transform(field, field['max']);
-	maxField.html(maxFieldDisplay[0])
-	if (maxFieldDisplay[1])
+        var maxFieldDisplay = transform(field, field['max']);
+        maxField.html(maxFieldDisplay[0])
+        if (maxFieldDisplay[1])
           maxField.addClass(maxFieldDisplay[1])
 
         var minField = $('<span>')
-	var minFieldDisplay = transform(field, field['min']);
-	minField.html(minFieldDisplay[0])
-	if (minFieldDisplay[1])
+        var minFieldDisplay = transform(field, field['min']);
+        minField.html(minFieldDisplay[0])
+        if (minFieldDisplay[1])
           minField.addClass(minFieldDisplay[1])
 
         var maxMinField = $('<span class="pull-right data-minmax">')
-	maxMinField.append(maxField)
-	maxMinField.append('<br>')
-	maxMinField.append(minField)
-	row.append(maxMinField)
+        maxMinField.append(maxField)
+        maxMinField.append('<br>')
+        maxMinField.append(minField)
+        row.append(maxMinField)
       }
 
       if (valueDisplay[1])
@@ -245,7 +243,6 @@ function opsDomeControl(data) {
 function opsDomeStatus(data) {
   return domeStatus[data['dome_status']]
 }
-
 
 function opsStatus(data) {
   if (data['observing'])
