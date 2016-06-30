@@ -5,6 +5,7 @@ sidebar: "onemetre"
 navorder: 0
 permalink: /onemetre/
 ---
+
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">One Metre &raquo; Dashboard</h2>
@@ -96,4 +97,15 @@ permalink: /onemetre/
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">System Log</h5>
+      <div class="list-group-item" style="overflow-y: scroll; height: 100px;">
+        <table id="log-table">
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="{{ "/js/onemetre-dashboard.js" | prepend: site.baseurl }}"></script>

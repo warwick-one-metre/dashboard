@@ -281,15 +281,45 @@ function opsEnvironment(data) {
   return ['NOT SAFE', null, 'list-group-item-danger'];
 }
 
-function updateGroups(data) {
-    updateEnvironment(data['environment']);
-    updateListGroup('blue', cameraFields, data['blue']);
-    updateListGroup('red', cameraFields, data['red']);
-    updateListGroup('telescope', telescopeFields, data['telescope']);
-    updateListGroup('ops', opsFields, data['ops']);
+function updateLog(messages) {
+  $('#log-table').children().remove();
+  if (messages) {
+    if (!messages.length) {
+        var row = $('<tr>');
+        row.append($('<td>').html('No log messages in the last 24 hours'));
+        row.addClass('text-danger');
+        $('#log-table').prepend(row);
+    } else {
+      for (var i in messages) {
+        var message = messages[i];
+        var row = $('<tr>');
+        if (message['type'] == 'warning')
+           row.addClass('text-warning');
+        if (message['type'] == 'error')
+           row.addClass('text-danger');
+        row.append($('<td class="log-date">').html(formatUTCDate(parseUTCDate(message['date'])) + '<span class="visible-xs">' + message['table'] + '</span>'));
+        row.append($('<td class="log-table hidden-xs">').html(message['table']));
+        row.append($('<td class="log-message">').html(message['message']));
+        $('#log-table').prepend(row);
+      }
+    }
+  } else {
+    var row = $('<tr>');
+    row.append($('<td>').html('Error querying log'));
+    row.addClass('text-danger');
+    $('#log-table').prepend(row);
+  }
+}
 
-    var date = 'date' in data ? parseUTCDate(data['date']) : new Date();
-    $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
+function updateGroups(data) {
+  updateEnvironment(data['environment']);
+  updateListGroup('blue', cameraFields, data['blue']);
+  updateListGroup('red', cameraFields, data['red']);
+  updateListGroup('telescope', telescopeFields, data['telescope']);
+  updateListGroup('ops', opsFields, data['ops']);
+  updateLog(data['log']);
+  var date = 'date' in data ? parseUTCDate(data['date']) : new Date();
+  $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
 }
 
 function queryData() {

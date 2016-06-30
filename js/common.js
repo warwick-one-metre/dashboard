@@ -40,6 +40,9 @@ function sexagesimal(angle) {
 
 function parseUTCDate(str) {
   var d = str.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+).(\d+)/);
+  while (d[7] > 1000)
+    d[7] /= 10;
+
   var utc = Date.UTC(d[1], d[2], d[3], d[4], d[5], d[6], d[7]);
   return new Date(utc);
 }
