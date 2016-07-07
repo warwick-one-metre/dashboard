@@ -99,12 +99,111 @@ function updateEnvironment(data) {
   }
 }
 
+var powerFields = {
+  'mainups': powerMainUPS,
+  'domeups': powerDomeUPS,
+  'teldrive': powerTelDrive,
+  'telcontroller': powerTelController,
+  'instrument': powerInstrument,
+  'light': powerLight
+};
+
+function powerMainUPS(data) {
+  if (!data || !('main_ups_status' in data) || !('main_ups_battery_remaining' in data))
+    return ['ERROR', 'text-danger'];
+
+  status = '';
+  if (data['main_ups_status'] == 2) {
+    status = 'ONLINE';
+    style = 'text-success';
+  }
+  else if (data['main_ups_status'] == 3) {
+    status = 'BATTERY';
+    style = 'text-warning';
+  }
+  else
+    return ['ERROR', 'text-danger'];
+
+  status += ' (' + data['main_ups_battery_remaining'] + '%)';
+  return [status, style];
+}
+
+function powerDomeUPS(data) {
+  if (!data || !('dome_ups_status' in data) || !('dome_ups_battery_remaining' in data))
+    return ['ERROR', 'text-danger'];
+
+  status = '';
+  if (data['dome_ups_status'] == 2) {
+    status = 'ONLINE';
+    style = 'text-success';
+  }
+  else if (data['dome_ups_status'] == 3) {
+    status = 'BATTERY';
+    style = 'text-warning';
+  }
+  else
+    return ['ERROR', 'text-danger'];
+
+  status += ' (' + data['dome_ups_battery_remaining'] + '%)';
+  return [status, style];
+}
+
+function powerTelDrive(data) {
+  if (!data || !('telescope_80v' in data))
+    return ['ERROR', 'text-danger'];
+
+  if (data['telescope_80v'])
+    return ['POWER ON', 'text-success']
+
+  return ['POWER OFF', 'text-danger']
+}
+
+function powerTelController(data) {
+  if (!data || !('telescope_12v' in data))
+    return ['ERROR', 'text-danger'];
+
+  if (data['telescope_12v'])
+    return ['POWER ON', 'text-success']
+
+  return ['POWER OFF', 'text-danger']
+}
+
+function powerInstrument(data) {
+  fields = ['blue_camera', 'red_camera', 'red_focus_controller', 'red_focus_motor'];
+  if (!data)
+    return ['ERROR', 'text-danger'];
+
+  var enabled = 0;
+  for (i in fields) {
+    if (!(fields[i] in data))
+      return ['ERROR', 'text-danger'];
+    if (data[fields[i]])
+      enabled += 1;
+  }
+
+  if (enabled == fields.length)
+    return ['POWER ON', 'text-success']
+  if (enabled == 0)
+    return ['POWER OFF', 'text-danger']
+  return ['POWER MIXED', 'text-warning']
+}
+
+function powerLight(data) {
+  if (!data || !('light' in data))
+    return ['ERROR', 'text-danger'];
+
+  if (data['light'])
+    return ['POWER ON', 'text-success']
+
+  return ['POWER OFF', 'text-danger']
+}
+
 var cameraFields = {
   'status': camStatus,
   'temperature': camTemperature,
   'shutter': camShutter,
   'exposure': camExposure,
-  'saving': camSaving
+  'geometry': camGeometry,
 };
 
 var cameraStatus = [
@@ -154,14 +253,27 @@ function camExposure(data) {
   return [data['exposure_time'].toFixed(2) + ' s'];
 }
 
-function camSaving(data) {
-  if (!data || !('save_enabled' in data))
+function camGeometry(data) {
+  if (!data || !('geometry_x' in data))
     return ['ERROR', 'text-danger'];
 
-  if (data['save_enabled'])
-    return [data['next_filename']];
+  x = data['geometry_x'];
+  y = data['geometry_y'];
+  width = data['geometry_width'];
+  height = data['geometry_height'];
+  bin_x = data['geometry_bin_x'];
+  bin_y = data['geometry_bin_y'];
 
-  return ['NOT SAVING', 'text-danger'];
+  desc = bin_x + 'x' + bin_y + ' in [' + x + ':' + (x + width - 1) + ',' + y + ':' + (y + height - 1) + ']'
+
+  return [desc]
+}
+
+function camBinning(data) {
+  if (!data || !('geometry_bin_x' in data))
+    return ['ERROR', 'text-danger'];
+
+  return [data['geometry_bin_x'] + 'x' + data['geometry_bin_y']]
 }
 
 var telescopeFields = {
@@ -281,6 +393,89 @@ function opsEnvironment(data) {
   return ['NOT SAFE', null, 'list-group-item-danger'];
 }
 
+var pipelineFields = {
+  'guiding': pipelineGuiding,
+  'frametype': pipelineFrameType,
+  'save-dir': pipelineSaveDir,
+  'next-blue': pipelineNextBlue,
+  'next-red': pipelineNextRed,
+  'process': pipelineProcess
+};
+
+function pipelineGuiding(data) {
+  if (!data || !('guide_camera_id' in data))
+    return ['ERROR', 'text-danger'];
+
+  if (!data['guide_camera_id'])
+    return ['NOT GUIDING', 'text-danger']
+
+  return [data['guide_camera_id']];
+}
+
+function pipelineFrameType(data) {
+  if (!data || !('frame_type' in data) || !('frame_object' in data))
+    return ['ERROR', 'text-danger'];
+
+  if (data['frame_type'] == 'SCIENCE')
+    return ['SCIENCE (' + data['frame_object'] + ')']
+
+  return [data['frame_type']];
+}
+
+function pipelineSaveDir(data) {
+  if (!data || !('archive_directory' in data))
+    return ['ERROR', 'text-danger'];
+
+  return [data['archive_directory']]
+}
+
+function pipelineNextBlue(data) {
+  console.log(data);
+  if (!data || !('next_filename' in data) || !('BLUE' in data['next_filename'])
+        || !('archive_enabled' in data) || !('BLUE' in data['archive_enabled']))
+    return ['ERROR', 'text-danger'];
+
+  if (!data['archive_enabled']['BLUE'])
+    return ['NOT SAVING', 'text-danger'];
+
+  return [data['next_filename']['BLUE']];
+}
+
+function pipelineNextRed(data) {
+  if (!data || !('next_filename' in data) || !('RED' in data['next_filename'])
+        || !('archive_enabled' in data) || !('RED' in data['archive_enabled']))
+    return ['ERROR', 'text-danger'];
+
+  if (!data['archive_enabled']['RED'])
+    return ['NOT SAVING', 'text-danger'];
+
+  return [data['next_filename']['RED'], 'text-small'];
+}
+
+function pipelineProcess(data) {
+  if (!data || !('wcs_enabled' in data) || !('fwhm_enabled' in data) || !('intensity_stats_enabled' in data) 
+        || !('compression_enabled' in data) || !('dashboard_enabled' in data))
+    return ['ERROR', 'text-danger'];
+
+  calculations = [];
+  if (data['wcs_enabled'])
+    calculations.push('WCS');
+
+  if (data['fwhm_enabled'])
+    calculations.push('FWHM');
+
+  if (data['intensity_stats_enabled'])
+    calculations.push('IntStats');
+
+  if (data['compression_enabled'])
+    calculations.push('Compress');
+
+  if (data['dashboard_enabled'])
+    calculations.push('Dashboard');
+
+  return [calculations.join(', ')]
+}
+
 function updateLog(messages) {
   $('#log-table').children().remove();
   if (messages) {
@@ -313,10 +508,12 @@ function updateLog(messages) {
 
 function updateGroups(data) {
   updateEnvironment(data['environment']);
+  updateListGroup('power', powerFields, data['power']);
   updateListGroup('blue', cameraFields, data['blue']);
   updateListGroup('red', cameraFields, data['red']);
   updateListGroup('telescope', telescopeFields, data['telescope']);
   updateListGroup('ops', opsFields, data['ops']);
+  updateListGroup('pipeline', pipelineFields, data['pipeline']);
   updateLog(data['log']);
   var date = 'date' in data ? parseUTCDate(data['date']) : new Date();
   $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');

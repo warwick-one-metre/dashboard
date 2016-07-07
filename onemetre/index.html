@@ -34,8 +34,18 @@ permalink: /onemetre/
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-4 col-sm-6 col-xs-12">
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span id="power-mainups" class="list-group-item">Main UPS</span>
+      <span id="power-domeups" class="list-group-item">Dome UPS</span>
+      <span id="power-teldrive" class="list-group-item">Tel Drive</span>
+      <span id="power-telcontroller" class="list-group-item">Tel Controllers</span>
+      <span id="power-instrument" class="list-group-item">Instrument</span>
+      <span id="power-light" class="list-group-item">Dome Light</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <span id="external-humidity" class="list-group-item" data-units=" %RH">Ext. Humidity</span>
       <span id="internal-humidity" class="list-group-item" data-units=" %RH">Int. Humidity</span>
@@ -45,27 +55,27 @@ permalink: /onemetre/
       <span id="sky-temperature" class="list-group-item" data-units=" ºC">Sky Temp.</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
+  <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <span id="peak-wind" class="list-group-item" data-units=" km/h">Peak Wind</span>
       <span id="median-wind" class="list-group-item" data-units=" km/h">Median Wind</span>
       <span id="pressure" class="list-group-item" data-units=" hPa">Pressure</span>
       <span id="dust" class="list-group-item" data-units=" ug/m3">Dust</span>
-      <span id="accumulated-rain" class="list-group-item" data-units=" mm">Total Rain</span>
-      <span id="dewpoint" class="list-group-item" data-units=" ºC">Temp. > Dew Pt.</span>
+      <span id="dewpoint" class="list-group-item" data-units=" ºC">T > Dew Pt.</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
+  <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span id="power" class="list-group-item">Power</span>
+      <span id="accumulated-rain" class="list-group-item" data-units=" mm">Total Rain</span>
       <span id="diskspace" class="list-group-item" data-units=" GB">TCS Disk Space</span>
       <span id="trapdoor" class="list-group-item">Trap Door</span>
       <span id="hatch" class="list-group-item">Side Hatch</span>
-      <span id="light" class="list-group-item">Dome Light</span>
+      <span id="secsys" class="list-group-item">Hard Limits</span>
     </div>
   </div>
-  <div class="clearfix visible-md-block visible-lg-block"></div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Telescope</h5>
       <span id="telescope-ra" class="list-group-item">RA</span>
@@ -82,7 +92,7 @@ permalink: /onemetre/
       <span id="blue-temperature" class="list-group-item">Temperature</span>
       <span id="blue-shutter" class="list-group-item">Shutter</span>
       <span id="blue-exposure" class="list-group-item">Exposure</span>
-      <span id="blue-saving" class="list-group-item">Next Frame</span>
+      <span id="blue-geometry" class="list-group-item">Geometry</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
@@ -92,16 +102,27 @@ permalink: /onemetre/
       <span id="red-temperature" class="list-group-item">Temperature</span>
       <span id="red-shutter" class="list-group-item">Shutter</span>
       <span id="red-exposure" class="list-group-item">Exposure</span>
-      <span id="red-saving" class="list-group-item">Next Frame</span>
+      <span id="red-geometry" class="list-group-item">Geometry</span>
     </div>
   </div>
 </div>
-
-<div class="row">
-  <div class="col-md-12">
+<div class="row dashboard-stats">
+  <div class="col-md-5 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Pipeline</h5>
+      <span id="pipeline-guiding" class="list-group-item">Guide Camera</span>
+      <span id="pipeline-frametype" class="list-group-item">Frame Type</span>
+      <span id="pipeline-save-dir" class="list-group-item">Archive Dir</span>
+      <span id="pipeline-next-blue" class="list-group-item">Next Blue Frame</span>
+      <span id="pipeline-next-red" class="list-group-item">Next Red Frame</span>
+      <span id="pipeline-process" class="list-group-item">Pipeline Steps</span>
+    </div>
+  </div>
+  <div class="clearfix visible-sm-block visible-xs-block"></div>
+  <div class="col-md-7">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">System Log</h5>
-      <div class="list-group-item" style="overflow-y: scroll; height: 100px;">
+      <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
         <table id="log-table">
         </table>
       </div>
