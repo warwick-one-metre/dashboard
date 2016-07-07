@@ -22,10 +22,21 @@ function reductionFrameFilename(data) {
   return [data['filename']]
 }
 
+function reductionFrameFWHM(data) {
+  if (!data || !('fwhm' in data))
+    return ['ERROR', 'text-danger']
+
+  if (data['fwhm'] < 0)
+    return ['N/A']
+
+  return [data['fwhm'] + ' arcsec']
+}
+
 var cameraFields = {
   'date': reductionFrameDate,
   'exposure': reductionFrameExposure,
-  'saved': reductionFrameFilename
+  'saved': reductionFrameFilename,
+  'fwhm': reductionFrameFWHM
 }
 
 function queryCamera(id) {
