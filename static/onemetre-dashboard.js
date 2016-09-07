@@ -526,7 +526,7 @@ function updateGroups(data) {
 function queryData() {
   $.ajax({
     type: "GET",
-    url: "/dashboard/onemetre",
+    url: "/data/onemetre",
     statusCode: {
       404: function() {
         updateGroups({});

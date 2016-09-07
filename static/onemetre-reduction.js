@@ -42,7 +42,7 @@ var cameraFields = {
 function queryCamera(id) {
   $.ajax({
     type: "GET",
-    url: "/dashboard/onemetre/" + id + "/json",
+    url: "/data/onemetre/" + id,
     statusCode: {
       404: function() {
         updateListGroup(id, cameraFields);
