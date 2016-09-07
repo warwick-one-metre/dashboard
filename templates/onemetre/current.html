@@ -1,10 +1,6 @@
----
-layout: default
-title: "Current Run"
-sidebar: "onemetre"
-navorder: 1
-permalink: /onemetre/reduction/
----
+{% extends "layout.html" %}
+{% set active_page = 'onemetre-current' -%}
+{% block body %}
 <style>
 .overlaybutton {
   background: rgba(255, 255, 255, 0.2);
@@ -52,4 +48,5 @@ a:hover .overlaybutton {
     TODO: Display reduction plots
   </div>
 </div>
-<script src="{{ "/js/onemetre-reduction.js" | prepend: site.baseurl }}"></script>
+<script src="{{ url_for('static', filename='onemetre-reduction.js') }}"></script>
+{% endblock %}

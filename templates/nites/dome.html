@@ -1,11 +1,6 @@
----
-layout: default
-title: "Dome View"
-sidebar: "nites"
-navorder: 2
-permalink: /nites/dome/
----
-
+{% extends "layout.html" %}
+{% set active_page = 'nites-dome' -%}
+{% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">NITES &raquo; Dome View</h2>
@@ -16,17 +11,14 @@ permalink: /nites/dome/
   <div id="container" class="col-md-12 m-b" style="position: relative">
     <img id="video" src="/webcam/nites/static" width="100%">
     <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
-      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/video.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
+      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
     </div>
   </div>
   <div id="container" class="col-md-12">
     <p class="description">Please note that video sync may drift over time. Stop and re-start playback to resync the time.</p>
   </div>
 </div>
-<script src="{{ "/js/jquery.min.js" | prepend: site.baseurl }}"></script>
-
 <script>
-
 $(document).ready(function () {
   var videoPlaying = false;
   $('#video-button').click(function() {
@@ -44,3 +36,4 @@ $(document).ready(function () {
   })
 });
 </script>
+{% endblock %}

@@ -1,10 +1,6 @@
----
-layout: default
-title: "External Cameras"
-sidebar: "other"
-navorder: 2
-permalink: /extcams/
----
+{% extends "layout.html" %}
+{% set active_page = 'extcams' -%}
+{% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">External Cameras</h2>
@@ -36,3 +32,4 @@ $(document).ready(function () {
   window.setInterval(reloadImages, 10000)
 });
 </script>
+{% endblock %}

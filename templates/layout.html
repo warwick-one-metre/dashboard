@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta charset="utf-8">
+
+    <title>{{ title|e }}</title>
+    <!-- link rel="canonical" href="" -->
+    <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
+    <link href="{{ url_for('static', filename='toolkit-inverse.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='application.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='slider.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='common.js') }}"></script>
+
+ <style>
+    .data-minmax {
+      font-size:0.7em;
+      margin-top: -3px;
+      margin-left: 5px
+    }
+    
+    .overlaybutton {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    a:hover .overlaybutton {
+      color: #1ca8dd;
+    }
+
+    .description {
+      font-size: 0.9em;
+      margin: 0 5px;
+    }
+
+    #log-container p, {
+      margin: 0px;
+      font-size: 0.8em;
+    }
+
+    #log-container td {
+      padding: 0 2px;
+      font-size: 0.8em;
+    }
+
+    table {
+      font-size: 0.8em;
+    }
+
+    .log-date {
+      width: 100px;
+      vertical-align: top;
+    }
+
+    .log-table {
+      width: 90px;
+      vertical-align: top;
+    }
+
+    .log-message {
+      vertical-align: top;
+    }
+
+    .dashboard-stats {
+      font-size: 80%;
+    }
+
+    .dashboard-stats .list-group-item {
+      padding: 5px 7px;
+    }
+
+    .dashboard-stats .col-md-3, .dashboard-stats .col-md-4, .dashboard-stats .col-md-5, .dashboard-stats .col-md-7 {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    .dashboard-stats .list-group-header {
+      font-size: 1.2em;
+      padding: 5px 7px;
+    }
+  </style>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3 sidebar">
+          {% set active_page = active_page -%}
+          {% include "sidebar.html" %}
+        </div>
+        <div class="col-sm-9 content">
+          {% block body %}{% endblock %}
+        </div>
+      </div>
+    </div>
+  <script src="{{ url_for('static', filename='toolkit.js') }}"></script>
+  </body>
+</html>

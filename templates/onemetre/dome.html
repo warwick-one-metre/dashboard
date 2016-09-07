@@ -1,10 +1,6 @@
----
-layout: default
-title: "Dome View"
-sidebar: "onemetre"
-navorder: 2
-permalink: /onemetre/dome/
----
+{% extends "layout.html" %}
+{% set active_page = 'onemetre-dome' -%}
+{% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">One Metre &raquo; Dome View</h2>
@@ -15,11 +11,11 @@ permalink: /onemetre/dome/
   <div id="container" class="col-md-12 m-b" style="position: relative">
     <img id="video" src="/webcam/onemetre/static" width="100%">
     <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
-      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/video.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
+      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
     </div>
     <div style="position: absolute; right: 25px; top: 10px; text-align: center;">
       <audio id="audio" preload="none"></audio>
-      <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ "/img/speaker.svg" | prepend: site.baseurl }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
+      <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='speaker.svg') }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
       <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="1" data-slider-selection="after" data-slider-tooltip="hide">
     </div>
   </div>
@@ -28,8 +24,8 @@ permalink: /onemetre/dome/
     <p class="description">Audio playback is delayed by a few seconds, and both audio and video sync may drift over time. Stop and re-start playback to resync the time.</p>
   </div>
 </div>
-<script src="{{ "/js/bootstrap-slider.js" | prepend: site.baseurl }}"></script>
-<script src="{{ "/js/onemetre-dome.js" | prepend: site.baseurl }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-slider.js') }}"></script>
+<script src="{{ url_for('static', filename='onemetre-dome.js') }}"></script>
 <script>
 
 $(document).ready(function () {
@@ -70,3 +66,4 @@ $(document).ready(function () {
 });
 
 </script>
+{% endblock %}

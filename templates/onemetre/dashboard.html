@@ -1,11 +1,6 @@
----
-layout: default
-title: "Dashboard"
-sidebar: "onemetre"
-navorder: 0
-permalink: /onemetre/
----
-
+{% extends "layout.html" %}
+{% set active_page = 'onemetre-dashboard' -%}
+{% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">One Metre &raquo; Dashboard</h2>
@@ -129,4 +124,5 @@ permalink: /onemetre/
     </div>
   </div>
 </div>
-<script src="{{ "/js/onemetre-dashboard.js" | prepend: site.baseurl }}"></script>
+<script src="{{ url_for('static', filename='onemetre-dashboard.js') }}"></script>
+{% endblock %}

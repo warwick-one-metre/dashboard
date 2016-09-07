@@ -1,0 +1,33 @@
+{% set categories = [
+  ('One Metre', [
+    (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard'),
+    (url_for('onemetre_current'), 'onemetre-current', 'Current Run'),
+    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome View')]),
+  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome View')]),
+  ('Other', [
+    (url_for('skycams'), 'skycams', 'Sky Cameras'),
+    (url_for('extcams'), 'extcams', 'External Cameras'),
+    (url_for('resources'), 'resources', 'Observing Resources'),
+]),
+] -%}
+
+<nav class="sidebar-nav">
+  <div class="sidebar-header">
+    <button class="nav-toggler nav-toggler-sm sidebar-toggler" type="button" data-toggle="collapse" data-target="#nav-toggleable-sm">
+      <span class="sr-only">Toggle nav</span>
+    </button>
+  </div>
+  <div class="collapse nav-toggleable-sm" id="nav-toggleable-sm">
+    <ul class="nav nav-pills nav-stacked">
+      {% for title, links in categories %}
+      <li class="nav-header">{{ title|e }}</li>
+      {% for href, id, caption in links %}
+      <li{% if id == active_page %} class="active"{% endif %}>
+        <a href="{{ href|e }}">{{ caption|e }}</a>
+      </li>
+      {% endfor %}
+      {% endfor %}
+    </ul>
+    <hr class="visible-xs m-t">
+  </div>
+</nav>
