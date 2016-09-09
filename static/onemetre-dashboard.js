@@ -434,7 +434,6 @@ function pipelineSaveDir(data) {
 }
 
 function pipelineNextBlue(data) {
-  console.log(data);
   if (!data || !('next_filename' in data) || !('BLUE' in data['next_filename'])
         || !('archive_enabled' in data) || !('BLUE' in data['archive_enabled']))
     return ['ERROR', 'text-danger'];
@@ -480,33 +479,35 @@ function pipelineProcess(data) {
   return [calculations.join(', ')]
 }
 
+var lastLogMessageId = 0;
 function updateLog(messages) {
-  $('#log-table').children().remove();
   if (messages) {
-    if (!messages.length) {
-        var row = $('<tr>');
-        row.append($('<td>').html('No log messages in the last 24 hours'));
-        row.addClass('text-danger');
-        $('#log-table').prepend(row);
-    } else {
-      for (var i in messages) {
-        var message = messages[i];
-        var row = $('<tr>');
-        if (message['type'] == 'warning')
-           row.addClass('text-warning');
-        if (message['type'] == 'error')
-           row.addClass('text-danger');
-        row.append($('<td class="log-date">').html(formatUTCDate(parseUTCDate(message['date'])) + '<span class="visible-xs">' + message['table'] + '</span>'));
-        row.append($('<td class="log-table hidden-xs">').html(message['table']));
-        row.append($('<td class="log-message">').html(message['message']));
-        $('#log-table').prepend(row);
-      }
+    var length = messages.length;
+    for (var i in messages) {
+      var message = messages[length - i - 1];
+      var row = $('<tr>');
+      if (message[2] == 'warning')
+         row.addClass('text-warning');
+      if (message[2] == 'error')
+         row.addClass('text-danger');
+      row.append($('<td class="log-date">').html(formatUTCDate(parseUTCDate(message[1]+'.0')) + '<span class="visible-xs">' + message[3] + '</span>'));
+      row.append($('<td class="log-table hidden-xs">').html(message[3]));
+      row.append($('<td class="log-message">').html(message[4]));
+      $('#log-table').prepend(row);
+      lastLogMessageId = message[0];
     }
+
+    // Remove excess rows as new messages arrive
+    var tbody = $('#log-table tbody');
+    while (tbody.children().length > 250)
+        tbody.children().last().remove();
   } else {
+    $('#log-table').children().remove();
     var row = $('<tr>');
     row.append($('<td>').html('Error querying log'));
     row.addClass('text-danger');
     $('#log-table').prepend(row);
+    lastLogMessageId = 0;
   }
 }
 
@@ -518,15 +519,14 @@ function updateGroups(data) {
   updateListGroup('telescope', telescopeFields, data['telescope']);
   updateListGroup('ops', opsFields, data['ops']);
   updateListGroup('pipeline', pipelineFields, data['pipeline']);
-  updateLog(data['log']);
   var date = 'date' in data ? parseUTCDate(data['date']) : new Date();
   $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
 }
 
 function queryData() {
   $.ajax({
-    type: "GET",
-    url: "/data/onemetre",
+    type: 'GET',
+    url: '/data/onemetre',
     statusCode: {
       404: function() {
         updateGroups({});
@@ -534,6 +534,17 @@ function queryData() {
     }
   }).done(function(msg) {
     updateGroups(jQuery.parseJSON(msg));
+  });
+
+  var logURL = '/data/obslog';
+  if (lastLogMessageId > 0)
+    logURL += '?from=' + lastLogMessageId;
+
+  $.ajax({
+    type: 'GET',
+    url: logURL,
+  }).done(function(data) {
+      updateLog(data['messages']);
   });
 
   window.setTimeout(queryData, 10000);
