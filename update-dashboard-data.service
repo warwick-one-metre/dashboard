@@ -1,0 +1,9 @@
+[Unit]
+Description=Polls observatory systems and updates the cached dashboard json files
+Wants=update-dashboard-data.timer
+
+[Service]
+User=ops
+Group=nginx
+ExecStart=/usr/bin/update-dashboard-data
+

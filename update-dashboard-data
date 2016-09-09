@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+#
+# This file is part of dashboard.
+#
+# dashboard is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# dashboard is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with environmentd.  If not, see <http://www.gnu.org/licenses/>.
+
+import datetime
+import json
+import os
+import time
+import Pyro4
+import warwick.observatory as observatory
+
+output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
+try:
+    with observatory.daemons.onemetre_environment.connect() as environment:
+        output['environment'] = environment.dashboard_status()
+except Exception as e:
+    print('failed to query environment with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query environmentd (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.onemetre_telescope.connect() as tel:
+        output['telescope'] = tel.report_status()
+except Exception as e:
+    print('failed to query telescope with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query teld (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.onemetre_blue_camera.connect() as blue:
+        output['blue'] = blue.report_status()
+except Exception as e:
+    print('failed to query blue camera with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query blue_camd (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.onemetre_red_camera.connect() as red:
+        output['red'] = red.report_status()
+except Exception as e:
+    print('failed to query red camera with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query red_camd (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.onemetre_pipeline.connect() as pipeline:
+        output['pipeline'] = pipeline.report_status()
+except Exception as e:
+    print('failed to query pipeline with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query pipelined (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.onemetre_operations.connect() as ops:
+        output['ops'] = ops.status()
+except Exception as e:
+    print('failed to query operations with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query opsd (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.onemetre_power.connect() as power:
+        output['power'] = power.last_measurement()
+except Exception as e:
+    print('failed to query power with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query powerd (' + str(e) + ')')
+    pass
+
+try:
+    with open('/srv/dashboard/generated/onemetre-dashboard.json', 'w') as outfile:
+        json.dump(output, outfile)
+except Exception as e:
+    print('failed to write json with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+try:
+    os.system('rsync -u 192.168.0.101:/var/tmp/dashboard-* /srv/dashboard/generated/')
+except Exception as e:
+    print('failed to rsync camera data with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to rsync camera data (' + str(e) + ')')
+

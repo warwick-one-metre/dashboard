@@ -1,6 +1,6 @@
 Name:      onemetre-dashboard
-Version:   1.0
-Release:   0
+Version:   1.1
+Release:   3
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
 License:   GPL-3.0
@@ -14,14 +14,19 @@ Part of the observatory software for the Warwick one-meter telescope.
 
 %build
 
-mkdir -p %{buildroot}/srv/dashboard
+mkdir -p %{buildroot}/srv/dashboard/generated
 %{__install} %{_sourcedir}/dashboard.py %{buildroot}/srv/dashboard/
 %{__install} %{_sourcedir}/dashboard.ini %{buildroot}/srv/dashboard/
 cp -r %{_sourcedir}/static %{buildroot}/srv/dashboard/
 cp -r %{_sourcedir}/templates %{buildroot}/srv/dashboard/
 
+mkdir -p %{buildroot}%{_bindir}
+%{__install} %{_sourcedir}/update-dashboard-data %{buildroot}%{_bindir}
+
 mkdir -p %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/dashboard.service %{buildroot}%{_unitdir}
+%{__install} %{_sourcedir}/update-dashboard-data.service %{buildroot}%{_unitdir}
+%{__install} %{_sourcedir}/update-dashboard-data.timer %{buildroot}%{_unitdir}
 
 mkdir -p %{buildroot}/etc/nginx/conf.d/
 %{__install} %{_sourcedir}/dashboard.conf %{buildroot}/etc/nginx/conf.d/dashboard.conf
@@ -46,6 +51,10 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 
 %defattr(-,root,root,-)
 %{_unitdir}/dashboard.service
+%{_unitdir}/update-dashboard-data.service
+%{_unitdir}/update-dashboard-data.timer
 /etc/nginx/conf.d/dashboard.conf
+
+%{_bindir}/update-dashboard-data
 
 %changelog
