@@ -1,18 +1,160 @@
----
-layout: default
-title: "Weather Plots"
-sidebar: "other"
-navorder: 0
-permalink: /weather/
----
+{% extends "layout.html" %}
+
+{% set active_page = 'weather' -%}
+{% block body %}
+<style>
+
+#content {
+  width: 880px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.plot-container {
+  height: 125px;
+  padding: 0;
+  margin: 0;
+  margin-top:15px;
+}
+
+.weather-plot {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  line-height: 1.2em;
+}
+
+.wind-labels {
+  position:absolute;
+  font-size:smaller;
+  width:20px;
+  height:20px
+}
+
+.xAxis, .yAxis { color: #fff; }
+.legend { background-color: #252830; }
+.legendLabel { color: #fff; padding-left: 2px; padding-right: 8px; }
+.axisLabels { text-align: center; }
+
+.weather-labels-left {
+  width: 100%;
+  height: 14px;
+  padding-right: 5px;
+}
+
+.weather-labels-right {
+  width: 100%;
+  height: 14px;
+  padding-right: 40px;
+}
+
+.weather-labels-left table, .weather-labels-right table {
+  float:right;
+}
+
+#wind-container { height: 262px; }
+#raindetector-container { height: 55px; }
+#vaisala-rain-container { margin-top: 6px; height: 90px; }
+#main-ups-container { height: 60px; margin-top: 0px; }
+#dome-ups-container { margin-top: 6px; height: 95px; margin-top: 6px; }
+#network-container { height: 147px; margin-top: 0px; }
+
+.datepicker tfoot tr th {
+  text-align: center;
+  border-radius: 3px;
+}
+
+.datepicker table tr td.day:hover,
+.datepicker-months table tr td span:hover,
+.datepicker-years table tr td span:hover,
+.datepicker thead tr:first-child th:hover,
+.datepicker tfoot tr th:hover {
+  background: #4d5364;
+  color:#fff;
+}
+
+.datepicker table tr td.disabled:hover {
+  background: #fff;
+  color: #cfd2da;
+}
+
+</style>
 <div class="dashhead m-b">
+  <div class="btn-toolbar dashhead-toolbar">
+    <div class="btn-toolbar-item input-with-icon">
+      <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-clear-btn="true" data-date-start-date="2016-09-14" data-date-end-date="0d" data-date-disable-touch-keyboard="true">
+      <span class="icon icon-calendar"></span>
+    </div>
+  </div>
   <div class="dashhead-titles">
     <h2 class="dashhead-title">Weather Plots</h2>
+    <h2 id="headerdesc" class="dashhead-subtitle">Loading...</h2>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-md-12">
-    TODO: Display plots generated from local weather database
+  <div class="col-md-6 plot-container">
+    <div class="weather-labels-left" id="temperature-labels"></div>
+    <div class="weather-plot" data-series='["vexttemp", "rinttemp", "rtrusstemp", "rracktemp", "swtemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temperature (&deg;C)' data-labelfudge="-7"></div>
+  </div>
+  <div id="humidity-container" class="col-md-6 plot-container">
+    <div class="weather-labels-right" id="humidity-labels"></div>
+    <div class="weather-plot" data-series='["vexthumid", "rinthumid", "rrackhumid", "swhumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%RH)' data-labelfudge="-7"></div>
   </div>
 </div>
+<div class="row">
+  <div class="col-md-6 plot-container">
+    <div class="weather-labels-left" id="dewdelta-labels"></div>
+    <div class="weather-plot" data-series='["vdewdelta", "swdewdelta"]' data-labelcontainer="dewdelta-labels" data-axislabel='Temp. > Dew Pt. (&deg;C)' data-labelfudge="-7"></div>
+  </div>
+  <div id="pressure-container" class="col-md-6 plot-container">
+    <div class="weather-labels-right" id="pressure-labels"></div>
+    <div class="weather-plot" data-series='["vpressure", "swpressure"]' data-sidesensor="pressure-container" data-labelcontainer="pressure-labels" data-axislabel='Pressure (hPa)' data-labelfudge="-7"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6" style="padding: 0;">
+    <div id="wind-container" class="plot-container">
+      <div class="weather-labels-left" id="wind-labels"></div>
+      <div id="wind-plot" class="weather-plot wind-plot" data-series='["vwindspeed", "swwindspeed"]' data-series='["vwinddir", "swwinddir"]' data-labelcontainer="wind-labels" data-axislabel='Wind Speed (km/h)'></div>
+    </div>
+  </div>
+  <div id="sky-container" class="col-md-6" style="padding: 0;">
+    <div class="plot-container" style="height: 110px;">
+      <div class="weather-labels-right" id="skytemp-labels"></div>
+      <div class="weather-plot" data-series='["swskytemp"]'data-sidesensor="sky-container"  data-labelcontainer="skytemp-labels" data-axislabel='Sky Temp. (&deg;C)' data-labelfudge="-7"></div>
+    </div>
+    <div id="raindetector-container" class="plot-container">
+      <div class="weather-labels-right"><div id="vrain-label"></div><div id="rdboards-label"></div></div>
+      <div class="weather-plot" data-series='["rdboards"]' data-sidesensor="sky-container" data-labelcontainer="rdboards-label" data-axislabel='Rain Detectors' data-labelfudge="16" data-min="0" data-max="6" data-hidetime></div>
+    </div>
+    <div id="vaisala-rain-container" class="plot-container">
+      <div class="weather-plot" data-series='["vrain"]' data-sidesensor="sky-container" data-labelcontainer="vrain-label" data-axislabel="&nbsp;" data-min="0"></div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6" style="padding: 0;">
+    <div id="main-ups-container" class="plot-container">
+      <div class="weather-labels-left"><div id="dome-ups-labels"></div><div id="main-ups-labels"></div></div>
+      <div id="main-ups-plot" class="weather-plot" data-series='["mupsbat"]' data-labelcontainer="main-ups-labels" data-axislabel='UPS Battery (%)' data-labelfudge="19" data-min="0" data-max="105" data-hidetime></div>
+    </div>
+    <div id="dome-ups-container" class="plot-container">
+      <div id="dome-ups-plot" class="weather-plot" data-series='["dupsbat"]' data-labelcontainer="dome-ups-labels" data-axislabel="&nbsp;" data-min="0" data-max="105"></div>
+    </div>
+  </div>
+  <div id="network-container" class="col-md-6 plot-container">
+    <div class="weather-labels-right" id="network-labels"></div>
+    <div class="weather-plot" data-series='["ngtsping", "googleping"]' data-sidesensor="network-container" data-labelcontainer="network-labels" data-axislabel='Ping (ms)' data-labelfudge="-9"></div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='jquery.flot.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.axislabels.js') }}"></script>
+<script src="{{ url_for('static', filename='weather.js') }}"></script>
+<script>
+  var dataURL = '{{ url_for('weatherdata') }}';
+  $(document).ready(setup);
+</script>
+{% endblock %}

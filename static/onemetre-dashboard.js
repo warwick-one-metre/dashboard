@@ -526,6 +526,7 @@ function updateGroups(data) {
 function queryData() {
   $.ajax({
     type: 'GET',
+    dataType: 'json',
     url: '/data/onemetre',
     statusCode: {
       404: function() {
@@ -533,7 +534,7 @@ function queryData() {
       }
     }
   }).done(function(msg) {
-    updateGroups(jQuery.parseJSON(msg));
+    updateGroups(msg);
   });
 
   var logURL = '/data/obslog';
@@ -542,6 +543,7 @@ function queryData() {
 
   $.ajax({
     type: 'GET',
+    dataType: 'json',
     url: logURL,
   }).done(function(data) {
       updateLog(data['messages']);

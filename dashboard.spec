@@ -1,6 +1,6 @@
 Name:      onemetre-dashboard
-Version:   1.3
-Release:   1
+Version:   1.5
+Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
 License:   GPL-3.0
@@ -16,6 +16,7 @@ Part of the observatory software for the Warwick one-meter telescope.
 
 mkdir -p %{buildroot}/srv/dashboard/generated
 cp -r %{_sourcedir}/dashboard %{buildroot}/srv/dashboard
+cp -r %{_sourcedir}/static %{buildroot}/srv/dashboard
 rm -rf %{buildroot}/srv/dashboard/dashboard/__pycache__
 %{__install} %{_sourcedir}/dashboard.ini %{buildroot}/srv/dashboard/
 
@@ -47,7 +48,7 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 
 %files
 %defattr(0755,ops,nginx,-)
-/srv/dashboard
+/srv/dashboard/*
 
 %defattr(-,root,root,-)
 %{_unitdir}/dashboard.service

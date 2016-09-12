@@ -23,6 +23,8 @@ from flask import jsonify
 from flask import render_template
 from flask import request
 
+from dashboard import weather_json
+
 # Log and weather data are stored in the database
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
@@ -45,6 +47,10 @@ def onemetre_dome():
 @app.route('/nites/dome/')
 def nites_dome():
     return render_template('nites/dome.html')
+
+@app.route('/weather/')
+def weather():
+    return render_template('weather.html')
 
 @app.route('/extcams/')
 def extcams():
@@ -75,7 +81,8 @@ def observatory_log():
         return jsonify(messages=messages)
 
 @app.route('/data/weather')
-def weather():
-    vaisala = dashboard.weather_vaisala.plot_json()
-    return jsonify(vaisala=vaisala)
+def weatherdata():
+    date = request.args['date'] if 'date' in request.args else None
+    data, start, end = weather_json.plot_json(date)
+    return jsonify(data=data, start=start, end=end)
 
