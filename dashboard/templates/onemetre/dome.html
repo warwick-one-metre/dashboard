@@ -13,40 +13,30 @@
     <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
       <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
     </div>
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
     <div style="position: absolute; right: 25px; top: 10px; text-align: center;">
       <audio id="audio" preload="none"></audio>
       <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='speaker.svg') }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
       <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="1" data-slider-selection="after" data-slider-tooltip="hide">
     </div>
+{% endif %}
   </div>
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
   <div id="container" class="col-md-12">
     <p class="description">Please note that audio playback requires browser support for streaming mp3 audio.<br />
     <p class="description">Audio playback is delayed by a few seconds, and both audio and video sync may drift over time. Stop and re-start playback to resync the time.</p>
   </div>
+{% endif %}
 </div>
 <script src="{{ url_for('static', filename='bootstrap-slider.js') }}"></script>
 <script src="{{ url_for('static', filename='onemetre-dome.js') }}"></script>
 <script>
 
 $(document).ready(function () {
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
   $('#audio-volume').slider()
   $('#audio-volume').on('slide', function(ev){
     $('#audio').prop('volume', ev.value);
-  });
-
-  var videoPlaying = false;
-  $('#video-button').click(function() {
-    if (videoPlaying) {
-      $('#video-button-text').html('Play');
-      $('#video').attr('src', '/webcam/onemetre/static?' + Date.now());
-      console.log($('#video').attr('src'));
-      videoPlaying = false;
-    } else {
-      $('#video-button-text').html('Stop');
-      $('#video').attr('src', '/webcam/onemetre/live?' + Date.now());
-
-      videoPlaying = true;
-    }
   });
 
   var audioPlaying = false;
@@ -61,6 +51,22 @@ $(document).ready(function () {
       player.src = '/microphone/onemetre';
       player.play();
       audioPlaying = true;
+    }
+  });
+{% endif %}
+
+  var videoPlaying = false;
+  $('#video-button').click(function() {
+    if (videoPlaying) {
+      $('#video-button-text').html('Play');
+      $('#video').attr('src', '/webcam/onemetre/static?' + Date.now());
+      console.log($('#video').attr('src'));
+      videoPlaying = false;
+    } else {
+      $('#video-button-text').html('Stop');
+      $('#video').attr('src', '/webcam/onemetre/live?' + Date.now());
+
+      videoPlaying = true;
     }
   });
 });

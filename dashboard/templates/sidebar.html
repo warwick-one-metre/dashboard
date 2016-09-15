@@ -10,7 +10,12 @@
     (url_for('extcams'), 'extcams', 'External Cameras'),
     (url_for('resources'), 'resources', 'Observing Resources'),
 ]),
-] -%}
+] %}
+
+{% set permissions = {
+    'onemetre': 'One-metre observer',
+    'nites': 'NITES observer'
+} %}
 
 <nav class="sidebar-nav">
   <div class="sidebar-header">
@@ -19,7 +24,7 @@
     </button>
   </div>
   <div class="collapse nav-toggleable-sm" id="nav-toggleable-sm">
-    <ul class="nav nav-pills nav-stacked">
+    <ul class="nav nav-pills nav-stacked m-b">
       {% for title, links in categories %}
       <li class="nav-header">{{ title|e }}</li>
       {% for href, id, caption in links %}
@@ -29,6 +34,35 @@
       {% endfor %}
       {% endfor %}
     </ul>
+
+    <hr style="margin: 0px" class="m-b">
+
+    {% if user_account['username'] != None and user_account['avatar'] != None %}
+      <div class="clearfix">
+        <img style="border-radius: 3px; margin-right: 5px; float: left;" src="{{ user_account['avatar'] }}" width="40" height="40">
+        <h4 style="margin: 0; margin-top: 8px; overflow:hidden; text-overflow: ellipsis; height: 32px;">@{{ user_account['username'] }}</h4>
+      </div>
+      <ul class="user-permissions">
+      {% if user_account['permissions']|length > 0 %}
+        {% if 'onemetre' in user_account['permissions'] %}
+          <li>One-metre observer</li>
+        {% endif %}
+        {% if 'nites' in user_account['permissions'] %}
+          <li>NITES observer</li>
+        {% endif %}
+      {% else %}
+        <li>No Permissions</li>
+      {% endif %}
+      </ul>
+      <div class="text-center">
+        <a href="{{ url_for('logout') + '?next=' + request.base_url }}" class="btn btn-default-outline btn-sm">Log out</a>
+      </div>
+    {% else %}
+      <div class="text-center">
+        <a id="login-button" href="{{ url_for('login') + '?next=' + request.base_url }}" class="btn btn-primary-outline" style="width: 150px; overflow: hidden; text-overflow: ellipsis;">Log in with Github</a>
+      </div>
+    {% endif %}
     <hr class="visible-xs m-t">
   </div>
 </nav>
+

@@ -92,7 +92,7 @@
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Red Camera</h5>
+      <h5 class="list-group-header text-center">Red Camera</h5>
       <span id="red-status" class="list-group-item">Status</span>
       <span id="red-temperature" class="list-group-item">Temperature</span>
       <span id="red-shutter" class="list-group-item">Shutter</span>
@@ -101,6 +101,7 @@
     </div>
   </div>
 </div>
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-5 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -116,7 +117,7 @@
   <div class="clearfix visible-sm-block visible-xs-block"></div>
   <div class="col-md-7">
     <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">System Log</h5>
+      <h5 class="list-group-header text-center">System Log</h5>
       <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
         <table id="log-table">
         </table>
@@ -124,5 +125,15 @@
     </div>
   </div>
 </div>
+{% else %}
+<div class="row dashboard-stats">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Pipeline and log information restricted to <a href="https://github.com/orgs/warwick-one-metre/teams/observers/">@warwick-one-metre/observers</a>.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
 <script src="{{ url_for('static', filename='onemetre-dashboard.js') }}"></script>
 {% endblock %}

@@ -1,12 +1,12 @@
 Name:      onemetre-dashboard
-Version:   1.5
+Version:   1.6
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
 License:   GPL-3.0
 Group:     Unspecified
 BuildArch: noarch
-Requires:  nginx, python3, python3-Flask, uwsgi, uwsgi-python3, %{?systemd_requires}
+Requires:  nginx, python3, python3-Flask, python3-Flask-OAuthlib, uwsgi, uwsgi-python3, %{?systemd_requires}
 BuildRequires: systemd-rpm-macros
 
 %description

@@ -20,8 +20,12 @@ import pymysql
 from flask import abort
 from flask import Flask
 from flask import jsonify
+from flask import redirect
 from flask import render_template
 from flask import request
+from flask import session
+from flask import url_for
+from flask_oauthlib.client import OAuth
 
 from dashboard import weather_json
 
@@ -30,39 +34,103 @@ DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
 app = Flask(__name__)
+app.config.from_object('config')
+
+# Use github's OAuth interface for verifying user identity
+oauth = OAuth(app)
+github = oauth.remote_app(
+    'github',
+    consumer_key=app.config['GITHUB_KEY'],
+    consumer_secret=app.config['GITHUB_SECRET'],
+    request_token_params={'scope': 'read:org'},
+    base_url='https://api.github.com/',
+    request_token_url=None,
+    access_token_method='POST',
+    access_token_url='https://github.com/login/oauth/access_token',
+    authorize_url='https://github.com/login/oauth/authorize'
+)
+
+def get_user_account():
+    username = None
+    avatar = None
+    permissions = []
+
+    # Check for OAuth login response
+    if 'code' in request.args:
+        resp = github.authorized_response()
+        if resp is not None and 'access_token' in resp:
+            session['github_token'] = (resp['access_token'], '')
+
+    if 'error' in request.args and 'error_description' in request.args:
+        # todo: show error popup
+        pass
+
+    if 'github_token' in session:
+        try:
+            user = github.get('user')
+            username = user.data['login']
+            avatar = user.data['avatar_url']
+            if github.get('teams/2128810/memberships/' + username).data['state'] == 'active':
+                permissions.append('onemetre')
+                # todo: check a different group
+                permissions.append('nites')
+        except:
+            # todo: show error popup
+            pass
+
+    return {
+        'username': username,
+        'avatar': avatar,
+        'permissions': permissions
+    }
+
+@github.tokengetter
+def get_github_oauth_token():
+    return session.get('github_token')
+
+@app.route('/login')
+def login():
+    callback = request.args['next'] if 'next' in request.args else url_for('onemetre_dashboard', _external=True)
+    return github.authorize(callback=callback)
+
+@app.route('/logout')
+def logout():
+    next = request.args['next'] if 'next' in request.args else url_for('onemetre_dashboard')
+    session.pop('github_token', None)
+    return redirect(next)
 
 # Main pages
 @app.route('/onemetre/')
 def onemetre_dashboard():
-    return render_template('onemetre/dashboard.html')
+    return render_template('onemetre/dashboard.html', user_account=get_user_account())
 
 @app.route('/onemetre/current/')
 def onemetre_current():
-    return render_template('onemetre/current.html')
+    return render_template('onemetre/current.html', user_account=get_user_account())
 
 @app.route('/onemetre/dome/')
 def onemetre_dome():
-    return render_template('onemetre/dome.html')
+    return render_template('onemetre/dome.html', user_account=get_user_account())
 
 @app.route('/nites/dome/')
 def nites_dome():
-    return render_template('nites/dome.html')
+    return render_template('nites/dome.html', user_account=get_user_account())
 
 @app.route('/weather/')
 def weather():
-    return render_template('weather.html')
+    return render_template('weather.html', user_account=get_user_account())
 
 @app.route('/extcams/')
 def extcams():
-    return render_template('extcams.html')
+    return render_template('extcams.html', user_account=get_user_account())
 
 @app.route('/skycams/')
 def skycams():
-    return render_template('skycams.html')
+    return render_template('skycams.html', user_account=get_user_account())
 
 @app.route('/resources/')
 def resources():
-    return render_template('resources.html')
+    return render_template('resources.html', user_account=get_user_account())
 
 # Dynamically generated JSON
 @app.route('/data/obslog')

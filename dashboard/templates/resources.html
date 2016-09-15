@@ -7,7 +7,7 @@
     <h2 class="dashhead-title">Observing Resources</h2>
   </div>
 </div>
-
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
 <div class="row">
   <ul>
     <li><a href="https://github.com/warwick-one-metre/docs/wiki/Observing-Guide">Observing guide</a></li>
@@ -17,4 +17,14 @@
     <li><a href="http://www.not.iac.es/weather/">NOT weather page</a></li>
   </ul>
 </div>
+{% else %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="list-group m-b">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Content restricted to <a href="https://github.com/orgs/warwick-one-metre/teams/observers/">@warwick-one-metre/observers</a>.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
