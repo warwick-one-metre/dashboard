@@ -17,6 +17,7 @@ Part of the observatory software for the Warwick one-meter telescope.
 mkdir -p %{buildroot}/srv/dashboard/generated
 cp -r %{_sourcedir}/dashboard %{buildroot}/srv/dashboard
 cp -r %{_sourcedir}/static %{buildroot}/srv/dashboard
+cp %{_sourcedir}/config.py %{buildroot}/srv/dashboard
 rm -rf %{buildroot}/srv/dashboard/dashboard/__pycache__
 %{__install} %{_sourcedir}/dashboard.ini %{buildroot}/srv/dashboard/
 
