@@ -19,7 +19,7 @@ function reductionFrameFilename(data) {
   if (!data['saved'])
     return ['NOT SAVED', 'text-danger']
 
-  return [data['filename']]
+  return [data['filename'], 'filename']
 }
 
 function reductionFrameFWHM(data) {
@@ -41,8 +41,9 @@ var cameraFields = {
 
 function queryCamera(id) {
   $.ajax({
-    type: "GET",
-    url: "/data/onemetre/" + id,
+    type: 'GET',
+    dataType: 'json',
+    url: '/data/onemetre/' + id,
     statusCode: {
       404: function() {
         updateListGroup(id, cameraFields);
@@ -52,8 +53,7 @@ function queryCamera(id) {
         $('#' + id + '-thumb').attr('src', '');
       }
     }
-  }).done(function(msg) {
-    var data = jQuery.parseJSON(msg);
+  }).done(function(data) {
     updateListGroup(id, cameraFields, data);
     $('#' + id + '-updated').html(formatUTCDate(new Date()) + ' UTC');
 
