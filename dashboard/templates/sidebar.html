@@ -1,13 +1,13 @@
 {% set categories = [
   ('One Metre', [
     (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard'),
-    (url_for('onemetre_current'), 'onemetre-current', 'Current Run'),
-    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome View')]),
-  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome View')]),
+    (url_for('onemetre_current'), 'onemetre-current', 'Live Data'),
+    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera')]),
+  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera')]),
   ('Other', [
-    (url_for('weather'), 'weather', 'Weather Plots'),
+    (url_for('weather'), 'weather', 'Weather Archive'),
     (url_for('skycams'), 'skycams', 'Sky Cameras'),
-    (url_for('extcams'), 'extcams', 'External Cameras'),
+    (url_for('extcams'), 'extcams', 'Site Cameras'),
     (url_for('resources'), 'resources', 'Observing Resources'),
 ]),
 ] %}
