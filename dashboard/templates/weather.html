@@ -33,8 +33,10 @@
 
 .xAxis, .yAxis { color: #fff; }
 .legend { background-color: #252830; }
-.legendLabel { color: #fff; padding-left: 2px; padding-right: 8px; }
+.legendLabel { color: #fff; padding-left: 2px; width: 70px; height: 17px;}
 .axisLabels { text-align: center; }
+
+#rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
 
 .weather-labels-left {
   width: 100%;
@@ -51,6 +53,9 @@
 .weather-labels-left table, .weather-labels-right table {
   float:right;
 }
+
+#temperature-labels { height: 30px; }
+#humidity-labels { height: 30px; }
 
 #wind-container { height: 262px; }
 #raindetector-container { height: 55px; }
@@ -95,41 +100,41 @@
 <div class="row">
   <div class="col-md-6 plot-container">
     <div class="weather-labels-left" id="temperature-labels"></div>
-    <div class="weather-plot" data-series='["vexttemp", "rinttemp", "rtrusstemp", "rracktemp", "swtemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temperature (&deg;C)' data-labelfudge="-7"></div>
+    <div class="weather-plot" data-series='["ninttemp", "nracktemp", "vexttemp", "swtemp", "rinttemp", "rracktemp", "rtrusstemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temperature (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C'></div>
   </div>
   <div id="humidity-container" class="col-md-6 plot-container">
     <div class="weather-labels-right" id="humidity-labels"></div>
-    <div class="weather-plot" data-series='["vexthumid", "rinthumid", "rrackhumid", "swhumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%RH)' data-labelfudge="-7"></div>
+    <div class="weather-plot" data-series='["ninthumid", "nrackhumid", "vexthumid", "swhumid", "rinthumid", "rrackhumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%)' data-labelfudge="-7" data-labelunits='%'></div>
   </div>
 </div>
-<div class="row">
+<div class="row" style="padding-top: 20px;">
   <div class="col-md-6 plot-container">
     <div class="weather-labels-left" id="dewdelta-labels"></div>
-    <div class="weather-plot" data-series='["vdewdelta", "swdewdelta"]' data-labelcontainer="dewdelta-labels" data-axislabel='Temp. > Dew Pt. (&deg;C)' data-labelfudge="-7"></div>
+    <div class="weather-plot" data-series='["vdewdelta", "swdewdelta"]' data-labelcontainer="dewdelta-labels" data-axislabel='Temp. &gt; Dew Pt. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C'></div>
   </div>
   <div id="pressure-container" class="col-md-6 plot-container">
     <div class="weather-labels-right" id="pressure-labels"></div>
-    <div class="weather-plot" data-series='["vpressure", "swpressure"]' data-sidesensor="pressure-container" data-labelcontainer="pressure-labels" data-axislabel='Pressure (hPa)' data-labelfudge="-7"></div>
+    <div class="weather-plot" data-series='["vpressure", "swpressure"]' data-sidesensor="pressure-container" data-labelcontainer="pressure-labels" data-axislabel='Pressure (hPa)' data-labelfudge="-7" data-labelunits=' hPa'></div>
   </div>
 </div>
 <div class="row">
   <div class="col-md-6" style="padding: 0;">
     <div id="wind-container" class="plot-container">
       <div class="weather-labels-left" id="wind-labels"></div>
-      <div id="wind-plot" class="weather-plot wind-plot" data-series='["vwindspeed", "swwindspeed"]' data-series='["vwinddir", "swwinddir"]' data-labelcontainer="wind-labels" data-axislabel='Wind Speed (km/h)'></div>
+      <div id="wind-plot" class="weather-plot wind-plot" data-series='["vwindspeed", "swwindspeed"]' data-series='["vwinddir", "swwinddir"]' data-labelcontainer="wind-labels" data-axislabel='Wind Speed (km/h)' data-labelunits=' km/h'></div>
     </div>
   </div>
   <div id="sky-container" class="col-md-6" style="padding: 0;">
     <div class="plot-container" style="height: 110px;">
       <div class="weather-labels-right" id="skytemp-labels"></div>
-      <div class="weather-plot" data-series='["swskytemp"]'data-sidesensor="sky-container"  data-labelcontainer="skytemp-labels" data-axislabel='Sky Temp. (&deg;C)' data-labelfudge="-7"></div>
+      <div class="weather-plot" data-series='["swskytemp"]' data-sidesensor="sky-container"  data-labelcontainer="skytemp-labels" data-axislabel='Sky Temp. (&deg;C)' data-labelunits='&deg;C' data-labelfudge="-7"></div>
     </div>
     <div id="raindetector-container" class="plot-container">
       <div class="weather-labels-right"><div id="vrain-label"></div><div id="rdboards-label"></div></div>
-      <div class="weather-plot" data-series='["rdboards"]' data-sidesensor="sky-container" data-labelcontainer="rdboards-label" data-axislabel='Rain Detectors' data-labelfudge="16" data-min="0" data-max="6" data-hidetime></div>
+      <div class="weather-plot" data-series='["rdboards"]' data-sidesensor="sky-container" data-labelcontainer="rdboards-label" data-axislabel='Rain Detectors' data-labelfudge="16" data-min="0" data-max="6" data-labelunits=' boards' data-hidetime></div>
     </div>
     <div id="vaisala-rain-container" class="plot-container">
-      <div class="weather-plot" data-series='["vrain"]' data-sidesensor="sky-container" data-labelcontainer="vrain-label" data-axislabel="&nbsp;" data-min="0"></div>
+      <div class="weather-plot" data-series='["vrain"]' data-sidesensor="sky-container" data-labelcontainer="vrain-label" data-axislabel="&nbsp;" data-labelunits=' mm' data-min="0"></div>
     </div>
   </div>
 </div>
@@ -137,21 +142,22 @@
   <div class="col-md-6" style="padding: 0;">
     <div id="main-ups-container" class="plot-container">
       <div class="weather-labels-left"><div id="dome-ups-labels"></div><div id="main-ups-labels"></div></div>
-      <div id="main-ups-plot" class="weather-plot" data-series='["mupsbat"]' data-labelcontainer="main-ups-labels" data-axislabel='UPS Battery (%)' data-labelfudge="19" data-min="0" data-max="105" data-hidetime></div>
+      <div id="main-ups-plot" class="weather-plot" data-series='["mupsbat"]' data-labelcontainer="main-ups-labels" data-axislabel='UPS Battery (%)' data-labelfudge="19" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="dome-ups-container" class="plot-container">
-      <div id="dome-ups-plot" class="weather-plot" data-series='["dupsbat"]' data-labelcontainer="dome-ups-labels" data-axislabel="&nbsp;" data-min="0" data-max="105"></div>
+      <div id="dome-ups-plot" class="weather-plot" data-series='["dupsbat"]' data-labelcontainer="dome-ups-labels" data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%'></div>
     </div>
   </div>
   <div id="network-container" class="col-md-6 plot-container">
     <div class="weather-labels-right" id="network-labels"></div>
-    <div class="weather-plot" data-series='["ngtsping", "googleping"]' data-sidesensor="network-container" data-labelcontainer="network-labels" data-axislabel='Ping (ms)' data-labelfudge="-9"></div>
+    <div class="weather-plot" data-series='["ngtsping", "googleping"]' data-sidesensor="network-container" data-labelcontainer="network-labels" data-axislabel='Ping (ms)' data-labelfudge="-9" data-labelunits=' ms'></div>
   </div>
 </div>
 <script src="{{ url_for('static', filename='jquery.flot.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.axislabels.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.crosshair.min.js') }}"></script>
 <script src="{{ url_for('static', filename='weather.js') }}"></script>
 <script>
   var dataURL = '{{ url_for('weatherdata') }}';

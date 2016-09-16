@@ -29,11 +29,18 @@ VAISALA = {
 }
 
 ROOMALERT = {
-    'internal_temp': ('1m&nbsp;Dome', 'rinttemp', '#FDE74C'),
-    'internal_humidity': ('1m&nbsp;Dome', 'rinthumid', '#FDE74C'),
-    'truss_temp': ('1m&nbsp;Truss', 'rtrusstemp', '#009B72'),
-    'roomalert_temp': ('1m&nbsp;Rack', 'rracktemp', '#E5DADA'),
-    'roomalert_humidity': ('1m&nbsp;Rack', 'rrackhumid', '#E5DADA'),
+    'internal_temp': ('1m&nbsp;Dome', 'rinttemp', '#F3A712'),
+    'internal_humidity': ('1m&nbsp;Dome', 'rinthumid', '#F3A712'),
+    'truss_temp': ('1m&nbsp;Truss', 'rtrusstemp', '#CEB5A7'),
+    'roomalert_temp': ('1m&nbsp;Rack', 'rracktemp', '#FACC6B'),
+    'roomalert_humidity': ('1m&nbsp;Rack', 'rrackhumid', '#FACC6B'),
+}
+
+NITES_ROOMALERT = {
+    'internal_temperature': ('NITES&nbsp;Dome', 'ninttemp', '#DE0D92'),
+    'internal_humidity': ('NITES&nbsp;Dome', 'ninthumid', '#DE0D92'),
+    'rack_temperature': ('NITES&nbsp;Rack', 'nracktemp', '#B4436C'),
+    'rack_humidity': ('NITES&nbsp;Rack', 'nrackhumid', '#B4436C'),
 }
 
 SUPERWASP = {
@@ -79,6 +86,7 @@ def plot_json(date=None):
     data.update(__sensor_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', RAINDETECTOR, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_ups', UPS, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_network', NETWORK, start_str, end_str))
 
     print('start: ', start, start_str, start_js)

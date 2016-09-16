@@ -23,9 +23,11 @@ function redrawPlot() {
     series: { shadowSize: 0 },
     axisLabels: { show: true },
     xaxis: { mode: 'time', minTickSize: [1, 'minute'], timeformat:'', min: data.start, max: data.end },
-    grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0} },
+    grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
+    crosshair: { mode: "x", color: '#545454' },
     yaxis: { axisLabel: plot.data('axislabel'), axisLabelPadding: 9, labelWidth: 20 },
-    legend: { container: $('#'+plot.data('labelcontainer')), noColumns: 0, labelBoxBorderColor: '#545454'}
+    legend: { container: $('#'+plot.data('labelcontainer')), noColumns: 4, labelBoxBorderColor: '#545454', units: plot.data('labelunits') },
+    hooks: { bindEvents: bindHoverHooks }
   };
 
   if (plot.data('labelfudge') !== undefined)
@@ -46,6 +48,49 @@ function redrawPlot() {
   }
 
   $.plot(this, d, options);
+}
+
+function bindHoverHooks(plot, eventHolder) {
+  var axes = plot.getAxes();
+  var offset = plot.getPlotOffset();
+  var dataset = plot.getData();
+  var options = plot.getOptions();
+  var legend = options.legend.container.find('.legendLabel');
+
+  var start = axes.xaxis.p2c(axes.xaxis.min);
+  var end = axes.xaxis.p2c(axes.xaxis.max);
+
+  eventHolder.mouseout(function(e) {
+    for (var i = 0; i < dataset.length; ++i) {
+      var series = dataset[i];
+      $(legend.eq(i)).html(dataset[i].label);
+    }
+  });
+
+  eventHolder.mousemove(function(e) {
+    var fractionalPos = (e.offsetX - offset.left) / (end - start);
+    if (fractionalPos < 0 || fractionalPos > 1)
+      return;
+
+    var x = axes.xaxis.min + (axes.xaxis.max - axes.xaxis.min) * fractionalPos;
+    for (var i = 0; i < dataset.length; i++) {
+      var series = dataset[i];
+
+      var j = 0;
+      for (; j < series.data.length; j++)
+        if (series.data[j][0] < x)
+          break;
+
+      var p1 = series.data[j - 1];
+      var p2 = series.data[j];
+      if (p1 != null && p2 != null) {
+        var y = (p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0])).toFixed(2);
+        $(legend.eq(i)).text(y + options.legend.units);
+      }
+      else
+        $(legend.eq(i)).html(dataset[i].label);
+    }
+  });
 }
 
 function redrawWindPlot() {
