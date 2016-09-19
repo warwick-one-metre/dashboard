@@ -74,15 +74,20 @@ def get_user_account():
     if 'error' in request.args and 'error_description' in request.args:
         errors.append('Unable to authenticate with Github')
 
-    if 'github_token' in session:
+    if 'username' in session and 'avatar' in session and 'permissions' in session:
+        username = session['username']
+        avatar = session['avatar']
+        permissions = session['permissions']
+    elif 'github_token' in session:
         try:
             user = github.get('user')
-            username = user.data['login']
-            avatar = user.data['avatar_url']
+            username = session['username'] = user.data['login']
+            avatar = session['avatar'] = user.data['avatar_url']
             if github.get('teams/2128810/memberships/' + username).data['state'] == 'active':
                 permissions.append('onemetre')
                 # todo: check a different group
                 permissions.append('nites')
+            session['permissions'] = permissions
         except:
             errors.append('Unable to query Github user data')
 
@@ -105,6 +110,9 @@ def login():
 def logout():
     next = request.args['next'] if 'next' in request.args else url_for('onemetre_dashboard')
     session.pop('github_token', None)
+    session.pop('username', None)
+    session.pop('avatar', None)
+    session.pop('permissions', None)
     return redirect(next)
 
 # Main pages
