@@ -523,7 +523,7 @@ function updateGroups(data) {
   $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
 }
 
-function queryData() {
+function queryData(includeLog) {
   $.ajax({
     type: 'GET',
     dataType: 'json',
@@ -537,19 +537,20 @@ function queryData() {
     updateGroups(msg);
   });
 
-  var logURL = '/data/obslog';
-  if (lastLogMessageId > 0)
-    logURL += '?from=' + lastLogMessageId;
+  if (includeLog) {
+    var logURL = '/data/obslog';
+    if (lastLogMessageId > 0)
+      logURL += '?from=' + lastLogMessageId;
 
-  $.ajax({
-    type: 'GET',
-    dataType: 'json',
-    url: logURL,
-  }).done(function(data) {
-      updateLog(data['messages']);
-  });
+   $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: logURL,
+    }).done(function(data) {
+       updateLog(data['messages']);
+    });
+  }
 
-  window.setTimeout(queryData, 10000);
+  window.setTimeout(function() { queryData(includeLog); }, 10000);
 }
 
-$(document).ready(queryData);

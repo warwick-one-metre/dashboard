@@ -22,6 +22,7 @@ import time
 import Pyro4
 import warwick.observatory as observatory
 
+# Public data
 output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
 try:
     with observatory.daemons.onemetre_environment.connect() as environment:
@@ -56,14 +57,6 @@ except Exception as e:
     pass
 
 try:
-    with observatory.daemons.onemetre_pipeline.connect() as pipeline:
-        output['pipeline'] = pipeline.report_status()
-except Exception as e:
-    print('failed to query pipeline with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query pipelined (' + str(e) + ')')
-    pass
-
-try:
     with observatory.daemons.onemetre_operations.connect() as ops:
         output['ops'] = ops.status()
 except Exception as e:
@@ -80,11 +73,23 @@ except Exception as e:
     pass
 
 try:
-    with open('/srv/dashboard/generated/onemetre-dashboard.json', 'w') as outfile:
+    with open('/srv/dashboard/generated/onemetre-public.json', 'w') as outfile:
         json.dump(output, outfile)
 except Exception as e:
     print('failed to write json with error: ' + str(e))
     observatory.log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+# Private data (requires auth from the web frontend)
+try:
+    private = {}
+    with observatory.daemons.onemetre_pipeline.connect() as pipeline:
+        private['pipeline'] = pipeline.report_status()
+    with open('/srv/dashboard/generated/onemetre-pipeline.json', 'w') as outfile:
+        json.dump(private, outfile)
+except Exception as e:
+    print('failed to query pipeline with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query pipelined (' + str(e) + ')')
+    pass
 
 try:
     os.system('rsync -u 192.168.0.101:/var/tmp/dashboard-* /srv/dashboard/generated/')

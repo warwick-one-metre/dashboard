@@ -15,6 +15,7 @@
 # pylint: disable=invalid-name
 
 import datetime
+import json
 import pymysql
 
 from flask import abort
@@ -23,6 +24,7 @@ from flask import jsonify
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import send_from_directory
 from flask import session
 from flask import url_for
 from flask_oauthlib.client import OAuth
@@ -32,6 +34,13 @@ from dashboard import weather_json
 # Log and weather data are stored in the database
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
+
+ONEMETRE_GENERATED_DATA = {
+    'blue': 'dashboard-BLUE.json',
+    'blue/image': 'dashboard-BLUE-thumb.png',
+    'red': 'dashboard-RED.json',
+    'red/image': 'dashboard-RED-thumb.png',
+}
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -54,6 +63,7 @@ def get_user_account():
     username = None
     avatar = None
     permissions = []
+    errors = []
 
     # Check for OAuth login response
     if 'code' in request.args:
@@ -62,8 +72,7 @@ def get_user_account():
             session['github_token'] = (resp['access_token'], '')
 
     if 'error' in request.args and 'error_description' in request.args:
-        # todo: show error popup
-        pass
+        errors.append('Unable to authenticate with Github')
 
     if 'github_token' in session:
         try:
@@ -75,14 +84,13 @@ def get_user_account():
                 # todo: check a different group
                 permissions.append('nites')
         except:
-            # todo: show error popup
-            pass
+            errors.append('Unable to query Github user data')
 
     return {
         'username': username,
         'avatar': avatar,
         'permissions': permissions
-    }
+    }, errors
 
 @github.tokengetter
 def get_github_oauth_token():
@@ -102,55 +110,82 @@ def logout():
 # Main pages
 @app.route('/onemetre/')
 def onemetre_dashboard():
-    return render_template('onemetre/dashboard.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('onemetre/dashboard.html', user_account=account, errors=errors)
 
 @app.route('/onemetre/current/')
 def onemetre_current():
-    return render_template('onemetre/current.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('onemetre/current.html', user_account=account, errors=errors)
 
 @app.route('/onemetre/dome/')
 def onemetre_dome():
-    return render_template('onemetre/dome.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('onemetre/dome.html', user_account=account, errors=errors)
 
 @app.route('/nites/dome/')
 def nites_dome():
-    return render_template('nites/dome.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('nites/dome.html', user_account=account, errors=errors)
 
 @app.route('/weather/')
 def weather():
-    return render_template('weather.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('weather.html', user_account=account, errors=errors)
 
 @app.route('/extcams/')
 def extcams():
-    return render_template('extcams.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('extcams.html', user_account=account, errors=errors)
 
 @app.route('/skycams/')
 def skycams():
-    return render_template('skycams.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('skycams.html', user_account=account, errors=errors)
 
 @app.route('/resources/')
 def resources():
-    return render_template('resources.html', user_account=get_user_account())
+    account, errors = get_user_account()
+    return render_template('resources.html', user_account=account, errors=errors)
 
 # Dynamically generated JSON
 @app.route('/data/obslog')
 def observatory_log():
-    # Returns latest 250 log messages.
-    # If 'from' argument is present, returns latest 100 log messages with a greater id
-    db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
-    with db.cursor() as cur:
-        query = 'SELECT id, date, type, source, message from obslog'
-        if 'from' in request.args:
-            query += ' WHERE id > ' + db.escape(request.args['from'])
+    account, errors = get_user_account()
+    if 'onemetre' in account['permissions']:
+        # Returns latest 250 log messages.
+        # If 'from' argument is present, returns latest 100 log messages with a greater id
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
+        with db.cursor() as cur:
+            query = 'SELECT id, date, type, source, message from obslog'
+            if 'from' in request.args:
+                query += ' WHERE id > ' + db.escape(request.args['from'])
 
-        query += ' ORDER BY id DESC LIMIT 250;'
-        cur.execute(query)
-        messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-        return jsonify(messages=messages)
+            query += ' ORDER BY id DESC LIMIT 250;'
+            cur.execute(query)
+            messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+            return jsonify(messages=messages)
+    abort(404)
 
 @app.route('/data/weather')
 def weatherdata():
     date = request.args['date'] if 'date' in request.args else None
     data, start, end = weather_json.plot_json(date)
     return jsonify(data=data, start=start, end=end)
+
+@app.route('/data/onemetre/')
+def onemetre_dashboard_data():
+    data = json.load(open('/srv/dashboard/generated/onemetre-public.json'))
+    account, errors = get_user_account()
+    if 'onemetre' in account['permissions']:
+        data.update(json.load(open('/srv/dashboard/generated/onemetre-pipeline.json')))
+
+    return jsonify(**data)
+
+@app.route('/data/onemetre/<path:path>')
+def onemetre_generated_data(path):
+    account, errors = get_user_account()
+    if 'onemetre' in account['permissions'] and path in ONEMETRE_GENERATED_DATA:
+        return send_from_directory('/srv/dashboard/generated', ONEMETRE_GENERATED_DATA[path])
+    abort(404)
 
