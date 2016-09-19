@@ -50,13 +50,7 @@
   padding-right: 40px;
 }
 
-.weather-labels-left table, .weather-labels-right table {
-  float:right;
-}
-
-#temperature-labels { height: 30px; }
-#humidity-labels { height: 30px; }
-
+.weather-labels-left table, .weather-labels-right table { float:right; }
 #wind-container { height: 262px; }
 #raindetector-container { height: 55px; }
 #vaisala-rain-container { margin-top: 6px; height: 90px; }
@@ -85,26 +79,26 @@
 
 </style>
 <div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">Weather Plots</h2>
+    <h2 id="headerdesc" class="dashhead-subtitle">Loading...</h2>
+  </div>
   <div class="btn-toolbar dashhead-toolbar">
     <div class="btn-toolbar-item input-with-icon">
       <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-clear-btn="true" data-date-start-date="2016-09-14" data-date-end-date="0d" data-date-disable-touch-keyboard="true">
       <span class="icon icon-calendar"></span>
     </div>
   </div>
-  <div class="dashhead-titles">
-    <h2 class="dashhead-title">Weather Plots</h2>
-    <h2 id="headerdesc" class="dashhead-subtitle">Loading...</h2>
-  </div>
 </div>
 
 <div class="row">
   <div class="col-md-6 plot-container">
     <div class="weather-labels-left" id="temperature-labels"></div>
-    <div class="weather-plot" data-series='["ninttemp", "nracktemp", "vexttemp", "swtemp", "rinttemp", "rracktemp", "rtrusstemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temperature (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C'></div>
+    <div class="weather-plot" data-series='["ninttemp", "vexttemp", "swtemp", "rinttemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C'></div>
   </div>
   <div id="humidity-container" class="col-md-6 plot-container">
     <div class="weather-labels-right" id="humidity-labels"></div>
-    <div class="weather-plot" data-series='["ninthumid", "nrackhumid", "vexthumid", "swhumid", "rinthumid", "rrackhumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%)' data-labelfudge="-7" data-labelunits='%'></div>
+    <div class="weather-plot" data-series='["ninthumid", "vexthumid", "swhumid", "rinthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%)' data-labelfudge="-7" data-labelunits='%'></div>
   </div>
 </div>
 <div class="row" style="padding-top: 20px;">

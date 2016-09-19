@@ -18,7 +18,7 @@ function redrawPlot() {
   }
 
   var options = {
-    lines: { show: true },
+    lines: { show: true, lineWidth: 1 },
     points: { show: false },
     series: { shadowSize: 0 },
     axisLabels: { show: true },
@@ -59,6 +59,12 @@ function bindHoverHooks(plot, eventHolder) {
 
   var start = axes.xaxis.p2c(axes.xaxis.min);
   var end = axes.xaxis.p2c(axes.xaxis.max);
+  var recacheLegend = false;
+
+  eventHolder.resize(function(e) {
+    // Resizing wipes out the labels, so we need to recache this
+    recacheLegend = true;
+  });
 
   eventHolder.mouseout(function(e) {
     for (var i = 0; i < dataset.length; ++i) {
@@ -72,6 +78,11 @@ function bindHoverHooks(plot, eventHolder) {
     if (fractionalPos < 0 || fractionalPos > 1)
       return;
 
+    if (recacheLegend) {
+      recacheLegend = false;
+      legend = options.legend.container.find('.legendLabel');
+    }
+
     var x = axes.xaxis.min + (axes.xaxis.max - axes.xaxis.min) * fractionalPos;
     for (var i = 0; i < dataset.length; i++) {
       var series = dataset[i];
@@ -83,6 +94,7 @@ function bindHoverHooks(plot, eventHolder) {
 
       var p1 = series.data[j - 1];
       var p2 = series.data[j];
+
       if (p1 != null && p2 != null) {
         var y = (p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0])).toFixed(2);
         $(legend.eq(i)).text(y + options.legend.units);
