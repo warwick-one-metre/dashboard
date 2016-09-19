@@ -43,7 +43,14 @@ ONEMETRE_GENERATED_DATA = {
 }
 
 app = Flask(__name__)
-app.config.from_object('config')
+
+# Read secret data from the database
+db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
+with db.cursor() as cur:
+    query = 'SELECT keyname, value from dashboard_config WHERE 1'
+    cur.execute(query)
+    for x in cur:
+        app.config[x[0]] = x[1]
 
 # Use github's OAuth interface for verifying user identity
 oauth = OAuth(app)
