@@ -69,11 +69,11 @@ NETWORK = {
 
 def plot_json(date=None):
     try:
-        start = datetime.datetime.strptime(date, '%Y-%m-%d')
-        end = start + datetime.timedelta(hours=24)
+        start = datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(minutes=6)
+        end = start + datetime.timedelta(hours=24, minutes=6)
     except:
         end = datetime.datetime.utcnow()
-        start = end - datetime.timedelta(hours=6)
+        start = end - datetime.timedelta(hours=6, minutes=6)
 
     start_str = start.isoformat()
     end_str = end.isoformat()

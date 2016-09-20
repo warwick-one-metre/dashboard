@@ -1,6 +1,6 @@
 Name:      onemetre-dashboard
 Version:   1.8
-Release:   1
+Release:   2
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
 License:   GPL-3.0
