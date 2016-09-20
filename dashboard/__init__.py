@@ -44,6 +44,9 @@ ONEMETRE_GENERATED_DATA = {
 
 app = Flask(__name__)
 
+# Stop Flask from telling the browser to cache our onemetre_generated_data
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = -1
+
 # Read secret data from the database
 db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
 with db.cursor() as cur:
