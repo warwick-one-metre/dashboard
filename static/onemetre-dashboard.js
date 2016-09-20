@@ -14,6 +14,7 @@ var environmentFields = {
   '#pressure': ['vaisala_pressure', round],
   '#trapdoor': ['roomalert_trap_closed', closedOrOpen],
   '#hatch': ['roomalert_hatch_closed', closedOrOpen],
+  '#secsys': ['roomalert_security_system_safe', safeOrTripped],
   '#power': ['power_main_ups_status', powerStatus],
   '#light': ['power_light', onOrOff]
 };
@@ -37,6 +38,10 @@ function closedOrOpen(field, value) {
 
 function onOrOff(field, value) {
   return [value ? 'ON' : 'OFF', null];
+}
+
+function safeOrTripped(field, value) {
+  return value ?  ['SAFE', 'text-success'] : ['TRIPPED', 'text-danger'];
 }
 
 function powerStatus(field, value) {
