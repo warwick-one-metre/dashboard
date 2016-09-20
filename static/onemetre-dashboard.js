@@ -9,7 +9,7 @@ var environmentFields = {
   '#diskspace': ['diskspace_data_fs_available_bytes', bytesToGB],
   '#dust': ['tng_dust', round],
   '#sky-temperature': ['superwasp_sky_temp', round],
-  '#dewpoint': ['superwasp_dew_point_delta', round],
+  '#dewpoint': ['vaisala_dew_point_delta', round],
   '#accumulated-rain': ['vaisala_accumulated_rain', round],
   '#pressure': ['vaisala_pressure', round],
   '#trapdoor': ['roomalert_trap_closed', closedOrOpen],
