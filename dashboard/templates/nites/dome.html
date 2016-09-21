@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
+{% set title = 'NITES &raquo; Dome Camera' -%}
 {% set active_page = 'nites-dome' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">NITES &raquo; Dome View</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
 

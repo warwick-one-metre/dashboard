@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
+{% set title = 'Observing Resources' -%}
 {% set active_page = 'resources' -%}
 {% block body %}
 
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">Observing Resources</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
 {% if user_account != None and 'onemetre' in user_account['permissions'] %}

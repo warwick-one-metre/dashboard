@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+{% set title = 'Weather Archive' -%}
 {% set active_page = 'weather' -%}
 {% block body %}
 <style>
@@ -80,7 +80,7 @@
 </style>
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">Weather Plots</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
     <h2 id="headerdesc" class="dashhead-subtitle">Loading...</h2>
   </div>
   <div class="btn-toolbar dashhead-toolbar">

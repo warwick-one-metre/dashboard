@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% set title = 'One Metre &raquo; Live Data' -%}
 {% set active_page = 'onemetre-live' -%}
 {% block body %}
 <style>
@@ -22,7 +23,7 @@ a:hover .overlaybutton {
 </style>
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">One Metre &raquo; Live Data</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
 {% if user_account != None and 'onemetre' in user_account['permissions'] %}

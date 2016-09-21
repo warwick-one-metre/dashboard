@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
+{% set title = 'Site Cameras' -%}
 {% set active_page = 'extcams' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">External Cameras</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
     <h2 class="dashhead-subtitle">Automatically updates every 10 seconds</h2>
   </div>
 </div>

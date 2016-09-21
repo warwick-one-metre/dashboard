@@ -6,12 +6,12 @@
   'http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png',
   'http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg'
 ] -%}
-
+{% set title = 'Sky Cameras' -%}
 {% set active_page = 'skycams' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">Sky Cameras</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
     <h2 class="dashhead-subtitle">Automatically updates every 30 seconds</h2>
   </div>
 </div>

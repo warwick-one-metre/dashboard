@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
+{% set title = 'One Metre &raquo; Dashboard' -%}
 {% set active_page = 'onemetre-dashboard' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">One Metre &raquo; Dashboard</h2>
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
     <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
   </div>
 </div>
