@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% set active_page = 'onemetre-current' -%}
+{% set active_page = 'onemetre-live' -%}
 {% block body %}
 <style>
 .overlaybutton {
@@ -22,7 +22,7 @@ a:hover .overlaybutton {
 </style>
 <div class="dashhead m-b">
   <div class="dashhead-titles">
-    <h2 class="dashhead-title">One Metre &raquo; Current Run</h2>
+    <h2 class="dashhead-title">One Metre &raquo; Live Data</h2>
   </div>
 </div>
 {% if user_account != None and 'onemetre' in user_account['permissions'] %}
@@ -52,12 +52,7 @@ a:hover .overlaybutton {
     </div>
   </div>
 </div>
-<hr class="m-t">
-<div class="row">
-  <div class="col-md-12">
-    TODO: Display reduction plots
-  </div>
-</div>
+
 <script src="{{ url_for('static', filename='onemetre-reduction.js') }}"></script>
 {% else %}
 <div class="row">

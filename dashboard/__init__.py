@@ -131,10 +131,10 @@ def onemetre_dashboard():
     account, errors = get_user_account()
     return render_template('onemetre/dashboard.html', user_account=account, errors=errors)
 
-@app.route('/onemetre/current/')
-def onemetre_current():
+@app.route('/onemetre/live/')
+def onemetre_live():
     account, errors = get_user_account()
-    return render_template('onemetre/current.html', user_account=account, errors=errors)
+    return render_template('onemetre/live.html', user_account=account, errors=errors)
 
 @app.route('/onemetre/dome/')
 def onemetre_dome():
