@@ -229,9 +229,9 @@ function camStatus(data) {
       return ['ERROR', 'text-danger'];
 
     if (data['sequence_frame_limit'] > 0)
-      return ['Acquiring (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')', 'text-success'];
+      return ['ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')', 'text-success'];
 
-    return ['Acquiring (until stopped)', 'text-success'];
+    return ['ACQUIRING (until stopped)', 'text-success'];
   }
 
   return cameraStatus[data['state']];
