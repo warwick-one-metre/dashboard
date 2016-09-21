@@ -205,7 +205,7 @@ function redrawWindPlot() {
         var y = offset.top + axes.yaxis.p2c(yScale * dy);
 
         // Opacity scales from full at 0 age to 1 at 1 hour, then stays constant
-        if (liveData)
+        if (!dateString)
             ctx.globalAlpha = Math.min(Math.max(0.1, 1 - (data.end - dir.data[j][0]) / 3600000), 1);
 
         ctx.beginPath();
@@ -217,7 +217,7 @@ function redrawWindPlot() {
     // Add a border around the most recent point
     ctx.globalAlpha = 1.0;
 
-    if (liveData) {
+    if (!dateString) {
       ctx.strokeStyle = '#fff';
       for (var i = 0; i < series.length; i++) {
         if (!speed.data[0])
@@ -256,17 +256,18 @@ function redrawWindPlot() {
 }
 
 var queryUpdate;
-var liveData = false;
-function queryData(dateString) {
+var dateString = null;
+
+function queryData() {
   // Clear a queued refresh if this was triggered manually
   if (queryUpdate)
     window.clearTimeout(queryUpdate);
 
-  liveData = dateString === undefined;
   var url = dataURL;
   if (dateString)
     url += '?date=' + dateString;
 
+  $('#headerdesc').text('Loading...');
   $.ajax({
     url: url,
     type: 'GET',
@@ -275,12 +276,17 @@ function queryData(dateString) {
       data = json;
       $('.weather-plot').each(redrawPlot);
       $('.wind-plot').each(redrawWindPlot);
+
+      if (dateString)
+        $('#headerdesc').text('Weather archive for ' + dateString);
+      else
+        $('#headerdesc').text('Live weather data (updates every 30 seconds)');
     }
   });
 
   // Refresh live data every 30 seconds
   if (!dateString)
-    queryUpdate = window.setTimeout(function() { queryData(dateString); }, 30000);
+    queryUpdate = window.setTimeout(queryData, 30000);
 }
 
 function setup() {
@@ -325,14 +331,12 @@ function setup() {
         var day = date.getDate();
         if (day < 10)
             day = '0' + day;
-        var dateString = date.getFullYear() + '-' + month + '-' + day;
-        $('#headerdesc').text('Weather archive for ' + dateString);
-        queryData(dateString);
+        dateString = date.getFullYear() + '-' + month + '-' + day;
     }
-    else {
-        $('#headerdesc').text('Live weather data (updates every 30 seconds)');
-        queryData();
-    }
+    else
+      dateString = null;
+
+    queryData();
   }
 
   picker.datepicker().on('changeDate', setDataSource);
