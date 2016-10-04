@@ -450,7 +450,7 @@ function pipelineNextBlue(data) {
   if (!data['archive_enabled']['BLUE'])
     return ['NOT SAVING', 'text-danger'];
 
-  return [data['next_filename']['BLUE']];
+  return [data['next_filename']['BLUE'], 'filename'];
 }
 
 function pipelineNextRed(data) {
@@ -461,7 +461,7 @@ function pipelineNextRed(data) {
   if (!data['archive_enabled']['RED'])
     return ['NOT SAVING', 'text-danger'];
 
-  return [data['next_filename']['RED'], 'text-small'];
+  return [data['next_filename']['RED'], 'filename'];
 }
 
 function pipelineProcess(data) {
