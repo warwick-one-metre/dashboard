@@ -23,8 +23,12 @@ function fieldLimitsColor(field, value) {
   if (!('limits' in field))
     return null;
 
+  if (field['disabled'])
+    return 'text-info';
+
   if (value >= field['limits'][0] && value <= field['limits'][1])
     return 'text-success';
+
   return 'text-danger';
 }
 
