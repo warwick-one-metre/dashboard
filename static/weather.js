@@ -181,10 +181,10 @@ function redrawWindPlot() {
     var labelVCenter = offset.top + plot.height() / 2;
     var labelPlotWidth = plot.width();
     var labelPlotHeight = plot.height();
-    $('#wind-plot').append('<div style="left:' + (labelHCenter - 10) + 'px;top:' + (offset.top - 20) + 'px;" class="wind-labels axisLabels">N</div>');
-    $('#wind-plot').append('<div style="left:' + (offset.left + labelPlotWidth) + 'px;top:' + (labelVCenter - 9) + 'px;" class="wind-labels axisLabels">E</div>');
-    $('#wind-plot').append('<div style="left:' + (labelHCenter - 10) + 'px;top:' + (offset.top + labelPlotHeight + 5) + 'px;" class="wind-labels axisLabels">S</div>');
-    $('#wind-plot').append('<div style="left:' + (offset.left - 20) + 'px;top:' + (labelVCenter - 9) + 'px;" class="wind-labels axisLabels">W</div>');
+    $('#wind-plot').append('<div style="left:' + (labelHCenter - 2) + 'px;top:' + (offset.top - 1) + 'px;" class="wind-labels axisLabels">N</div>');
+    $('#wind-plot').append('<div style="left:' + (offset.left + labelPlotWidth - 17) + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">E</div>');
+    $('#wind-plot').append('<div style="left:' + (labelHCenter - 2) + 'px;top:' + (offset.top + labelPlotHeight - 17) + 'px;" class="wind-labels axisLabels">S</div>');
+    $('#wind-plot').append('<div style="left:' + offset.left + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">W</div>');
 
     // Historical data is drawn with constant opacity
     // This will be adjusted per-point if we are drawing live data
