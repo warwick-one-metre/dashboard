@@ -8,6 +8,8 @@ var environmentFields = {
   '#median-wind': ['vaisala_median_wind_speed', round],
   '#diskspace': ['diskspace_data_fs_available_bytes', bytesToGB],
   '#dust': ['tng_dust', round],
+  '#seeing': ['tng_seeing', seeingIfAvailable],
+  '#solarimeter': ['tng_solarimeter', round],
   '#sky-temperature': ['superwasp_sky_temp', round],
   '#dewpoint': ['vaisala_dew_point_delta', round],
   '#accumulated-rain': ['vaisala_accumulated_rain', round],
@@ -34,6 +36,10 @@ function fieldLimitsColor(field, value) {
 
 function round(field, value) {
   return [value.toFixed(1), fieldLimitsColor(field, value)];
+}
+
+function seeingIfAvailable(field, value) {
+  return [value > 0 ? value.toFixed(2) : 'NO DATA'];
 }
 
 function closedOrOpen(field, value) {
@@ -245,7 +251,7 @@ function camTemperature(data) {
   if (!data || !('temperature' in data))
     return ['ERROR', 'text-danger'];
 
-  status = +data['temperature'].toFixed(0) + ' ºC';
+  status = +data['temperature'].toFixed(0) + ' &deg;C';
   return [status, data['temperature_locked'] ? 'text-success' : 'text-danger'];
 }
 
