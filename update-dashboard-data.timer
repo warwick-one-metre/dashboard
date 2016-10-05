@@ -3,7 +3,7 @@ Description=Polls observatory systems and updates the cached dashboard json file
 
 [Timer]
 OnBootSec=30
-OnUnitActiveSec=30
+OnUnitActiveSec=10
 Unit=update-dashboard-data.service
 
 [Install]
