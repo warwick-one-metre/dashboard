@@ -475,12 +475,13 @@ function updateGroups(data) {
   updateListGroup('ops', opsFields, data['ops']);
   updateListGroup('pipeline', pipelineFields, data['pipeline']);
 
-  $('.dynamic-data').each(function() {
+  $('[data-generator]').each(function() {
     // Remove old content
     $(this).children('span.pull-right').remove();
-    $(this).attr('class', 'list-group-item dynamic-data');
+    $(this).attr('class', 'list-group-item');
 
     // Add new content
+    var generator = $(this).data('generator');
     var group = $(this).data('group');
     var field = $(this).data('field');
     var cell = $('<span class="pull-right">');
@@ -488,11 +489,8 @@ function updateGroups(data) {
     if (!data || !group || !field || !(group in data) || !(field in data[group])) {
       cell.html('ERROR');
       cell.addClass('text-danger');
-    } else {
-      var generator = $(this).data('generator');
-      if (generator && window[generator])
-        window[generator]($(this), cell, data[group][field]);
-    }
+    } else if (window[generator])
+      window[generator]($(this), cell, data[group][field]);
 
     $(this).append(cell);
   });
