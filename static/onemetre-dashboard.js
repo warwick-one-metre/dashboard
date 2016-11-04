@@ -1,118 +1,3 @@
-var environmentFields = {
-  '#external-humidity': ['vaisala_relative_humidity', round],
-  '#internal-humidity': ['roomalert_internal_humidity', round],
-  '#external-temperature': ['vaisala_temperature', round],
-  '#internal-temperature': ['roomalert_internal_temp', round],
-  '#truss-temperature': ['roomalert_truss_temp', round],
-  '#peak-wind': ['vaisala_wind_speed', round],
-  '#median-wind': ['vaisala_median_wind_speed', round],
-  '#diskspace': ['diskspace_data_fs_available_bytes', bytesToGB],
-  '#dust': ['tng_dust', round],
-  '#seeing': ['tng_seeing', seeingIfAvailable],
-  '#solarimeter': ['tng_solarimeter', round],
-  '#sky-temperature': ['superwasp_sky_temp', round],
-  '#dewpoint': ['vaisala_dew_point_delta', round],
-  '#accumulated-rain': ['vaisala_accumulated_rain', round],
-  '#pressure': ['vaisala_pressure', round],
-  '#trapdoor': ['roomalert_trap_closed', closedOrOpen],
-  '#hatch': ['roomalert_hatch_closed', closedOrOpen],
-  '#secsys': ['roomalert_security_system_safe', safeOrTripped],
-  '#power': ['power_main_ups_status', powerStatus],
-  '#light': ['power_light', onOrOff]
-};
-
-function fieldLimitsColor(field, value) {
-  if (!('limits' in field))
-    return null;
-
-  if (field['disabled'])
-    return 'text-info';
-
-  if (value >= field['limits'][0] && value <= field['limits'][1])
-    return 'text-success';
-
-  return 'text-danger';
-}
-
-function round(field, value) {
-  return [value.toFixed(1), fieldLimitsColor(field, value)];
-}
-
-function seeingIfAvailable(field, value) {
-  return [value > 0 ? value.toFixed(2) : 'NO DATA'];
-}
-
-function closedOrOpen(field, value) {
-  return [value ? 'CLOSED' : 'OPEN', null];
-}
-
-function onOrOff(field, value) {
-  return [value ? 'ON' : 'OFF', null];
-}
-
-function safeOrTripped(field, value) {
-  return value ?  ['SAFE', 'text-success'] : ['TRIPPED', 'text-danger'];
-}
-
-function powerStatus(field, value) {
-  return value == 2 ? ['ONLINE', 'text-success'] : ['WARNING', 'text-warning'];
-}
-
-function bytesToGB(field, value) {
-  return [+(value / 1073741824).toFixed(1), fieldLimitsColor(field, value)]
-}
-
-function updateEnvironment(data) {
-  for (var key in environmentFields) {
-    var row = $(key);
-    var units = row.data('units');
-    if (!units)
-    	units = '';
-
-    row.children('span.pull-right').remove();
-    var value = $('<span class="pull-right">');
-    var transform = environmentFields[key][1];
-    if (!data || !(environmentFields[key][0] in data)) {
-      value.html('ERROR');
-      value.addClass('text-danger');
-    } else {
-
-      var field = data[environmentFields[key][0]];
-      if ('error' in field) {
-        value.html(field['error']);
-        value.addClass('text-danger');
-      } else if ('latest' in field) {
-        var valueDisplay = transform(field, field['latest']);
-        value.html(valueDisplay[0] + units);
-
-        if ('max' in field && 'min' in field) {
-          var maxField = $('<span>');
-          var maxFieldDisplay = transform(field, field['max']);
-          maxField.html(maxFieldDisplay[0]);
-          if (maxFieldDisplay[1])
-            maxField.addClass(maxFieldDisplay[1]);
-
-          var minField = $('<span>');
-          var minFieldDisplay = transform(field, field['min']);
-          minField.html(minFieldDisplay[0]);
-          if (minFieldDisplay[1])
-            minField.addClass(minFieldDisplay[1]);
-
-          var maxMinField = $('<span class="pull-right data-minmax">');
-          maxMinField.append(maxField);
-          maxMinField.append('<br>');
-          maxMinField.append(minField);
-          row.append(maxMinField);
-        }
-
-        if (valueDisplay[1])
-          value.addClass(valueDisplay[1]);
-      }
-    }
-
-    row.append(value);
-  }
-}
 
 var powerFields = {
   'mainups': powerMainUPS,
@@ -120,7 +5,6 @@ var powerFields = {
   'teldrive': powerTelDrive,
   'telcontroller': powerTelController,
   'instrument': powerInstrument,
-  'light': powerLight
 };
 
 function powerMainUPS(data) {
@@ -526,14 +410,125 @@ function updateLog(messages) {
   }
 }
 
+// Environment generators
+function fieldLimitsColor(field, value) {
+  if (!('limits' in field))
+    return null;
+
+  if (field['disabled'])
+    return 'text-info';
+
+  if (value >= field['limits'][0] && value <= field['limits'][1])
+    return 'text-success';
+
+  return 'text-danger';
+}
+
+function powerOnOff(row, cell, data) {
+  if (data) {
+    cell.html('POWER ON');
+    cell.addClass('text-success');
+  } else {
+    cell.html('POWER OFF');
+    cell.addClass('text-danger');
+  }
+}
+
+function switchClosedOpen(row, cell, data) {
+  cell.html(data ? 'CLOSED' : 'OPEN');
+}
+
+function switchSafeTripped(row, cell, data) {
+  if (data) {
+    cell.html('SAFE');
+    cell.addClass('text-success');
+  } else {
+    cell.html('TRIPPED');
+    cell.addClass('text-danger');
+  }
+}
+
+function diskSpaceGB(row, cell, data) {
+  if ('latest' in data) {
+    var display = +(data['latest'] / 1073741824).toFixed(1);
+    var units = row.data('units');
+    if (units)
+      display += units;
+    cell.html(display);
+    cell.addClass(fieldLimitsColor(data, data['latest']));
+  }
+}
+
+function seeingIfAvailable(row, cell, data) {
+  if ('latest' in data && data['latest'] > 0) {
+    var display = data['latest'].toFixed(2);
+    var units = row.data('units');
+    if (units)
+      display += units;
+    cell.html(display);
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
+function envLatestMinMax(row, cell, data) {
+  if ('latest' in data) {
+    var display = data['latest'].toFixed(1);
+    var units = row.data('units');
+    if (units)
+      display += units;
+    cell.html(display);
+    cell.addClass(fieldLimitsColor(data, data['latest']));
+  }
+
+  if ('max' in data && 'min' in data) {
+    var maxValue = $('<span>');
+    maxValue.html(data['max'].toFixed(1));
+    maxValue.addClass(fieldLimitsColor(data, data['max']));
+
+    var minValue = $('<span>');
+    minValue.html(data['min'].toFixed(1));
+    minValue.addClass(fieldLimitsColor(data, data['min']));
+
+    var maxMinValue = $('<span class="pull-right data-minmax">');
+    maxMinValue.append(maxValue);
+    maxMinValue.append('<br>');
+    maxMinValue.append(minValue);
+    cell.append(maxMinValue);
+  }
+}
+
 function updateGroups(data) {
-  updateEnvironment(data['environment']);
   updateListGroup('power', powerFields, data['power']);
   updateListGroup('blue', cameraFields, data['blue']);
   updateListGroup('red', cameraFields, data['red']);
   updateListGroup('telescope', telescopeFields, data['telescope']);
   updateListGroup('ops', opsFields, data['ops']);
   updateListGroup('pipeline', pipelineFields, data['pipeline']);
+
+  $('.dynamic-data').each(function() {
+    // Remove old content
+    $(this).children('span.pull-right').remove();
+    $(this).attr('class', 'list-group-item dynamic-data');
+
+    // Add new content
+    var group = $(this).data('group');
+    var field = $(this).data('field');
+    var cell = $('<span class="pull-right">');
+
+    if (!data || !group || !field || !(group in data) || !(field in data[group])) {
+      cell.html('ERROR');
+      cell.addClass('text-danger');
+    } else {
+      var generator = $(this).data('generator');
+      if (generator && window[generator])
+        window[generator]($(this), cell, data[group][field]);
+    }
+
+    $(this).append(cell);
+  });
+
   var date = 'date' in data ? parseUTCDate(data['date']) : new Date();
   $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
 }
