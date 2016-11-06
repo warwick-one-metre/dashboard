@@ -1,100 +1,70 @@
+// Power generators
+function powerUPS(row, cell, data, status_field, remaining_field) {
+  status = 'ERROR';
+  style = 'text-danger';
 
-var powerFields = {
-  'mainups': powerMainUPS,
-  'domeups': powerDomeUPS,
-  'teldrive': powerTelDrive,
-  'telcontroller': powerTelController,
-  'instrument': powerInstrument,
-};
+  if (data && status_field in data && remaining_field in data) {
+    if (data[status_field] == 2) {
+      status = 'ONLINE';
+      style = 'text-success';
+    }
+    else if (data[status_field] == 3) {
+      status = 'BATTERY';
+      style = 'text-warning';
+    }
 
-function powerMainUPS(data) {
-  if (!data || !('main_ups_status' in data) || !('main_ups_battery_remaining' in data))
-    return ['ERROR', 'text-danger'];
-
-  status = '';
-  if (data['main_ups_status'] == 2) {
-    status = 'ONLINE';
-    style = 'text-success';
+    status += ' (' + data[remaining_field] + '%)';
   }
-  else if (data['main_ups_status'] == 3) {
-    status = 'BATTERY';
-    style = 'text-warning';
-  }
-  else
-    return ['ERROR', 'text-danger'];
 
-  status += ' (' + data['main_ups_battery_remaining'] + '%)';
-  return [status, style];
+  cell.html(status);
+  cell.addClass(style);
 }
 
-function powerDomeUPS(data) {
-  if (!data || !('dome_ups_status' in data) || !('dome_ups_battery_remaining' in data))
-    return ['ERROR', 'text-danger'];
-
-  status = '';
-  if (data['dome_ups_status'] == 2) {
-    status = 'ONLINE';
-    style = 'text-success';
-  }
-  else if (data['dome_ups_status'] == 3) {
-    status = 'BATTERY';
-    style = 'text-warning';
-  }
-  else
-    return ['ERROR', 'text-danger'];
-
-  status += ' (' + data['dome_ups_battery_remaining'] + '%)';
-  return [status, style];
+function powerMainUPS(row, cell, data) {
+  powerUPS(row, cell, data, 'main_ups_status', 'main_ups_battery_remaining');
 }
 
-function powerTelDrive(data) {
-  if (!data || !('telescope_80v' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (data['telescope_80v'])
-    return ['POWER ON', 'text-success']
-
-  return ['POWER OFF', 'text-danger']
+function powerDomeUPS(row, cell, data) {
+  powerUPS(row, cell, data, 'dome_ups_status', 'dome_ups_battery_remaining');
 }
 
-function powerTelController(data) {
-  if (!data || !('telescope_12v' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (data['telescope_12v'])
-    return ['POWER ON', 'text-success']
-
-  return ['POWER OFF', 'text-danger']
-}
-
-function powerInstrument(data) {
+function powerInstrument(row, cell, data) {
   fields = ['blue_camera', 'red_camera', 'red_focus_controller', 'red_focus_motor'];
-  if (!data)
-    return ['ERROR', 'text-danger'];
+  error = false;
 
   var enabled = 0;
   for (i in fields) {
     if (!(fields[i] in data))
-      return ['ERROR', 'text-danger'];
-    if (data[fields[i]])
+      error = true;
+    else if (data[fields[i]])
       enabled += 1;
   }
 
-  if (enabled == fields.length)
-    return ['POWER ON', 'text-success']
-  if (enabled == 0)
-    return ['POWER OFF', 'text-danger']
-  return ['POWER MIXED', 'text-warning']
+  status = 'POWER MIXED';
+  style = 'text-warning';
+  if (error) {
+    status = 'ERROR';
+    style = 'text-danger';
+  } else if (enabled == fields.length) {
+    status = 'POWER ON';
+    style = 'text-success';
+  } else if (enabled == 0) {
+    status = 'POWER OFF';
+    style = 'text-danger';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
 }
 
-function powerLight(data) {
-  if (!data || !('light' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (data['light'])
-    return ['POWER ON', 'text-success']
-
-  return ['POWER OFF', 'text-danger']
+function powerOnOff(row, cell, data) {
+  if (data) {
+    cell.html('POWER ON');
+    cell.addClass('text-success');
+  } else {
+    cell.html('POWER OFF');
+    cell.addClass('text-danger');
+  }
 }
 
 var cameraFields = {
@@ -392,16 +362,6 @@ function fieldLimitsColor(field, value) {
   return 'text-danger';
 }
 
-function powerOnOff(row, cell, data) {
-  if (data) {
-    cell.html('POWER ON');
-    cell.addClass('text-success');
-  } else {
-    cell.html('POWER OFF');
-    cell.addClass('text-danger');
-  }
-}
-
 function switchClosedOpen(row, cell, data) {
   cell.html(data ? 'CLOSED' : 'OPEN');
 }
@@ -468,7 +428,6 @@ function envLatestMinMax(row, cell, data) {
 }
 
 function updateGroups(data) {
-  updateListGroup('power', powerFields, data['power']);
   updateListGroup('blue', cameraFields, data['blue']);
   updateListGroup('red', cameraFields, data['red']);
   updateListGroup('telescope', telescopeFields, data['telescope']);
@@ -486,11 +445,11 @@ function updateGroups(data) {
     var field = $(this).data('field');
     var cell = $('<span class="pull-right">');
 
-    if (!data || !group || !field || !(group in data) || !(field in data[group])) {
+    if (!data || !group || !(group in data) || (field && !(field in data[group]))) {
       cell.html('ERROR');
       cell.addClass('text-danger');
     } else if (window[generator])
-      window[generator]($(this), cell, data[group][field]);
+      window[generator]($(this), cell, field ? data[group][field] : data[group]);
 
     $(this).append(cell);
   });

@@ -33,12 +33,12 @@
 <div class="row dashboard-stats">
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span id="power-mainups" class="list-group-item">Main UPS</span>
-      <span id="power-domeups" class="list-group-item">Dome UPS</span>
-      <span id="power-teldrive" class="list-group-item">Tel Drive</span>
-      <span id="power-telcontroller" class="list-group-item">Tel Controllers</span>
-      <span id="power-instrument" class="list-group-item">Instrument</span>
-      <span class="list-group-item dynamic-data" data-group="power" data-field="light" data-generator="powerOnOff">Dome Light</span>
+      <span class="list-group-item" data-group="power" data-generator="powerMainUPS">Main UPS</span>
+      <span class="list-group-item" data-group="power" data-generator="powerDomeUPS">Dome UPS</span>
+      <span class="list-group-item" data-group="power" data-field="telescope_80v" data-generator="powerOnOff">Tel Drive</span>
+      <span class="list-group-item" data-group="power" data-field="telescope_12v" data-generator="powerOnOff">Tel Controllers</span>
+      <span class="list-group-item" data-group="power" data-generator="powerInstrument">Instrument</span>
+      <span class="list-group-item" data-group="power" data-field="light" data-generator="powerOnOff">Dome Light</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
