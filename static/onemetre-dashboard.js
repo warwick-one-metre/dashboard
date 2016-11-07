@@ -114,10 +114,7 @@ function camTemperature(row, cell, data) {
 }
 
 function camShutter(row, cell, data) {
-  if (!data || !('shutter_enabled' in data)) {
-    cell.html('ERROR');
-    cell.addClass('text-danger');
-  } else if (data['shutter_enabled']) {
+  if (data) {
     cell.html('AUTO');
     cell.addClass('text-success');
   } else {
@@ -127,12 +124,7 @@ function camShutter(row, cell, data) {
 }
 
 function camExposure(row, cell, data) {
-  if (!data || !('exposure_time' in data)) {
-    cell.html('ERROR');
-    cell.addClass('text-danger');
-  } else {
-    cell.html(data['exposure_time'].toFixed(2) + ' s');
-  }
+  cell.html(data.toFixed(2) + ' s');
 }
 
 function camGeometry(row, cell, data) {
@@ -150,15 +142,7 @@ function camGeometry(row, cell, data) {
   }
 }
 
-
-var telescopeFields = {
-  'status': telStatus,
-  'ra': telRA,
-  'dec': telDec,
-  'alt': telAlt,
-  'focus': telFocus,
-  'red-focus': telRedFocus
-};
+// Telescope generators
 
 var telescopeStatus = [
   ['DISABLED', 'text-danger', 'list-group-item-danger'],
@@ -168,46 +152,37 @@ var telescopeStatus = [
   ['GUIDING', 'text-success', 'list-group-item-success']
 ];
 
-function telStatus(data) {
-  if (!data || !('state' in data))
-    return ['ERROR', null, 'list-group-item-danger'];
-
-  return telescopeStatus[data['state']];
+function telStatus(row, cell, data) {
+  if (!data || !('state' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+    row.addClass('list-group-item-danger');
+  } else {
+    var s = telescopeStatus[data['state']];
+    cell.html(s[0]);
+    cell.addClass(s[1]);
+    row.addClass(s[2]);
+  }
 }
 
-function telRA(data) {
-  if (!data || !('ra' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [sexagesimal(data['ra'] * 12 / Math.PI)];
+function telRA(row, cell, data) {
+  cell.html(sexagesimal(data * 12 / Math.PI));
 }
 
-function telDec(data) {
-  if (!data || !('dec' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [sexagesimal(data['dec'] * 180 / Math.PI)];
+function telDec(row, cell, data) {
+  cell.html(sexagesimal(data * 180 / Math.PI));
 }
 
-function telAlt(data) {
-  if (!data || !('alt' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [(data['alt'] * 180 / Math.PI).toFixed(1) + 'º'];
+function telAlt(row, cell, data) {
+  cell.html((data * 180 / Math.PI).toFixed(1) + '&deg;');
 }
 
-function telFocus(data) {
-  if (!data || !('telescope_focus_um' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [data['telescope_focus_um'].toFixed(1) + ' um'];
+function telFocus(row, cell, data) {
+  cell.html(data.toFixed(1) + ' um');
 }
 
-function telRedFocus(data) {
-  if (!data || !('telescope_red_focus' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [data['telescope_red_focus'].toFixed(0)];
+function telInstrumentFocus(row, cell, data) {
+  cell.html(data.toFixed(0));
 }
 
 var opsFields = {
@@ -430,7 +405,6 @@ function envLatestMinMax(row, cell, data) {
 }
 
 function updateGroups(data) {
-  updateListGroup('telescope', telescopeFields, data['telescope']);
   updateListGroup('ops', opsFields, data['ops']);
   updateListGroup('pipeline', pipelineFields, data['pipeline']);
 

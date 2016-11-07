@@ -12,7 +12,7 @@
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span id="telescope-status" class="list-group-item">Tel. Status</span>
+      <span class="list-group-item" data-group="telescope" data-generator="telStatus">Tel. Status</span>
       <span id="ops-dome-status" class="list-group-item">Dome Status</span>
     </div>
   </div>
@@ -76,11 +76,11 @@
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Telescope</h5>
-      <span id="telescope-ra" class="list-group-item">RA</span>
-      <span id="telescope-dec" class="list-group-item">Dec</span>
-      <span id="telescope-alt" class="list-group-item">Altitude</span>
-      <span id="telescope-focus" class="list-group-item">Tel. Focus</span>
-      <span id="telescope-red-focus" class="list-group-item">Red Focus</span>
+      <span class="list-group-item" data-group="telescope" data-field="ra" data-generator="telRA">RA</span>
+      <span class="list-group-item" data-group="telescope" data-field="dec" data-generator="telDec">Dec</span>
+      <span class="list-group-item" data-group="telescope" data-field="alt" data-generator="telAlt">Altitude</span>
+      <span class="list-group-item" data-group="telescope" data-field="telescope_focus_um" data-generator="telFocus">Tel. Focus</span>
+      <span class="list-group-item" data-group="telescope" data-field="instrument_focus" data-generator="telInstrumentFocus">Red Focus</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
@@ -88,8 +88,8 @@
       <h5 class="list-group-header" style="text-align: center">Blue Camera</h5>
       <span class="list-group-item" data-group="blue" data-generator="camStatus">Status</span>
       <span class="list-group-item" data-group="blue" data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-group="blue" data-generator="camShutter">Shutter</span>
-      <span class="list-group-item" data-group="blue" data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-group="blue" data-field="shutter_enabled" data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-group="blue" data-field="exposure_time" data-generator="camExposure">Exposure</span>
       <span class="list-group-item" data-group="blue" data-generator="camGeometry">Geometry</span>
     </div>
   </div>
@@ -98,8 +98,8 @@
       <h5 class="list-group-header text-center">Red Camera</h5>
       <span class="list-group-item" data-group="red" data-generator="camStatus">Status</span>
       <span class="list-group-item" data-group="red" data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-group="red" data-generator="camShutter">Shutter</span>
-      <span class="list-group-item" data-group="red" data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-group="red" data-field="shutter_enabled" data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-group="red" data-field="exposure_time" data-generator="camExposure">Exposure</span>
       <span class="list-group-item" data-group="red" data-generator="camGeometry">Geometry</span>
     </div>
   </div>
