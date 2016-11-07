@@ -67,14 +67,6 @@ function powerOnOff(row, cell, data) {
   }
 }
 
-var cameraFields = {
-  'status': camStatus,
-  'temperature': camTemperature,
-  'shutter': camShutter,
-  'exposure': camExposure,
-  'geometry': camGeometry,
-};
-
 var cameraStatus = [
   ['OFFLINE', 'text-danger'],
   ['INITIALIZING', 'text-danger'],
@@ -84,70 +76,80 @@ var cameraStatus = [
   ['ABORTING', 'text-danger']
 ];
 
-function camStatus(data) {
-  if (!data || !('state' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (data['state'] == 3 || data['state'] == 4) {
-    if (!('sequence_frame_count' in data) || !('sequence_frame_limit' in data))
-      return ['ERROR', 'text-danger'];
-
-    if (data['sequence_frame_limit'] > 0)
-      return ['ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')', 'text-success'];
-
-    return ['ACQUIRING (until stopped)', 'text-success'];
+// Camera generators
+function camStatus(row, cell, data) {
+  if (!data || !('state' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+    return;
   }
 
-  return cameraStatus[data['state']];
+  if (data['state'] == 3 || data['state'] == 4) {
+    if (!('sequence_frame_count' in data) || !('sequence_frame_limit' in data)) {
+      cell.html('ERROR');
+      cell.addClass('text-danger');
+      return;
+    }
+
+    cell.addClass('text-success');
+    if (data['sequence_frame_limit'] > 0)
+      cell.html('ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')');
+    else
+      cell.html('ACQUIRING (until stopped)');
+    return;
+  }
+
+  cell.html(cameraStatus[data['state']][0]);
+  cell.addClass(cameraStatus[data['state']][1]);
 }
 
-function camTemperature(data) {
-  if (!data || !('temperature' in data))
-    return ['ERROR', 'text-danger'];
-
-  status = +data['temperature'].toFixed(0) + ' &deg;C';
-  return [status, data['temperature_locked'] ? 'text-success' : 'text-danger'];
+function camTemperature(row, cell, data) {
+  if (!data || !('temperature' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else {
+    cell.html(+data['temperature'].toFixed(0) + ' &deg;C');
+    cell.addClass(data['temperature_locked'] ? 'text-success' : 'text-danger');
+  }
 }
 
-function camShutter(data) {
-  if (!data || !('shutter_enabled' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (data['shutter_enabled'])
-    return ['AUTO', 'text-success'];
-
-  return ['DARK', 'text-danger'];
+function camShutter(row, cell, data) {
+  if (!data || !('shutter_enabled' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['shutter_enabled']) {
+    cell.html('AUTO');
+    cell.addClass('text-success');
+  } else {
+    cell.html('DARK');
+    cell.addClass('text-danger');
+  }
 }
 
-function camExposure(data) {
-  if (!data || !('exposure_time' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [data['exposure_time'].toFixed(2) + ' s'];
+function camExposure(row, cell, data) {
+  if (!data || !('exposure_time' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else {
+    cell.html(data['exposure_time'].toFixed(2) + ' s');
+  }
 }
 
-function camGeometry(data) {
-  if (!data || !('geometry_x' in data))
-    return ['ERROR', 'text-danger'];
-
-  x = data['geometry_x'];
-  y = data['geometry_y'];
-  width = data['geometry_width'];
-  height = data['geometry_height'];
-  bin_x = data['geometry_bin_x'];
-  bin_y = data['geometry_bin_y'];
-
-  desc = bin_x + 'x' + bin_y + ' in [' + x + ':' + (x + width - 1) + ',' + y + ':' + (y + height - 1) + ']'
-
-  return [desc]
+function camGeometry(row, cell, data) {
+  if (!data || !('geometry_x' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else {
+    x = data['geometry_x'];
+    y = data['geometry_y'];
+    width = data['geometry_width'];
+    height = data['geometry_height'];
+    bin_x = data['geometry_bin_x'];
+    bin_y = data['geometry_bin_y'];
+    cell.html(bin_x + 'x' + bin_y + ' in [' + x + ':' + (x + width - 1) + ',' + y + ':' + (y + height - 1) + ']');
+  }
 }
 
-function camBinning(data) {
-  if (!data || !('geometry_bin_x' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [data['geometry_bin_x'] + 'x' + data['geometry_bin_y']]
-}
 
 var telescopeFields = {
   'status': telStatus,
@@ -428,8 +430,6 @@ function envLatestMinMax(row, cell, data) {
 }
 
 function updateGroups(data) {
-  updateListGroup('blue', cameraFields, data['blue']);
-  updateListGroup('red', cameraFields, data['red']);
   updateListGroup('telescope', telescopeFields, data['telescope']);
   updateListGroup('ops', opsFields, data['ops']);
   updateListGroup('pipeline', pipelineFields, data['pipeline']);
