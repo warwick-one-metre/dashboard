@@ -9,12 +9,13 @@
   </div>
 </div>
 
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
 <div class="row">
   <div class="col-md-6">
-    <img src="http://wasp.warwick.ac.uk/swasp/main/cam1/image.jpg" data-url="http://wasp.warwick.ac.uk/swasp/main/cam1/image.jpg" width="100%">
+    <img src="/webcam/ext1/static" data-url="/webcam/ext1/static" width="100%">
   </div>
   <div class="col-md-6">
-    <img src="http://wasp.warwick.ac.uk/swasp/main/cam2/image.jpg" data-url="http://wasp.warwick.ac.uk/swasp/main/cam2/image.jpg" width="100%">
+    <img src="/webcam/ext2/static" data-url="/webcam/ext2/static" width="100%">
   </div>
 </div>
 
@@ -33,4 +34,14 @@ $(document).ready(function () {
   window.setInterval(reloadImages, 10000)
 });
 </script>
+{% else %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="list-group m-b">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Content restricted to <a href="https://github.com/orgs/warwick-one-metre/teams/observers/">@warwick-one-metre/observers</a>.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
