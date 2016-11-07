@@ -185,62 +185,48 @@ function telInstrumentFocus(row, cell, data) {
   cell.html(data.toFixed(0));
 }
 
-var opsFields = {
-  'telescope-control': opsTelescopeControl,
-  'dome-control': opsDomeControl,
-  'dome-status': opsDomeStatus,
-  'status': opsStatus,
-  'environment': opsEnvironment,
-};
-
-function opsTelescopeControl(data) {
-  return ['MANUAL', null, 'list-group-item-warning'];
+function opsTelescopeControl(row, cell, data) {
+  cell.html('MANUAL');
+  row.addClass('list-group-item-warning');
 }
 
-var operationsModes = [
-  ['ERROR', null, 'list-group-item-danger'],
-  ['AUTO', null, 'list-group-item-success'],
-  ['MANUAL', null, 'list-group-item-warning'],
-];
+// Ops generators
+function opsDomeControl(row, cell, data) {
+  var modes = [
+    ['ERROR', 'list-group-item-danger'],
+    ['AUTO', 'list-group-item-success'],
+    ['MANUAL', 'list-group-item-warning'],
+  ];
 
-var domeStatus = [
-  ['CLOSED', null, 'list-group-item-danger'],
-  ['OPEN', null, 'list-group-item-success'],
-  ['MOVING', null, 'list-group-item-warning'],
-];
-
-function opsDomeControl(data) {
-  if (!data || !('dome_mode' in data))
-    return ['ERROR', null, 'list-group-item-danger'];
-
-  return operationsModes[data['dome_mode']];
+  var mode = data in modes ? modes[data] : mode[0];
+  cell.html(mode[0]);
+  row.addClass(mode[1]);
 }
 
-function opsDomeStatus(data) {
-  if (!data || !('dome_status' in data))
-    return ['ERROR', null, 'list-group-item-danger'];
+function opsDomeStatus(row, cell, data) {
+  var status = [
+    ['CLOSED', 'list-group-item-danger'],
+    ['OPEN', 'list-group-item-success'],
+    ['MOVING', 'list-group-item-warning'],
+  ];
 
-  return domeStatus[data['dome_status']];
+  if (!data in status) {
+    cell.html('ERROR');
+    row.addClass('list-group-item-danger');
+  } else {
+    cell.html(status[data][0]);
+    row.addClass(status[data][1]);
+  }
 }
 
-function opsStatus(data) {
-  if (!data || !('observing' in data))
-    return ['ERROR', null, 'list-group-item-danger'];
-
-  if (data['observing'])
-    return ['ONLINE', null, 'list-group-item-success'];
-
-  return ['OFFLINE', null, 'list-group-item-danger'];
+function opsStatus(row, cell, data) {
+  cell.html(data ? 'ONLINE' : 'OFFLINE');
+  row.addClass(data ? 'list-group-item-success' : 'list-group-item-danger');
 }
 
-function opsEnvironment(data) {
-  if (!data || !('environment_safe' in data))
-    return ['ERROR', null, 'list-group-item-danger'];
-
-  if (data['environment_safe'])
-    return ['SAFE', null, 'list-group-item-success'];
-
-  return ['NOT SAFE', null, 'list-group-item-danger'];
+function opsEnvironment(row, cell, data) {
+  cell.html(data ? 'SAFE' : 'NOT SAFE');
+  row.addClass(data ? 'list-group-item-success' : 'list-group-item-danger');
 }
 
 var pipelineFields = {
@@ -405,7 +391,6 @@ function envLatestMinMax(row, cell, data) {
 }
 
 function updateGroups(data) {
-  updateListGroup('ops', opsFields, data['ops']);
   updateListGroup('pipeline', pipelineFields, data['pipeline']);
 
   $('[data-generator]').each(function() {

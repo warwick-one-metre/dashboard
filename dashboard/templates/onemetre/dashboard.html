@@ -13,19 +13,19 @@
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-group="telescope" data-generator="telStatus">Tel. Status</span>
-      <span id="ops-dome-status" class="list-group-item">Dome Status</span>
+      <span class="list-group-item" data-group="ops" data-field="dome_status" data-generator="opsDomeStatus">Dome Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span id="ops-telescope-control" class="list-group-item">Tel. Control</span>
-      <span id="ops-dome-control" class="list-group-item">Dome Control</span>
+      <span class="list-group-item" data-group="ops" data-generator="opsTelescopeControl">Tel. Control</span>
+      <span class="list-group-item" data-group="ops" data-field="dome_mode" data-generator="opsDomeControl">Dome Control</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <span id="ops-status" class="list-group-item">Operations</span>
-      <span id="ops-environment" class="list-group-item">Environment</span>
+      <span class="list-group-item" data-group="ops" data-field="observing" data-generator="opsStatus">Operations</span>
+      <span class="list-group-item" data-group="ops" data-field="environment_safe" data-generator="opsEnvironment">Environment</span>
     </div>
   </div>
 </div>
