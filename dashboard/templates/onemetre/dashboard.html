@@ -109,12 +109,12 @@
   <div class="col-md-5 col-sm-12 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Pipeline</h5>
-      <span id="pipeline-guiding" class="list-group-item">Guide Camera</span>
-      <span id="pipeline-frametype" class="list-group-item">Frame Type</span>
-      <span id="pipeline-save-dir" class="list-group-item">Archive Dir</span>
-      <span id="pipeline-next-blue" class="list-group-item">Next Blue Frame</span>
-      <span id="pipeline-next-red" class="list-group-item">Next Red Frame</span>
-      <span id="pipeline-process" class="list-group-item">Pipeline Steps</span>
+      <span class="list-group-item" data-group="pipeline" data-field="guide_camera_id" data-generator="pipelineGuiding">Guide Camera</span>
+      <span class="list-group-item" data-group="pipeline" data-generator="pipelineFrameType">Frame Type</span>
+      <span class="list-group-item" data-group="pipeline" data-field="archive_directory" data-generator="pipelineSaveDir">Archive Dir</span>
+      <span class="list-group-item" data-group="pipeline" data-generator="pipelineNextBlue">Next Blue Frame</span>
+      <span class="list-group-item" data-group="pipeline" data-generator="pipelineNextRed">Next Red Frame</span>
+      <span class="list-group-item" data-group="pipeline" data-generator="pipelineProcess">Pipeline Steps</span>
     </div>
   </div>
   <div class="clearfix visible-sm-block visible-xs-block"></div>

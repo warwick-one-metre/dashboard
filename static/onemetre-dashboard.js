@@ -229,86 +229,72 @@ function opsEnvironment(row, cell, data) {
   row.addClass(data ? 'list-group-item-success' : 'list-group-item-danger');
 }
 
-var pipelineFields = {
-  'guiding': pipelineGuiding,
-  'frametype': pipelineFrameType,
-  'save-dir': pipelineSaveDir,
-  'next-blue': pipelineNextBlue,
-  'next-red': pipelineNextRed,
-  'process': pipelineProcess
-};
-
-function pipelineGuiding(data) {
-  if (!data || !('guide_camera_id' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (!data['guide_camera_id'])
-    return ['NOT GUIDING', 'text-danger']
-
-  return [data['guide_camera_id']];
+// Pipeline generators
+function pipelineGuiding(row, cell, data) {
+  if (data) {
+    cell.html(data);
+  } else {
+    cell.html('NOT GUIDING');
+    cell.addClass('text-danger');
+  }
 }
 
-function pipelineFrameType(data) {
-  if (!data || !('frame_type' in data) || !('frame_object' in data))
-    return ['ERROR', 'text-danger'];
-
-  if (data['frame_type'] == 'SCIENCE')
-    return ['SCIENCE (' + data['frame_object'] + ')']
-
-  return [data['frame_type']];
+function pipelineFrameType(row, cell, data) {
+  if (!('frame_type' in data) || !('frame_object' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['frame_type'] == 'SCIENCE')
+    cell.html('SCIENCE (' + data['frame_object'] + ')');
+  else
+    cell.html(data['frame_type']);
 }
 
-function pipelineSaveDir(data) {
-  if (!data || !('archive_directory' in data))
-    return ['ERROR', 'text-danger'];
-
-  return [data['archive_directory']]
+function pipelineSaveDir(row, cell, data) {
+  cell.html(data);
 }
 
-function pipelineNextBlue(data) {
-  if (!data || !('next_filename' in data) || !('BLUE' in data['next_filename'])
-        || !('archive_enabled' in data) || !('BLUE' in data['archive_enabled']))
-    return ['ERROR', 'text-danger'];
-
-  if (!data['archive_enabled']['BLUE'])
-    return ['NOT SAVING', 'text-danger'];
-
-  return [data['next_filename']['BLUE'], 'filename'];
+function pipelineNextCamera(row, cell, data, camera) {
+  if (!data || !('next_filename' in data) || !(camera in data['next_filename'])
+        || !('archive_enabled' in data) || !(camera in data['archive_enabled'])) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (!data['archive_enabled'][camera]) {
+    cell.html('NOT SAVING');
+    cell.addClass('text-danger');
+  } else {
+    cell.html(data['next_filename'][camera]);
+    cell.addClass('filename');
+  }
 }
 
-function pipelineNextRed(data) {
-  if (!data || !('next_filename' in data) || !('RED' in data['next_filename'])
-        || !('archive_enabled' in data) || !('RED' in data['archive_enabled']))
-    return ['ERROR', 'text-danger'];
-
-  if (!data['archive_enabled']['RED'])
-    return ['NOT SAVING', 'text-danger'];
-
-  return [data['next_filename']['RED'], 'filename'];
+function pipelineNextBlue(row, cell, data) {
+  pipelineNextCamera(row, cell, data, 'BLUE');
 }
 
-function pipelineProcess(data) {
-  if (!data || !('wcs_enabled' in data) || !('fwhm_enabled' in data) || !('intensity_stats_enabled' in data) 
-        || !('compression_enabled' in data) || !('dashboard_enabled' in data))
+function pipelineNextRed(row, cell, data) {
+  pipelineNextCamera(row, cell, data, 'RED');
+}
+
+function pipelineProcess(row, cell, data) {
+  if (!data || !('wcs_enabled' in data) || !('fwhm_enabled' in data) || !('intensity_stats_enabled' in data)
+        || !('compression_enabled' in data) || !('dashboard_enabled' in data)) {
     return ['ERROR', 'text-danger'];
+  } else {
+    steps = {
+      'wcs_enabled': 'WCS',
+      'fwhm_enabled': 'FWHM',
+      'intensity_stats_enabled': 'IntStats',
+      'compression_enabled': 'Compress',
+      'dashboard_enabled': 'Dashboard'
+    };
 
-  calculations = [];
-  if (data['wcs_enabled'])
-    calculations.push('WCS');
+    active = [];
+    for (var s in steps)
+      if (s in data && data[s])
+        active.push(steps[s]);
 
-  if (data['fwhm_enabled'])
-    calculations.push('FWHM');
-
-  if (data['intensity_stats_enabled'])
-    calculations.push('IntStats');
-
-  if (data['compression_enabled'])
-    calculations.push('Compress');
-
-  if (data['dashboard_enabled'])
-    calculations.push('Dashboard');
-
-  return [calculations.join(', ')]
+    cell.html(active.join(', '));
+  }
 }
 
 // Environment generators
@@ -391,8 +377,6 @@ function envLatestMinMax(row, cell, data) {
 }
 
 function updateGroups(data) {
-  updateListGroup('pipeline', pipelineFields, data['pipeline']);
-
   $('[data-generator]').each(function() {
     // Remove old content
     $(this).children('span.pull-right').remove();
