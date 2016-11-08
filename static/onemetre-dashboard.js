@@ -384,15 +384,21 @@ function updateGroups(data) {
 
     // Add new content
     var generator = $(this).data('generator');
-    var group = $(this).data('group');
-    var field = $(this).data('field');
-    var cell = $('<span class="pull-right">');
+    var index = $(this).data('index');
 
-    if (!data || !group || !(group in data) || (field && !(field in data[group]))) {
+    var fieldData = data;
+    for (var i in index) {
+      fieldData = index[i] in fieldData ? fieldData[index[i]] : undefined;
+      if (fieldData === undefined)
+        break;
+    }
+
+    var cell = $('<span class="pull-right">');
+    if (fieldData === undefined) {
       cell.html('ERROR');
       cell.addClass('text-danger');
     } else if (window[generator])
-      window[generator]($(this), cell, field ? data[group][field] : data[group]);
+      window[generator]($(this), cell, fieldData);
 
     $(this).append(cell);
   });
