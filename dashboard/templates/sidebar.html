@@ -1,14 +1,14 @@
 {% set categories = [
   ('One Metre', [
-    (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard'),
-    (url_for('onemetre_live'), 'onemetre-live', 'Live Data'),
-    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera')]),
-  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera')]),
+    (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard', 'icon-menu'),
+    (url_for('onemetre_live'), 'onemetre-live', 'Live Data', 'icon-stopwatch'),
+    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera', 'icon-video-camera')]),
+  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera', 'icon-video-camera')]),
   ('Other', [
-    (url_for('weather'), 'weather', 'Weather Archive'),
-    (url_for('skycams'), 'skycams', 'Sky Cameras'),
-    (url_for('extcams'), 'extcams', 'Site Cameras'),
-    (url_for('resources'), 'resources', 'Observing Resources'),
+    (url_for('weather'), 'weather', 'Weather Archive', 'icon-cloud'),
+    (url_for('skycams'), 'skycams', 'Sky Cameras', 'icon-images'),
+    (url_for('extcams'), 'extcams', 'Site Cameras', 'icon-tree'),
+    (url_for('resources'), 'resources', 'Observing Resources', 'icon-info'),
 ]),
 ] %}
 
@@ -27,9 +27,9 @@
     <ul class="nav nav-pills nav-stacked m-b">
       {% for title, links in categories %}
       <li class="nav-header">{{ title|e }}</li>
-      {% for href, id, caption in links %}
+      {% for href, id, caption, icon in links %}
       <li{% if id == active_page %} class="active"{% endif %}>
-        <a href="{{ href|e }}">{{ caption|e }}</a>
+        <a href="{{ href|e }}">{% if icon %}<span class="icon {{ icon }}" style="margin-right: 10px"></span>{% endif %}{{ caption|e }}</a>
       </li>
       {% endfor %}
       {% endfor %}
