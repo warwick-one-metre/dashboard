@@ -29,23 +29,18 @@ VAISALA = {
 }
 
 ROOMALERT = {
-    'internal_temp': ('1m&nbsp;Dome', 'rinttemp', '#F3A712'),
-    'internal_humidity': ('1m&nbsp;Dome', 'rinthumid', '#F3A712'),
-    'truss_temp': ('1m&nbsp;Truss', 'rtrusstemp', '#CEB5A7'),
-    'roomalert_temp': ('1m&nbsp;Rack', 'rracktemp', '#FACC6B'),
-    'roomalert_humidity': ('1m&nbsp;Rack', 'rrackhumid', '#FACC6B'),
+    'internal_temp': ('1m', 'rinttemp', '#F3A712'),
+    'internal_humidity': ('1m', 'rinthumid', '#F3A712'),
 }
 
 NITES_ROOMALERT = {
-    'internal_temperature': ('NITES&nbsp;Dome', 'ninttemp', '#DE0D92'),
-    'internal_humidity': ('NITES&nbsp;Dome', 'ninthumid', '#DE0D92'),
-    'rack_temperature': ('NITES&nbsp;Rack', 'nracktemp', '#B4436C'),
-    'rack_humidity': ('NITES&nbsp;Rack', 'nrackhumid', '#B4436C'),
+    'internal_temperature': ('NITES', 'ninttemp', '#DE0D92'),
+    'internal_humidity': ('NITES', 'ninthumid', '#DE0D92'),
 }
 
 GOTO_ROOMALERT = {
-    'internal_temp': ('GOTO&nbsp;Dome', 'ginttemp', '#22cc44'),
-    'internal_humidity': ('GOTO&nbsp;Dome', 'ginthumid', '#22cc44'),
+    'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
+    'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
 }
 
 SUPERWASP = {

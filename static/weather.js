@@ -26,7 +26,7 @@ function redrawPlot() {
     grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
     crosshair: { mode: "x", color: '#545454' },
     yaxis: { axisLabel: plot.data('axislabel'), axisLabelPadding: 9, labelWidth: 20 },
-    legend: { container: $('#'+plot.data('labelcontainer')), noColumns: 4, labelBoxBorderColor: '#545454', units: plot.data('labelunits') },
+    legend: { container: $('#'+plot.data('labelcontainer')), noColumns: 5, labelBoxBorderColor: '#545454', units: plot.data('labelunits') },
     hooks: { bindEvents: bindHoverHooks }
   };
 

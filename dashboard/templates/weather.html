@@ -33,7 +33,7 @@
 
 .xAxis, .yAxis { color: #fff; }
 .legend { background-color: #252830; }
-.legendLabel { color: #fff; padding-left: 2px; width: 70px; height: 17px;}
+.legendLabel { color: #fff; padding-left: 2px; width: 60px; height: 17px;}
 .axisLabels { text-align: center; }
 
 #rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
@@ -94,11 +94,11 @@
 <div class="row">
   <div class="col-md-6 plot-container">
     <div class="weather-labels-left" id="temperature-labels"></div>
-    <div class="weather-plot" data-series='["ninttemp", "ginttemp", "vexttemp", "swtemp", "rinttemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C'></div>
+    <div class="weather-plot" data-series='["rinttemp", "ninttemp", "ginttemp", "vexttemp", "swtemp"]' data-labelcontainer="temperature-labels" data-axislabel='Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C'></div>
   </div>
   <div id="humidity-container" class="col-md-6 plot-container">
     <div class="weather-labels-right" id="humidity-labels"></div>
-    <div class="weather-plot" data-series='["ninthumid", "ginthumid", "vexthumid", "swhumid", "rinthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%)' data-labelfudge="-7" data-labelunits='%'></div>
+    <div class="weather-plot" data-series='["rinthumid", "ninthumid", "ginthumid", "vexthumid", "swhumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Humidity (%)' data-labelfudge="-7" data-labelunits='%'></div>
   </div>
 </div>
 <div class="row" style="padding-top: 20px;">
