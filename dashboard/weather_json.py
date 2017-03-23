@@ -43,6 +43,11 @@ NITES_ROOMALERT = {
     'rack_humidity': ('NITES&nbsp;Rack', 'nrackhumid', '#B4436C'),
 }
 
+GOTO_ROOMALERT = {
+    'internal_temp': ('GOTO&nbsp;Dome', 'ginttemp', '#22cc44'),
+    'internal_humidity': ('GOTO&nbsp;Dome', 'ginthumid', '#22cc44'),
+}
+
 SUPERWASP = {
     'ext_temperature': ('SWASP', 'swtemp', '#F26430'),
     'ext_humidity': ('SWASP', 'swhumid', '#F26430'),
@@ -87,6 +92,7 @@ def plot_json(date=None):
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', RAINDETECTOR, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_ups', UPS, start_str, end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_network', NETWORK, start_str, end_str))
 
     print('start: ', start, start_str, start_js)
