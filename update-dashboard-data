@@ -92,7 +92,7 @@ except Exception as e:
     pass
 
 try:
-    os.system('rsync -u 192.168.0.101:/var/tmp/dashboard-* /srv/dashboard/generated/')
+    os.system('rsync -u 10.2.6.203:/var/tmp/dashboard-* /srv/dashboard/generated/')
 except Exception as e:
     print('failed to rsync camera data with error: ' + str(e))
     observatory.log.error('dashboardd', 'Failed to rsync camera data (' + str(e) + ')')
