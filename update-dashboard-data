@@ -79,6 +79,25 @@ except Exception as e:
     print('failed to write json with error: ' + str(e))
     observatory.log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
+# Raw device data for GOTO ops
+try:
+    with observatory.daemons.onemetre_vaisala.connect() as vaisala:
+        with open('/srv/dashboard/generated/onemetre-vaisala.json', 'w') as outfile:
+            json.dump(vaisala.last_measurement(), outfile)
+except Exception as e:
+    print('failed to query vaisalad with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query vaisalad (' + str(e) + ')')
+    pass
+
+try:
+    with observatory.daemons.superwasp_log.connect() as superwasp:
+        with open('/srv/dashboard/generated/superwasp-log.json', 'w') as outfile:
+            json.dump(superwasp.last_measurement(), outfile)
+except Exception as e:
+    print('failed to query superwaspd with error: ' + str(e))
+    observatory.log.error('dashboardd', 'Failed to query superwaspd (' + str(e) + ')')
+    pass
+
 # Private data (requires auth from the web frontend)
 try:
     private = {}

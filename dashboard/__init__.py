@@ -207,3 +207,14 @@ def onemetre_generated_data(path):
         return send_from_directory('/srv/dashboard/generated', ONEMETRE_GENERATED_DATA[path])
     abort(404)
 
+# Raw sensor data for GOTO ops
+@app.route('/data/raw/onemetre-vaisala')
+def raw_onemetre_vaisala():
+    data = json.load(open('/srv/dashboard/generated/onemetre-vaisala.json'))
+    return jsonify(**data)
+
+@app.route('/data/raw/superwasp-log')
+def raw_superwasp_log():
+    data = json.load(open('/srv/dashboard/generated/superwasp-log.json'))
+    return jsonify(**data)
+
