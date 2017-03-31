@@ -126,6 +126,10 @@ def logout():
     return redirect(next)
 
 # Main pages
+@app.route('/')
+def main_redirect():
+    return redirect(url_for('environment'))
+
 @app.route('/onemetre/')
 def onemetre_dashboard():
     account, errors = get_user_account()
@@ -156,15 +160,10 @@ def infrastructure():
     account, errors = get_user_account()
     return render_template('infrastructure.html', user_account=account, errors=errors)
 
-@app.route('/extcams/')
-def extcams():
+@app.route('/sitecams/')
+def sitecams():
     account, errors = get_user_account()
-    return render_template('extcams.html', user_account=account, errors=errors)
-
-@app.route('/skycams/')
-def skycams():
-    account, errors = get_user_account()
-    return render_template('skycams.html', user_account=account, errors=errors)
+    return render_template('sitecams.html', user_account=account, errors=errors)
 
 @app.route('/resources/')
 def resources():
