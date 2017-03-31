@@ -1,4 +1,9 @@
 var data = {};
+
+function colorSeriesLabel(label, series) {
+  return '<span style="color: ' + series.color + '">' + label + '</span>';
+}
+
 function redrawPlot() {
   if (!data.data)
     return;
@@ -11,10 +16,37 @@ function redrawPlot() {
     axis = 1;
 
   var series = plot.data('series');
+  var range = [undefined, undefined];
   for (var s in series) {
     var sensor = data.data[series[s]];
-    if (sensor)
+    if (sensor) {
       d.push(sensor);
+      range[0] = range[0] !== undefined ? Math.min(range[0], sensor['min']) : sensor['min'];
+      range[1] = range[1] !== undefined ? Math.max(range[1], sensor['max']) : sensor['max'];
+    }
+  }
+
+  var regenerateLinkedPlots = function(plot, options) {
+    regenerateBindings = true;
+    window.setTimeout(function() {
+      if (!regenerateBindings)
+        return;
+
+      var plots = {};
+      var getPlot = function(id) { return plots[id]; };
+
+      $('.weather-plot').each(function() { plots[$(this).attr('id')] = $(this).data('plot'); });
+
+      // Link the plot hover together only after all plots have been created
+      for (var key in plots) {
+        var plot = plots[key];
+        var linkedPlots = plot.getPlaceholder().data('linkedplots');
+        if (linkedPlots !== undefined)
+          plot.getOptions().linkedplots = linkedPlots.map(getPlot);
+      };
+
+      regenerateBindings = false;
+    });
   }
 
   var options = {
@@ -26,9 +58,13 @@ function redrawPlot() {
     grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
     crosshair: { mode: "x", color: '#545454' },
     yaxis: { axisLabel: plot.data('axislabel'), axisLabelPadding: 9, labelWidth: 20 },
-    legend: { container: $('#'+plot.data('labelcontainer')), noColumns: 5, labelBoxBorderColor: '#545454', units: plot.data('labelunits') },
-    hooks: { bindEvents: bindHoverHooks }
+    legend: { noColumns: 5, units: plot.data('labelunits'), backgroundColor: '#252830', backgroundOpacity: 0.5, margin: 1, labelFormatter: colorSeriesLabel },
+    linkedplots: [],
+    hooks: { bindEvents: bindHoverHooks, processOptions: regenerateLinkedPlots }
   };
+
+  if (plot.data('ydecimals') !== undefined)
+    options.yaxis.tickDecimals = plot.data('ydecimals');
 
   if (plot.data('labelfudge') !== undefined)
     options.yaxis.labelFudge = plot.data('labelfudge');
@@ -38,6 +74,8 @@ function redrawPlot() {
 
   if (plot.data('max'))
     options.yaxis.max = plot.data('max');
+  else
+    options.yaxis.max = range[0] + 1.5 * (range[1] - range[0]);
 
   if (axis == 1)
     options.yaxis.position = 'right';
@@ -47,7 +85,50 @@ function redrawPlot() {
     options.xaxis.axisLabel = 'UTC Time';
   }
 
-  $.plot(this, d, options);
+  return $.plot(this, d, options);
+}
+
+function setHoverXPosition(plot, offsetX) {
+  var axes = plot.getAxes();
+  var offset = plot.getPlotOffset();
+  var dataset = plot.getData();
+  var options = plot.getOptions();
+  var legend = plot.getPlaceholder().find('.legendLabel :first-child');
+
+  var start = axes.xaxis.p2c(axes.xaxis.min);
+  var end = axes.xaxis.p2c(axes.xaxis.max);
+  var fractionalPos = (offsetX - offset.left) / (end - start);
+
+  if (fractionalPos < 0 || fractionalPos > 1) {
+    // Clear labels
+    for (var i = 0; i < dataset.length; ++i)
+      $(legend.eq(i)).html(dataset[i].label);
+
+    // Clear crosshair
+    plot.setCrosshair();
+    return;
+  }
+
+  var x = axes.xaxis.min + (axes.xaxis.max - axes.xaxis.min) * fractionalPos;
+  plot.setCrosshair({ x: x });
+  for (var i = 0; i < dataset.length; i++) {
+    var series = dataset[i];
+
+    var j = 0;
+    for (; j < series.data.length; j++)
+      if (series.data[j][0] < x)
+        break;
+
+    var p1 = series.data[j - 1];
+    var p2 = series.data[j];
+
+    if (p1 != null && p2 != null) {
+      var y = (p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0])).toFixed(2);
+      $(legend.eq(i)).text(y + options.legend.units);
+    }
+    else
+      $(legend.eq(i)).html(dataset[i].label);
+  }
 }
 
 function bindHoverHooks(plot, eventHolder) {
@@ -55,53 +136,20 @@ function bindHoverHooks(plot, eventHolder) {
   var offset = plot.getPlotOffset();
   var dataset = plot.getData();
   var options = plot.getOptions();
-  var legend = options.legend.container.find('.legendLabel');
-
   var start = axes.xaxis.p2c(axes.xaxis.min);
   var end = axes.xaxis.p2c(axes.xaxis.max);
-  var recacheLegend = false;
 
-  eventHolder.resize(function(e) {
-    // Resizing wipes out the labels, so we need to recache this
-    recacheLegend = true;
+  var linkedPlots = [];
+  eventHolder.mousemove(function(e) {
+    setHoverXPosition(plot, e.offsetX);
+    for (var i = 0; i < options.linkedplots.length; i++)
+        setHoverXPosition(options.linkedplots[i], e.offsetX);
   });
 
   eventHolder.mouseout(function(e) {
-    for (var i = 0; i < dataset.length; ++i) {
-      var series = dataset[i];
-      $(legend.eq(i)).html(dataset[i].label);
-    }
-  });
-
-  eventHolder.mousemove(function(e) {
-    var fractionalPos = (e.offsetX - offset.left) / (end - start);
-    if (fractionalPos < 0 || fractionalPos > 1)
-      return;
-
-    if (recacheLegend) {
-      recacheLegend = false;
-      legend = options.legend.container.find('.legendLabel');
-    }
-
-    var x = axes.xaxis.min + (axes.xaxis.max - axes.xaxis.min) * fractionalPos;
-    for (var i = 0; i < dataset.length; i++) {
-      var series = dataset[i];
-
-      var j = 0;
-      for (; j < series.data.length; j++)
-        if (series.data[j][0] < x)
-          break;
-
-      var p1 = series.data[j - 1];
-      var p2 = series.data[j];
-
-      if (p1 != null && p2 != null) {
-        var y = (p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0])).toFixed(2);
-        $(legend.eq(i)).text(y + options.legend.units);
-      }
-      else
-        $(legend.eq(i)).html(dataset[i].label);
-    }
+    setHoverXPosition(plot, -1);
+    for (var i = 0; i < options.linkedplots.length; i++)
+        setHoverXPosition(options.linkedplots[i], -1);
   });
 }
 
@@ -242,15 +290,22 @@ function redrawWindPlot() {
     ctx.restore();
   };
 
+  var axis = 0;
+  if (plot.data('column') == 'right')
+    axis = 1;
+
   var options = {
     lines: { show: false },
-    xaxis: { min: -1, max: 1, tickLength: 0, axisLabel: '&nbsp;', axisLabelPadding: 19, ticks: [] },
+    xaxis: { min: -1, max: 1, tickLength: 0, axisLabel: '&nbsp;', axisLabelPadding: 0, ticks: [] },
     yaxis: { min: -1, max: 1, tickLength: 0,  axisLabel: 'Wind (km/h)', axisLabelPadding: 29, ticks: [] },
-    legend: { container: $('#'+plot.data('labelcontainer')), noColumns: 0, labelBoxBorderColor: '#545454'},
-    grid: { margin: { left: 0, top: 0, right: 15, bottom: 0} },
+    legend: { noColumns: 0, backgroundColor: '#252830', backgroundOpacity: 0.5, margin: 1, labelFormatter: colorSeriesLabel },
+    grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
     points: { show: false },
     hooks: { draw: [drawPoints] },
   };
+
+  if (axis == 1)
+    options.yaxis.position = 'right';
 
   $.plot(this, [data.data.vwinddir, data.data.swwinddir], options);
 }
@@ -274,6 +329,7 @@ function queryData() {
     dataType: 'json',
     success: function(json) {
       data = json;
+
       $('.weather-plot').each(redrawPlot);
       $('.wind-plot').each(redrawWindPlot);
 
@@ -295,6 +351,7 @@ function setup() {
   // Automatically switch label side based on column layout
   $('.weather-plot').each(function() {
     var plot = $(this);
+    var redraw = $(this).attr('id') == 'wind-plot' ? redrawWindPlot : redrawPlot;
     var sensor = $(this).data('sidesensor');
     if (!sensor)
       return;
@@ -312,7 +369,7 @@ function setup() {
       }
 
       if (updated && !init)
-        window.setTimeout(function() { plot.each(redrawPlot) }, 0);
+        window.setTimeout(function() { plot.each(redraw) }, 0);
     };
 
     $(this).resize(onResize);

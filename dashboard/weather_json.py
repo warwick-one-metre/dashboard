@@ -24,7 +24,7 @@ VAISALA = {
     'wind_direction': ('N<sub>2</sub>&nbsp;Plant', 'vwinddir', '#009DDC'),
     'wind_speed': ('N<sub>2</sub>&nbsp;Plant', 'vwindspeed', '#009DDC'),
     'pressure': ('N<sub>2</sub>&nbsp;Plant', 'vpressure', '#009DDC'),
-    'accumulated_rain': ('N<sub>2</sub>&nbsp;Plant&nbsp;(Accumulated mm)', 'vrain', '#009DDC'),
+    'accumulated_rain': ('N<sub>2</sub>&nbsp;Plant&nbsp;(Accumulated&nbsp;mm)', 'vrain', '#009DDC'),
     'dew_point_delta': ('N<sub>2</sub>&nbsp;Plant&nbsp;', 'vdewdelta', '#009DDC')
 }
 
@@ -49,7 +49,6 @@ SUPERWASP = {
     'wind_speed': ('SWASP', 'swwindspeed', '#F26430'),
     'wind_direction': ('SWASP', 'swwinddir', '#F26430'),
     'sky_temp': ('SWASP', 'swskytemp', '#F26430'),
-    'pressure': ('SWASP', 'swpressure', '#F26430'),
     'dew_point_delta': ('SWASP', 'swdewdelta', '#F26430'),
 }
 
@@ -109,6 +108,10 @@ def __sensor_json(db, table, channels, start, end):
             cur.execute(query)
             c['data'] = [(int(x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000), x[1]) for x in cur]
 
+            values = [v[1] for v in c['data']]
+            c['max'] = max(values) if len(values) > 0 else 0
+            c['min'] = min(values) if len(values) > 0 else 0
+
         data[value[1]] = c
     return data
 
@@ -124,5 +127,10 @@ def __vaisala_json(db, start, end):
                 + db.escape(end) + ' ORDER BY `date` DESC;'
             cur.execute(query)
             c['data'] = [(int(x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000), x[1]) for x in cur]
+
+            values = [v[1] for v in c['data']]
+            c['max'] = max(values) if len(values) > 0 else 0
+            c['min'] = min(values) if len(values) > 0 else 0
+
         channels[value[1]] = c
     return channels
