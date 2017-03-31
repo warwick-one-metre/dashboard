@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
 
 {% set cameras = [
+  '/webcam/ext1/static',
+  '/webcam/ext2/static',
   'http://en.sat24.com/image?type=infraPolair&region=ce',
   'http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg',
   'http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png',
   'http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg'
 ] -%}
-{% set title = 'Sky Cameras' -%}
-{% set active_page = 'skycams' -%}
+
+{% set title = 'Site Cameras' -%}
+{% set active_page = 'sitecams' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
@@ -18,13 +21,13 @@
 
 <style>
 .thumb-panel {
-  padding:0; height: 140px; width: 140px; overflow: hidden; margin: auto auto;
+  padding:0; height: 90px; width: 90px; overflow: hidden; margin: auto auto;
 }
 </style>
 
 <div class="row">
 {% for cam in cameras %}
-  <div class="col-md-3 col-xs-6 m-b">
+  <div class="col-md-2 col-xs-4 m-b">
     <a class="btn list-group list-group-item thumb-panel" onclick="selectCamera(this);">
       <img src="{{ cam }}" data-url="{{ cam }}" height="100%">
     </a>
