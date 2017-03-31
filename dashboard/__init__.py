@@ -29,7 +29,7 @@ from flask import session
 from flask import url_for
 from flask_oauthlib.client import OAuth
 
-from dashboard import weather_json
+from dashboard import environment_json
 
 # Log and weather data are stored in the database
 DATABASE_DB = 'ops'
@@ -146,10 +146,15 @@ def nites_dome():
     account, errors = get_user_account()
     return render_template('nites/dome.html', user_account=account, errors=errors)
 
-@app.route('/weather/')
-def weather():
+@app.route('/environment/')
+def environment():
     account, errors = get_user_account()
-    return render_template('weather.html', user_account=account, errors=errors)
+    return render_template('environment.html', user_account=account, errors=errors)
+
+@app.route('/infrastructure/')
+def infrastructure():
+    account, errors = get_user_account()
+    return render_template('infrastructure.html', user_account=account, errors=errors)
 
 @app.route('/extcams/')
 def extcams():
@@ -185,10 +190,16 @@ def observatory_log():
             return jsonify(messages=messages)
     abort(404)
 
-@app.route('/data/weather')
-def weatherdata():
+@app.route('/data/environment')
+def environment_data():
     date = request.args['date'] if 'date' in request.args else None
-    data, start, end = weather_json.plot_json(date)
+    data, start, end = environment_json.environment_json(date)
+    return jsonify(data=data, start=start, end=end)
+
+@app.route('/data/infrastructure')
+def infrastructure_data():
+    date = request.args['date'] if 'date' in request.args else None
+    data, start, end = environment_json.infrastructure_json(date)
     return jsonify(data=data, start=start, end=end)
 
 @app.route('/data/onemetre/')

@@ -1,0 +1,64 @@
+
+#content {
+  width: 880px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.plot-container {
+  height: 155px;
+  padding: 0;
+  margin: 0;
+}
+
+.weather-plot {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  line-height: 1.2em;
+}
+
+.wind-labels {
+  position:absolute;
+  font-size:smaller;
+  width:20px;
+  height:20px
+}
+
+.xAxis, .yAxis { color: #fff; }
+.legendLabel { width: 55px; height: 17px;}
+.legendColorBox { display: none }
+.axisLabels { text-align: center; }
+
+.datepicker tfoot tr th {
+  text-align: center;
+  border-radius: 3px;
+}
+
+.datepicker table tr td.day:hover,
+.datepicker-months table tr td span:hover,
+.datepicker-years table tr td span:hover,
+.datepicker thead tr:first-child th:hover,
+.datepicker tfoot tr th:hover {
+  background: #4d5364;
+  color:#fff;
+}
+
+.datepicker table tr td.disabled:hover {
+  background: #fff;
+  color: #cfd2da;
+}
+
+#rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
+#humidity-container, #temperature-container, #dew-container, #pressure-container { height: 110px; }
+#dew-container, #humidity-container, #skytemp-container, #pressure-container, #raindetector-container, #vaisala-rain-container { margin-top: -5px; }
+#pressure-container { margin-top: -20px; }
+#wind-container { height: 230px; }
+#raindetector-container { height: 63px; }
+#vaisala-rain-container { height: 97px; }
+
+#main-ups-battery-container, #main-ups-load-container, #dome-ups-battery-container { height: 60px; }
+#dome-ups-load-container { height: 95px; }
+#main-ups-load-container, #dome-ups-battery-container, #dome-ups-load-container { margin-top: -5px; }
+#network-container { height: 147px; margin-top: 0px; }
+

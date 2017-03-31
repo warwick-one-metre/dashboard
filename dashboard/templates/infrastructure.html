@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% set title = 'Infrastructure' -%}
+{% set active_page = 'infrastructure' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+    <h2 id="headerdesc" class="dashhead-subtitle">Loading...</h2>
+  </div>
+  <div class="btn-toolbar dashhead-toolbar">
+    <div class="btn-toolbar-item input-with-icon">
+      <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-clear-btn="true" data-date-start-date="2016-09-14" data-date-end-date="0d" data-date-disable-touch-keyboard="true">
+      <span class="icon icon-calendar"></span>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6" style="padding: 0; margin: 0">
+    <div id="main-ups-battery-container" class="plot-container">
+      <div id="main-ups-battery-plot" data-linkedplots='["dome-ups-battery-plot", "main-ups-load-plot", "dome-ups-load-plot"]' class="weather-plot" data-series='["mupsbat"]' data-axislabel='UPS Battery (%)' data-labelfudge="19" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+    </div>
+    <div id="dome-ups-battery-container" class="plot-container">
+      <div id="dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "main-ups-load-plot", "dome-ups-load-plot"]' class="weather-plot" data-series='["dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+    </div>
+    <div id="main-ups-load-container" class="plot-container">
+      <div id="main-ups-load-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "dome-ups-load-plot"]' class="weather-plot" data-series='["mupsload"]' data-axislabel='UPS Load (%)' data-labelfudge="19" data-min="0" data-labelunits='%' data-hidetime></div>
+    </div>
+    <div id="dome-ups-load-container" class="plot-container">
+      <div id="dome-ups-load-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "main-ups-load-plot"]' class="weather-plot" data-series='["dupsload"]' data-axislabel="&nbsp;" data-min="0" data-labelunits='%'></div>
+    </div>
+  </div>
+  <div class="col-md-6" style="padding: 0; margin: 0" id="right-container">
+    <div id="network-container" class="plot-container">
+      <div class="weather-plot" data-series='["googleping", "ngtsping"]' data-axislabel='Ping (ms)' data-sidesensor="right-container" data-labelfudge="-9" data-labelunits=' ms'></div>
+    </div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='jquery.flot.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.axislabels.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.crosshair.min.js') }}"></script>
+<script src="{{ url_for('static', filename='environment.js') }}"></script>
+<script>
+  var dataURL = '{{ url_for('infrastructure_data') }}';
+  $(document).ready(setup);
+</script>
+{% endblock %}

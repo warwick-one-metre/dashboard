@@ -59,6 +59,8 @@ RAINDETECTOR = {
 UPS = {
     'main_ups_battery_remaining': ('1m&nbsp;Main', 'mupsbat', '#FDE74C'),
     'dome_ups_battery_remaining': ('1m&nbsp;Dome', 'dupsbat', '#009DDC'),
+    'main_ups_load': ('1m&nbsp;Main', 'mupsload', '#FDE74C'),
+    'dome_ups_load': ('1m&nbsp;Dome', 'dupsload', '#009DDC'),
 }
 
 NETWORK = {
@@ -66,7 +68,7 @@ NETWORK = {
     'google': ('Google', 'googleping', '#009DDC'),
 }
 
-def plot_json(date=None):
+def environment_json(date=None):
     try:
         start = datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(minutes=6)
         end = start + datetime.timedelta(hours=24, minutes=6)
@@ -84,14 +86,30 @@ def plot_json(date=None):
     data.update(__sensor_json(db, 'weather_onemetre_roomalert', ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', RAINDETECTOR, start_str, end_str))
-    data.update(__sensor_json(db, 'weather_onemetre_ups', UPS, start_str, end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
+
+    return data, start_js, end_js
+
+def infrastructure_json(date=None):
+    try:
+        start = datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(minutes=6)
+        end = start + datetime.timedelta(hours=24, minutes=6)
+    except:
+        end = datetime.datetime.utcnow()
+        start = end - datetime.timedelta(hours=6, minutes=6)
+
+    start_str = start.isoformat()
+    end_str = end.isoformat()
+    start_js = int(start.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000)
+    end_js = int(end.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000)
+
+    db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
+    data = __sensor_json(db, 'weather_onemetre_ups', UPS, start_str, end_str)
     data.update(__sensor_json(db, 'weather_network', NETWORK, start_str, end_str))
 
-    print('start: ', start, start_str, start_js)
-    print('end: ', end, end_str, end_js)
     return data, start_js, end_js
+
 
 def __sensor_json(db, table, channels, start, end):
     data = {}
