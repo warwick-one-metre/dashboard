@@ -2,15 +2,21 @@
 {% set title = 'Environment' -%}
 {% set active_page = 'environment' -%}
 {% block body %}
-<div class="dashhead m-b">
-  <div class="dashhead-titles">
+
+<div class="row">
+  <div class="dashhead-titles col-md-8 col-sm-8 col-xs-7">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
     <h2 id="headerdesc" class="dashhead-subtitle">Loading...</h2>
   </div>
-  <div class="btn-toolbar dashhead-toolbar">
-    <div class="btn-toolbar-item input-with-icon">
+  <div class="col-md-4 col-sm-4 col-xs-5">
+    <div class="input-group">
+      <div class="input-group-btn">
+        <button id="prev-date" class="btn btn-default-outline"><span class="icon icon-chevron-left"></span></button>
+      </div>
       <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-clear-btn="true" data-date-start-date="2016-09-14" data-date-end-date="0d" data-date-disable-touch-keyboard="true">
-      <span class="icon icon-calendar"></span>
+      <div class="input-group-btn">
+        <button id="next-date" class="btn btn-default-outline"><span class="icon icon-chevron-right"></span></button>
+      </div>
     </div>
   </div>
 </div>

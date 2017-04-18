@@ -379,24 +379,27 @@ function setup() {
   var picker = $('#datepicker');
   var setDataSource = function() {
     // e.date is in local time, but we need UTC - fetch it directly from the picker.
-    var date = picker.datepicker('getUTCDate');
-    if (date) {
-        var month = date.getMonth() + 1;
-        if (month < 10)
-            month = '0' + month;
-
-        var day = date.getDate();
-        if (day < 10)
-            day = '0' + day;
-        dateString = date.getFullYear() + '-' + month + '-' + day;
-    }
-    else
-      dateString = null;
-
+    dateString = picker.data('datepicker').getFormattedDate('yyyy-mm-dd');
     queryData();
   }
 
   picker.datepicker().on('changeDate', setDataSource);
+
+  var incrementDate = function(increment) {
+    if (dateString) {
+      var date = new Date(dateString)
+      date.setUTCDate(date.getUTCDate() + increment);
+      picker.datepicker('setUTCDate', date);
+    } else {
+      // Change from Live to today
+      picker.datepicker('update', new Date().toISOString().substr(0, 10));
+    }
+
+    setDataSource();
+  }
+
+  $('#prev-date').click(function() { incrementDate(-1); });
+  $('#next-date').click(function() { incrementDate(+1); });
 
   init = false;
   setDataSource();
