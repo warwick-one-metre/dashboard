@@ -150,6 +150,11 @@ def nites_dome():
     account, errors = get_user_account()
     return render_template('nites/dome.html', user_account=account, errors=errors)
 
+@app.route('/goto/dome/')
+def goto_dome():
+    account, errors = get_user_account()
+    return render_template('goto/dome.html', user_account=account, errors=errors)
+
 @app.route('/environment/')
 def environment():
     account, errors = get_user_account()
