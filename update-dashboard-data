@@ -53,13 +53,13 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-public.json', [
     (observatory.daemons.onemetre_environment, 'environment', lambda d: d.dashboard_status()),
     (observatory.daemons.onemetre_operations, 'ops', lambda d: d.status()),
     (observatory.daemons.onemetre_power, 'power', lambda d: d.last_measurement()),
-    (observatory.daemons.onemetre_telescope, 'telescope', lambda d: d.report_status()),
-    (observatory.daemons.onemetre_blue_camera, 'blue', lambda d: d.report_status()),
-    (observatory.daemons.onemetre_red_camera, 'red', lambda d: d.report_status())
 ])
 
 generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
-    (observatory.daemons.onemetre_pipeline, 'pipeline', lambda d: d.report_status())
+    (observatory.daemons.onemetre_pipeline, 'pipeline', lambda d: d.report_status()),
+    (observatory.daemons.onemetre_telescope, 'telescope', lambda d: d.report_status()),
+    (observatory.daemons.onemetre_blue_camera, 'blue', lambda d: d.report_status()),
+    (observatory.daemons.onemetre_red_camera, 'red', lambda d: d.report_status())
 ])
 
 try:

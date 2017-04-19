@@ -454,7 +454,7 @@ function queryData(includeLog) {
   });
 
   if (includeLog) {
-    var logURL = '/data/obslog';
+    var logURL = '/data/onemetre/log';
     if (lastLogMessageId > 0)
       logURL += '?from=' + lastLogMessageId;
 

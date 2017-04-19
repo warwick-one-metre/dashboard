@@ -35,6 +35,7 @@ from dashboard import environment_json
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
+GENERATED_DATA_DIR = '/srv/dashboard/generated'
 ONEMETRE_GENERATED_DATA = {
     'blue': 'dashboard-BLUE.json',
     'blue/image': 'dashboard-BLUE-thumb.png',
@@ -176,7 +177,7 @@ def resources():
     return render_template('resources.html', user_account=account, errors=errors)
 
 # Dynamically generated JSON
-@app.route('/data/obslog')
+@app.route('/data/onemetre/log')
 def observatory_log():
     account, errors = get_user_account()
     if 'onemetre' in account['permissions']:
@@ -208,10 +209,10 @@ def infrastructure_data():
 
 @app.route('/data/onemetre/')
 def onemetre_dashboard_data():
-    data = json.load(open('/srv/dashboard/generated/onemetre-public.json'))
+    data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
     account, errors = get_user_account()
     if 'onemetre' in account['permissions']:
-        data.update(json.load(open('/srv/dashboard/generated/onemetre-pipeline.json')))
+        data.update(json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json')))
 
     return jsonify(**data)
 
@@ -219,17 +220,17 @@ def onemetre_dashboard_data():
 def onemetre_generated_data(path):
     account, errors = get_user_account()
     if 'onemetre' in account['permissions'] and path in ONEMETRE_GENERATED_DATA:
-        return send_from_directory('/srv/dashboard/generated', ONEMETRE_GENERATED_DATA[path])
+        return send_from_directory(GENERATED_DATA_DIR, ONEMETRE_GENERATED_DATA[path])
     abort(404)
 
 # Raw sensor data for GOTO ops
 @app.route('/data/raw/onemetre-vaisala')
 def raw_onemetre_vaisala():
-    data = json.load(open('/srv/dashboard/generated/onemetre-vaisala.json'))
+    data = json.load(open(GENERATED_DATA_DIR + '/onemetre-vaisala.json'))
     return jsonify(**data)
 
 @app.route('/data/raw/superwasp-log')
 def raw_superwasp_log():
-    data = json.load(open('/srv/dashboard/generated/superwasp-log.json'))
+    data = json.load(open(GENERATED_DATA_DIR + '/superwasp-log.json'))
     return jsonify(**data)
 

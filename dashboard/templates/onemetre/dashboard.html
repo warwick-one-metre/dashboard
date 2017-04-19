@@ -12,7 +12,7 @@
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["telescope"]' data-generator="telStatus">Tel. Status</span>
+      <span class="list-group-item" data-index='["ops", "telescope_status"]' data-generator="telStatus">Tel. Status</span>
       <span class="list-group-item" data-index='["ops", "dome_status"]' data-generator="opsDomeStatus">Dome Status</span>
     </div>
   </div>
@@ -72,6 +72,7 @@
     </div>
   </div>
 </div>
+{% if user_account != None and 'onemetre' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -104,7 +105,6 @@
     </div>
   </div>
 </div>
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-5 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -133,7 +133,7 @@
   <div class="col-md-12">
     <div class="list-group">
       <h5 class="list-group-header text-center">Authentication Required</h5>
-      <span class="list-group-item text-center">Pipeline and log information restricted to <a href="https://github.com/orgs/warwick-one-metre/teams/observers/">@warwick-one-metre/observers</a>.</span>
+      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
     </div>
   </div>
 </div>
