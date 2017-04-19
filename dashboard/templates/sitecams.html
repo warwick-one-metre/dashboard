@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 
 {% set cameras = [
-  '/webcam/ext1/static',
-  '/webcam/ext2/static',
-  'http://en.sat24.com/image?type=infraPolair&region=ce',
-  'http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg',
-  'http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png',
-  'http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg'
+  ('/webcam/ext1/static', 'http://10.2.6.201/webcam/ext1/live'),
+  ('/webcam/ext2/static', None),
+  ('http://en.sat24.com/image?type=infraPolair&region=ce', None),
+  ('http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg', None),
+  ('http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png', None),
+  ('http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg', None)
 ] -%}
 
 {% set title = 'Site Cameras' -%}
@@ -29,7 +29,7 @@
 {% for cam in cameras %}
   <div class="col-md-2 col-xs-4 m-b">
     <a class="btn list-group list-group-item thumb-panel" onclick="selectCamera(this);">
-      <img src="{{ cam }}" data-url="{{ cam }}" height="100%">
+      <img src="{{ cam[0] }}" data-url="{{ cam[0] }}" {% if cam[1] != None %} data-liveurl="{{ cam[1] }}"{% endif %}height="100%">
     </a>
   </div>
 {% endfor %}
@@ -38,23 +38,53 @@
 <div class="row">
   <div class="col-md-12 panel">
     <div class="list-group list-group-item" style="padding:0">
-      <img id="main" src="{{ cameras[0] }}" data-url="{{ cameras[0] }}" width="100%">
+      <img id="main" src="{{ cameras[0][0] }}" data-url="{{ cameras[0][0] }}" width="100%">
+      <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
+        <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px; display: none;"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+var videoPlaying = undefined;
 function selectCamera(element) {
-  var url = $(element).children('img').data('url');
+  var img = $(element).children('img');
+  var url = img.data('url');
+  var liveurl = img.data('liveurl');
   var main = $('#main');
   main.attr('src', url);
   main.data('url', url);
+
+  if (liveurl) {
+    $('#video-button').show();
+    $('#video-button').click(function() {
+      if (videoPlaying) {
+        $('#video-button-text').html('Play');
+        main.attr('src', url + '?' + Date.now());
+        videoPlaying = undefined;
+      } else {
+        $('#video-button-text').html('Stop');
+        main.attr('src', liveurl +'?' + Date.now());
+        videoPlaying = liveurl;
+      }
+    })
+  } else {
+    $('#video-button').hide();
+  }
 }
 
 function reloadImages() {
   $('img').each(function() {
     var url = $(this).data('url');
-    if (url) {
+
+    // Only refresh webcam thumbs
+    if (!url)
+      return;
+
+    // Don't refresh live images
+    var liveurl = $(this).data('liveurl');
+    if (!liveurl || videoPlaying != liveurl) {
       var sep = url.indexOf('?') < 0 ? '?' : '&';
       $(this).attr('src', url + sep + Date.now());
     }
@@ -62,7 +92,10 @@ function reloadImages() {
 }
 
 $(document).ready(function () {
-  window.setInterval(reloadImages, 30000)
+  window.setInterval(reloadImages, 30000);
+
+  // Select first image
+  selectCamera($(".thumb-panel").first());
 });
 </script>
 {% endblock %}
