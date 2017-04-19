@@ -15,104 +15,65 @@
 # You should have received a copy of the GNU General Public License
 # along with environmentd.  If not, see <http://www.gnu.org/licenses/>.
 
+# pylint: disable=broad-except
+# pylint: disable=invalid-name
+
+"""Run from a systemd timer to generate status json that is served by the web dashboard"""
+
 import datetime
 import json
 import os
-import time
-import Pyro4
 import warwick.observatory as observatory
 
-# Public data
-output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
-try:
-    with observatory.daemons.onemetre_environment.connect() as environment:
-        output['environment'] = environment.dashboard_status()
-except Exception as e:
-    print('failed to query environment with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query environmentd (' + str(e) + ')')
-    pass
+BASE_OUTPUT_DIR = '/srv/dashboard/generated'
+
+def generate_json(output_path, data):
+    """Queries a set of daemons and stores the save a json file to the specified path"""
+    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
+    for daemon, key, query in data:
+        try:
+            with daemon.connect() as d:
+                if len(data) == 1:
+                    output = query(d)
+                else:
+                    output[key] = query(d)
+        except Exception as e:
+            print('failed to query ' + key + ' with error: ' + str(e))
+            observatory.log.error('dashboardd', 'Failed to query ' + key + ' (' + str(e) + ')')
+
+    try:
+        with open(output_path, 'w') as output_file:
+            json.dump(output, output_file, sort_keys=True)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        observatory.log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+# One metre dashboard pages
+generate_json(BASE_OUTPUT_DIR + '/onemetre-public.json', [
+    (observatory.daemons.onemetre_environment, 'environment', lambda d: d.dashboard_status()),
+    (observatory.daemons.onemetre_operations, 'ops', lambda d: d.status()),
+    (observatory.daemons.onemetre_power, 'power', lambda d: d.last_measurement()),
+    (observatory.daemons.onemetre_telescope, 'telescope', lambda d: d.report_status()),
+    (observatory.daemons.onemetre_blue_camera, 'blue', lambda d: d.report_status()),
+    (observatory.daemons.onemetre_red_camera, 'red', lambda d: d.report_status())
+])
+
+generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
+    (observatory.daemons.onemetre_pipeline, 'pipeline', lambda d: d.report_status())
+])
 
 try:
-    with observatory.daemons.onemetre_telescope.connect() as tel:
-        output['telescope'] = tel.report_status()
-except Exception as e:
-    print('failed to query telescope with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query teld (' + str(e) + ')')
-    pass
-
-try:
-    with observatory.daemons.onemetre_blue_camera.connect() as blue:
-        output['blue'] = blue.report_status()
-except Exception as e:
-    print('failed to query blue camera with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query blue_camd (' + str(e) + ')')
-    pass
-
-try:
-    with observatory.daemons.onemetre_red_camera.connect() as red:
-        output['red'] = red.report_status()
-except Exception as e:
-    print('failed to query red camera with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query red_camd (' + str(e) + ')')
-    pass
-
-try:
-    with observatory.daemons.onemetre_operations.connect() as ops:
-        output['ops'] = ops.status()
-except Exception as e:
-    print('failed to query operations with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query opsd (' + str(e) + ')')
-    pass
-
-try:
-    with observatory.daemons.onemetre_power.connect() as power:
-        output['power'] = power.last_measurement()
-except Exception as e:
-    print('failed to query power with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query powerd (' + str(e) + ')')
-    pass
-
-try:
-    with open('/srv/dashboard/generated/onemetre-public.json', 'w') as outfile:
-        json.dump(output, outfile)
-except Exception as e:
-    print('failed to write json with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
-
-# Raw device data for GOTO ops
-try:
-    with observatory.daemons.onemetre_vaisala.connect() as vaisala:
-        with open('/srv/dashboard/generated/onemetre-vaisala.json', 'w') as outfile:
-            json.dump(vaisala.last_measurement(), outfile)
-except Exception as e:
-    print('failed to query vaisalad with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query vaisalad (' + str(e) + ')')
-    pass
-
-try:
-    with observatory.daemons.superwasp_log.connect() as superwasp:
-        with open('/srv/dashboard/generated/superwasp-log.json', 'w') as outfile:
-            json.dump(superwasp.last_measurement(), outfile)
-except Exception as e:
-    print('failed to query superwaspd with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query superwaspd (' + str(e) + ')')
-    pass
-
-# Private data (requires auth from the web frontend)
-try:
-    private = {}
-    with observatory.daemons.onemetre_pipeline.connect() as pipeline:
-        private['pipeline'] = pipeline.report_status()
-    with open('/srv/dashboard/generated/onemetre-pipeline.json', 'w') as outfile:
-        json.dump(private, outfile)
-except Exception as e:
-    print('failed to query pipeline with error: ' + str(e))
-    observatory.log.error('dashboardd', 'Failed to query pipelined (' + str(e) + ')')
-    pass
-
-try:
-    os.system('rsync -u 10.2.6.203:/var/tmp/dashboard-* /srv/dashboard/generated/')
+    pipeline_host = observatory.daemons.onemetre_pipeline.host
+    os.system('rsync -u ' + pipeline_host + ':/var/tmp/dashboard-* ' + BASE_OUTPUT_DIR)
 except Exception as e:
     print('failed to rsync camera data with error: ' + str(e))
     observatory.log.error('dashboardd', 'Failed to rsync camera data (' + str(e) + ')')
 
+# Raw data for GOTO operations
+generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
+    (observatory.daemons.onemetre_vaisala, 'vaisala', lambda d: d.last_measurement())
+])
+
+generate_json(BASE_OUTPUT_DIR + '/superwasp-log.json', [
+    (observatory.daemons.superwasp_log, 'superwasp', lambda d: d.last_measurement())
+])
