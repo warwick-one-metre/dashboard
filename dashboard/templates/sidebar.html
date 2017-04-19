@@ -1,16 +1,17 @@
 {% set categories = [
   ('Observatory', [
-    (url_for('environment'), 'environment', 'Environment', 'icon-cloud'),
-    (url_for('infrastructure'), 'infrastructure', 'Infrastructure', 'icon-home'),
-    (url_for('sitecams'), 'sitecams', 'Site Cameras', 'icon-video-camera'),
-    (url_for('resources'), 'resources', 'Resources', 'icon-info'),
+    (url_for('environment'), 'environment', 'Environment', 'icon-cloud', None),
+    (url_for('infrastructure'), 'infrastructure', 'Infrastructure', 'icon-home', None),
+    (url_for('sitecams'), 'sitecams', 'Site Cameras', 'icon-video-camera', None)
   ]),
   ('One Metre', [
-    (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard', 'icon-menu'),
-    (url_for('onemetre_live'), 'onemetre-live', 'Live Data', 'icon-stopwatch'),
-    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera', 'icon-video-camera')]),
-  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera', 'icon-video-camera')]),
-  ('GOTO', [(url_for('goto_dome'), 'goto-dome', 'Dome Camera', 'icon-video-camera')]),
+    (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard', 'icon-menu', None),
+    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera', 'icon-video-camera', None),
+    (url_for('onemetre_live'), 'onemetre-live', 'Live Data', 'icon-stopwatch', 'onemetre'),
+    (url_for('onemetre_resources'), 'onemetre-resources', 'Resources', 'icon-info', 'onemetre')
+  ]),
+  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera', 'icon-video-camera', None)]),
+  ('GOTO', [(url_for('goto_dome'), 'goto-dome', 'Dome Camera', 'icon-video-camera', None)]),
 ] %}
 
 {% set permissions = {
@@ -28,11 +29,13 @@
     <ul class="nav nav-pills nav-stacked m-b">
       {% for title, links in categories %}
       <li class="nav-header">{{ title|e }}</li>
-      {% for href, id, caption, icon in links %}
+      {% for href, id, caption, icon, permission in links %}
+      {% if not permission or permission in user_account['permissions'] %}
       <li{% if id == active_page %} class="active"{% endif %}>
         <a class="hidden-sm" href="{{ href|e }}">{% if icon %}<span class="icon {{ icon }}" style="margin-right: 10px"></span>{% endif %}{{ caption|e }}</a>
         <a class="visible-sm" href="{{ href|e }}" style="font-size: 0.75em">{% if icon %}<span class="icon {{ icon }}" style="margin-right: 5px"></span>{% endif %}{{ caption|e }}</a>
       </li>
+      {% endif %}
       {% endfor %}
       {% endfor %}
     </ul>

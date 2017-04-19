@@ -17,7 +17,7 @@ a:hover .overlaybutton {
     <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
+
 <div class="row">
   <div class="col-md-6">
     <div class="list-group list-group-item panel" style="padding:0">
@@ -46,14 +46,5 @@ a:hover .overlaybutton {
 </div>
 
 <script src="{{ url_for('static', filename='onemetre-reduction.js') }}"></script>
-{% else %}
-<div class="row">
-  <div class="col-md-12">
-    <div class="list-group m-b">
-      <h5 class="list-group-header text-center">Authentication Required</h5>
-      <span class="list-group-item text-center">Content restricted to <a href="https://github.com/orgs/warwick-one-metre/teams/observers/">@warwick-one-metre/observers</a>.</span>
-    </div>
-  </div>
-</div>
-{% endif %}
+
 {% endblock %}

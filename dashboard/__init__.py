@@ -139,12 +139,21 @@ def onemetre_dashboard():
 @app.route('/onemetre/live/')
 def onemetre_live():
     account, errors = get_user_account()
-    return render_template('onemetre/live.html', user_account=account, errors=errors)
+    if 'onemetre' in account['permissions']:
+        return render_template('onemetre/live.html', user_account=account, errors=errors)
+    abort(404)
 
 @app.route('/onemetre/dome/')
 def onemetre_dome():
     account, errors = get_user_account()
     return render_template('onemetre/dome.html', user_account=account, errors=errors)
+
+@app.route('/onemetre/resources/')
+def onemetre_resources():
+    account, errors = get_user_account()
+    if 'onemetre' in account['permissions']:
+        return render_template('onemetre/resources.html', user_account=account, errors=errors)
+    abort(404)
 
 @app.route('/nites/dome/')
 def nites_dome():
@@ -170,11 +179,6 @@ def infrastructure():
 def sitecams():
     account, errors = get_user_account()
     return render_template('sitecams.html', user_account=account, errors=errors)
-
-@app.route('/resources/')
-def resources():
-    account, errors = get_user_account()
-    return render_template('resources.html', user_account=account, errors=errors)
 
 # Dynamically generated JSON
 @app.route('/data/onemetre/log')
