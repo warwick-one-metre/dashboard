@@ -110,7 +110,6 @@ def infrastructure_json(date=None):
 
     return data, start_js, end_js
 
-
 def __sensor_json(db, table, channels, start, end):
     data = {}
 
@@ -124,11 +123,23 @@ def __sensor_json(db, table, channels, start, end):
                 + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
                 + db.escape(end) + ' ORDER BY `date` DESC;'
             cur.execute(query)
-            c['data'] = [(int(x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000), x[1]) for x in cur]
 
-            values = [v[1] for v in c['data']]
-            c['max'] = max(values) if len(values) > 0 else 0
-            c['min'] = min(values) if len(values) > 0 else 0
+            # Times are enumerated in reverse order
+            next_time = None
+            c['data'] = []
+            c['max'] = c['min'] = 0
+            for x in cur:
+                time = x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+
+                c['max'] = max(c['max'], x[1])
+                c['min'] = max(c['min'], x[1])
+
+                # Insert a break in the plot line if there is > 6 minutes between points
+                if next_time is not None and next_time - time > 360000:
+                    c['data'].append(None)
+
+                c['data'].append((int(time), x[1]))
+                next_time = time
 
         data[value[1]] = c
     return data
@@ -144,11 +155,23 @@ def __vaisala_json(db, start, end):
                 + key + '_valid` = 1 AND `date` > ' + db.escape(start) + ' AND `date` <= ' \
                 + db.escape(end) + ' ORDER BY `date` DESC;'
             cur.execute(query)
-            c['data'] = [(int(x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000), x[1]) for x in cur]
 
-            values = [v[1] for v in c['data']]
-            c['max'] = max(values) if len(values) > 0 else 0
-            c['min'] = min(values) if len(values) > 0 else 0
+            # Times are enumerated in reverse order
+            next_time = None
+            c['data'] = []
+            c['max'] = c['min'] = 0
+            for x in cur:
+                time = x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+
+                c['max'] = max(c['max'], x[1])
+                c['min'] = max(c['min'], x[1])
+
+                # Insert a break in the plot line if there is > 6 minutes between points
+                if next_time is not None and next_time - time > 360000:
+                    c['data'].append(None)
+
+                c['data'].append((int(time), x[1]))
+                next_time = time
 
         channels[value[1]] = c
     return channels

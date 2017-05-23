@@ -116,7 +116,7 @@ function setHoverXPosition(plot, offsetX) {
 
     var j = 0;
     for (; j < series.data.length; j++)
-      if (series.data[j][0] < x)
+      if (series.data[j] !== null && series.data[j][0] < x)
         break;
 
     var p1 = series.data[j - 1];
@@ -157,7 +157,17 @@ function redrawWindPlot() {
   var plot = $(this);
   var speeds = [data.data.vwindspeed, data.data.swwindspeed];
 
-  var getMaxSpeed = function(a,b) { return Math.max(a, b[1]); };
+  var getMaxSpeed = function(a,b) {
+    if (a === null && b === null)
+      return 0;
+    else if (a === null)
+      return b;
+    else if (b === null)
+      return a;
+
+    return Math.max(a, b[1]);
+  };
+
   var maxVaisala = data.data.vwindspeed.data.reduce(getMaxSpeed, 0);
   var maxSWASP = data.data.vwindspeed.data.reduce(getMaxSpeed, 0);
   var maxRadius = 1.1 * Math.max(maxVaisala, maxSWASP, 15 / 1.1);
@@ -247,6 +257,9 @@ function redrawWindPlot() {
       ctx.fillStyle = series[i].color;
 
       for (var j = dir.data.length - 1; j >= 0; j--) {
+        if (speed.data[j] === null)
+          continue;
+
         var dy = speed.data[j][1] * Math.cos(dir.data[j][1] * Math.PI / 180);
         var dx = speed.data[j][1] * Math.sin(dir.data[j][1] * Math.PI / 180);
         var x = offset.left + axes.xaxis.p2c(xScale * dx);
