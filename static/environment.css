@@ -60,5 +60,5 @@
 #main-ups-battery-container, #main-ups-load-container, #dome-ups-battery-container { height: 60px; }
 #dome-ups-load-container { height: 95px; }
 #main-ups-load-container, #dome-ups-battery-container, #dome-ups-load-container { margin-top: -5px; }
-#network-container { height: 147px; margin-top: 0px; }
-
+#network-local-container { height: 115px; margin-top: 0px; }
+#network-external-container { height: 150px; margin-top: -5px; }

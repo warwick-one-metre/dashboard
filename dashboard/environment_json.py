@@ -12,13 +12,18 @@
 # You should have received a copy of the GNU General Public License
 # along with onemetre-dashboard.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Helper functions for querying data for the Environment and Infrastructure graphs"""
+
+# pylint: disable=invalid-name
+# pylint: disable=broad-except
+
 import datetime
 import pymysql
 
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
-VAISALA = {
+ONEMETRE_VAISALA = {
     'temperature': ('N<sub>2</sub>&nbsp;Plant', 'vexttemp', '#009DDC'),
     'relative_humidity': ('N<sub>2</sub>&nbsp;Plant', 'vexthumid', '#009DDC'),
     'wind_direction': ('N<sub>2</sub>&nbsp;Plant', 'vwinddir', '#009DDC'),
@@ -52,7 +57,7 @@ SUPERWASP = {
     'dew_point_delta': ('SWASP', 'swdewdelta', '#F26430'),
 }
 
-RAINDETECTOR = {
+ONEMETRE_RAINDETECTOR = {
     'unsafe_boards': ('1m&nbsp;(Triggered&nbsp;boards)', 'rdboards', '#FDE74C')
 }
 
@@ -64,15 +69,27 @@ UPS = {
 }
 
 NETWORK = {
-    'ngtshead': ('Warwick', 'ngtsping', '#FDE74C'),
-    'google': ('Google', 'googleping', '#009DDC'),
+    'ngtshead': ('Warwick', 'pingngts', '#FDE74C'),
+    'google': ('Google', 'pinggoogle', '#009DDC'),
+    'onemetre': ('1m', 'pingint1m', '#009DDC'),
+    'goto': ('GOTO', 'pingintgoto', '#22CC44'),
+    'nites': ('NITES', 'pingintnites', '#DE0D92'),
+    'swasp': ('SWASP', 'pingintswasp', '#F26430'),
+    'swasp_gateway': ('WHT', 'pingintwht', '#CC0000'),
 }
 
 def environment_json(date=None):
+    """Queries the data to be rendered on the "Environment" dashboard page
+       If date is specified, returns data for the specified full day (UTC times)
+       If date is not specified, returns data for the last 6 hours.
+
+       Returns a tuple of (<dictionary of flot-compatible series data>,
+       <js timestamp for the series-start time>, <js timestamp for the series-end time>)
+    """
     try:
         start = datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(minutes=6)
         end = start + datetime.timedelta(hours=24, minutes=6)
-    except:
+    except Exception:
         end = datetime.datetime.utcnow()
         start = end - datetime.timedelta(hours=6, minutes=6)
 
@@ -82,20 +99,28 @@ def environment_json(date=None):
     end_js = int(end.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000)
 
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
-    data = __vaisala_json(db, start_str, end_str)
+    data = __vaisala_json(db, 'weather_onemetre_vaisala', ONEMETRE_VAISALA, start_str, end_str)
     data.update(__sensor_json(db, 'weather_onemetre_roomalert', ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
-    data.update(__sensor_json(db, 'weather_onemetre_raindetector', RAINDETECTOR, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_onemetre_raindetector', ONEMETRE_RAINDETECTOR, start_str,
+                              end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
 
     return data, start_js, end_js
 
 def infrastructure_json(date=None):
+    """Queries the data to be rendered on the "Infrastructure" dashboard page
+       If date is specified, returns data for the specified full day (UTC times)
+       If date is not specified, returns data for the last 6 hours.
+
+       Returns a tuple of (<dictionary of flot-compatible series data>,
+       <js timestamp for the series-start time>, <js timestamp for the series-end time>)
+    """
     try:
         start = datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(minutes=6)
         end = start + datetime.timedelta(hours=24, minutes=6)
-    except:
+    except Exception:
         end = datetime.datetime.utcnow()
         start = end - datetime.timedelta(hours=6, minutes=6)
 
@@ -106,72 +131,80 @@ def infrastructure_json(date=None):
 
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
     data = __sensor_json(db, 'weather_onemetre_ups', UPS, start_str, end_str)
-    data.update(__sensor_json(db, 'weather_network', NETWORK, start_str, end_str))
+    data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
 
     return data, start_js, end_js
 
+def __query_table(db, query, valid_filter=None):
+    """Queries data for a plot series from the database, optionally applying a valid data filter"""
+    with db.cursor() as cur:
+        cur.execute(query)
+
+        # Times are enumerated in reverse order
+        next_time = None
+        c = {}
+        c['data'] = []
+        c['max'] = c['min'] = 0
+        for x in cur:
+            time = x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+
+            c['max'] = max(c['max'], x[1])
+            c['min'] = max(c['min'], x[1])
+
+            # Insert a break in the plot line if there is > 6 minutes between points
+            if next_time is not None and next_time - time > 360000:
+                c['data'].append(None)
+
+            if valid_filter and not valid_filter(time, x[1]):
+                c['data'].append(None)
+            else:
+                c['data'].append((int(time), x[1]))
+            next_time = time
+        return c
+
 def __sensor_json(db, table, channels, start, end):
+    """Queries data for an general-case sensor"""
     data = {}
 
     for key in channels:
         value = channels[key]
         c = {'label': value[0], 'color': value[2]}
 
-        # TODO:do this in one query
-        with db.cursor() as cur:
-            query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
-                + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
-                + db.escape(end) + ' ORDER BY `date` DESC;'
-            cur.execute(query)
+        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
+            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
+            + db.escape(end) + ' ORDER BY `date` DESC;'
 
-            # Times are enumerated in reverse order
-            next_time = None
-            c['data'] = []
-            c['max'] = c['min'] = 0
-            for x in cur:
-                time = x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
-
-                c['max'] = max(c['max'], x[1])
-                c['min'] = max(c['min'], x[1])
-
-                # Insert a break in the plot line if there is > 6 minutes between points
-                if next_time is not None and next_time - time > 360000:
-                    c['data'].append(None)
-
-                c['data'].append((int(time), x[1]))
-                next_time = time
-
+        c.update(__query_table(db, query))
         data[value[1]] = c
     return data
 
-def __vaisala_json(db, start, end):
-    channels = {}
-    for key in VAISALA:
-        value = VAISALA[key]
+def __ping_json(db, table, channels, start, end):
+    """Queries data for the network ping graph, applying the -1 = invalid point filter"""
+    data = {}
+
+    for key in channels:
+        value = channels[key]
         c = {'label': value[0], 'color': value[2]}
 
-        with db.cursor() as cur:
-            query = 'SELECT `date`, `' + key + '` from `weather_onemetre_vaisala` WHERE `' \
-                + key + '_valid` = 1 AND `date` > ' + db.escape(start) + ' AND `date` <= ' \
-                + db.escape(end) + ' ORDER BY `date` DESC;'
-            cur.execute(query)
+        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
+            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
+            + db.escape(end) + ' ORDER BY `date` DESC;'
 
-            # Times are enumerated in reverse order
-            next_time = None
-            c['data'] = []
-            c['max'] = c['min'] = 0
-            for x in cur:
-                time = x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+        c.update(__query_table(db, query, lambda time, ping: ping >= 0))
+        data[value[1]] = c
+    return data
 
-                c['max'] = max(c['max'], x[1])
-                c['min'] = max(c['min'], x[1])
+def __vaisala_json(db, table, channels, start, end):
+    """Queries data for the vaisala graphs, applying the _valid == 0 = invalid point filter"""
+    data = {}
+    for key in channels:
+        value = channels[key]
+        c = {'label': value[0], 'color': value[2]}
 
-                # Insert a break in the plot line if there is > 6 minutes between points
-                if next_time is not None and next_time - time > 360000:
-                    c['data'].append(None)
+        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE `' \
+            + key + '_valid` = 1 AND `date` > ' + db.escape(start) + ' AND `date` <= ' \
+            + db.escape(end) + ' ORDER BY `date` DESC;'
 
-                c['data'].append((int(time), x[1]))
-                next_time = time
-
-        channels[value[1]] = c
-    return channels
+        c.update(__query_table(db, query))
+        data[value[1]] = c
+    return data
