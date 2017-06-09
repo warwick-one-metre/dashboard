@@ -61,11 +61,14 @@ ONEMETRE_RAINDETECTOR = {
     'unsafe_boards': ('1m&nbsp;(Triggered&nbsp;boards)', 'rdboards', '#FDE74C')
 }
 
-UPS = {
+ONEMETRE_UPS = {
     'main_ups_battery_remaining': ('1m&nbsp;Main', 'mupsbat', '#FDE74C'),
     'dome_ups_battery_remaining': ('1m&nbsp;Dome', 'dupsbat', '#009DDC'),
-    'main_ups_load': ('1m&nbsp;Main', 'mupsload', '#FDE74C'),
-    'dome_ups_load': ('1m&nbsp;Dome', 'dupsload', '#009DDC'),
+}
+
+GOTO_UPS = {
+    'main_ups_battery_remaining': ('GOTO&nbsp;Main', 'goto-mupsbat', '#22CC44'),
+    'dome_ups_battery_remaining': ('GOTO&nbsp;Dome', 'goto-dupsbat', '#CC0000'),
 }
 
 NETWORK = {
@@ -130,7 +133,8 @@ def infrastructure_json(date=None):
     end_js = int(end.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000)
 
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
-    data = __sensor_json(db, 'weather_onemetre_ups', UPS, start_str, end_str)
+    data = __sensor_json(db, 'weather_onemetre_ups', ONEMETRE_UPS, start_str, end_str)
+    data.update(__sensor_json(db, 'weather_goto_ups', GOTO_UPS, start_str, end_str))
     data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
 
     return data, start_js, end_js

@@ -57,8 +57,8 @@
 #raindetector-container { height: 63px; }
 #vaisala-rain-container { height: 97px; }
 
-#main-ups-battery-container, #main-ups-load-container, #dome-ups-battery-container { height: 60px; }
-#dome-ups-load-container { height: 95px; }
-#main-ups-load-container, #dome-ups-battery-container, #dome-ups-load-container { margin-top: -5px; }
+#main-ups-battery-container, #goto-main-ups-battery-container, #dome-ups-battery-container { height: 60px; }
+#goto-dome-ups-battery-container { height: 95px; }
+#main-ups-load-container, #dome-ups-battery-container, #goto-main-ups-battery-container { margin-top: -5px; }
 #network-internal-container { height: 115px; margin-top: 0px; }
 #network-external-container { height: 150px; margin-top: -5px; }

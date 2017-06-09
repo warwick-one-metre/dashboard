@@ -23,16 +23,16 @@
 <div class="row">
   <div class="col-md-6" style="padding: 0; margin: 0">
     <div id="main-ups-battery-container" class="plot-container">
-      <div id="main-ups-battery-plot" data-linkedplots='["dome-ups-battery-plot", "main-ups-load-plot", "dome-ups-load-plot"]' class="weather-plot" data-series='["mupsbat"]' data-axislabel='UPS Battery (%)' data-labelfudge="19" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+      <div id="main-ups-battery-plot" data-linkedplots='["dome-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["mupsbat"]' data-axislabel='UPS Battery (%)' data-labelfudge="74" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="dome-ups-battery-container" class="plot-container">
-      <div id="dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "main-ups-load-plot", "dome-ups-load-plot"]' class="weather-plot" data-series='["dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+      <div id="dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
-    <div id="main-ups-load-container" class="plot-container">
-      <div id="main-ups-load-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "dome-ups-load-plot"]' class="weather-plot" data-series='["mupsload"]' data-axislabel='UPS Load (%)' data-labelfudge="19" data-min="0" data-labelunits='%' data-hidetime></div>
+    <div id="goto-main-ups-battery-container" class="plot-container">
+      <div id="goto-main-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["goto-mupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
-    <div id="dome-ups-load-container" class="plot-container">
-      <div id="dome-ups-load-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "main-ups-load-plot"]' class="weather-plot" data-series='["dupsload"]' data-axislabel="&nbsp;" data-min="0" data-labelunits='%'></div>
+    <div id="goto-dome-ups-battery-container" class="plot-container">
+      <div id="goto-dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "goto-main-ups-battery-plot"]' class="weather-plot" data-series='["goto-dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%'></div>
     </div>
   </div>
   <div class="col-md-6" style="padding: 0; margin: 0" id="right-container">
