@@ -48,30 +48,41 @@
 
 <script>
 var videoPlaying = undefined;
+
+function viewLive(url) {
+  $('#video-button-text').html('Stop');
+  $('#main').attr('src', url +'?' + Date.now());
+  videoPlaying = url;
+}
+
+function viewStatic(url) {
+  $('#video-button-text').html('Play');
+  $('#main').attr('src', url + '?' + Date.now());
+  videoPlaying = undefined;
+}
+
 function selectCamera(element) {
   var img = $(element).children('img');
   var url = img.data('url');
   var liveurl = img.data('liveurl');
   var main = $('#main');
-  main.attr('src', url);
+  var video = $('#video-button');
+
   main.data('url', url);
+  main.data('liveurl', liveurl);
+  viewStatic(url);
 
   if (liveurl) {
-    $('#video-button').show();
-    $('#video-button').click(function() {
-      if (videoPlaying) {
-        $('#video-button-text').html('Play');
-        main.attr('src', url + '?' + Date.now());
-        videoPlaying = undefined;
-      } else {
-        $('#video-button-text').html('Stop');
-        main.attr('src', liveurl +'?' + Date.now());
-        videoPlaying = liveurl;
-      }
-    })
-  } else {
-    $('#video-button').hide();
-  }
+    video.show();
+    video.unbind();
+    video.click(function() {
+      if (videoPlaying)
+        viewStatic(url);
+      else
+        viewLive(liveurl);
+    });
+  } else
+    video.hide();
 }
 
 function reloadImages() {
@@ -83,8 +94,7 @@ function reloadImages() {
       return;
 
     // Don't refresh live images
-    var liveurl = $(this).data('liveurl');
-    if (!liveurl || videoPlaying != liveurl) {
+    if ($(this).attr('id') != 'main' || !videoPlaying) {
       var sep = url.indexOf('?') < 0 ? '?' : '&';
       $(this).attr('src', url + sep + Date.now());
     }
