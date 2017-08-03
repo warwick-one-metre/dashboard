@@ -368,6 +368,9 @@ function envLatestMinMax(row, cell, data) {
       display += units;
     cell.html(display);
     cell.addClass(fieldLimitsColor(data, data['latest']));
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
   }
 
   if ('max' in data && 'min' in data) {
