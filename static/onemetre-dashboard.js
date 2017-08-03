@@ -312,15 +312,26 @@ function fieldLimitsColor(field, value) {
 }
 
 function switchClosedOpen(row, cell, data) {
-  cell.html(data ? 'CLOSED' : 'OPEN');
+  if ('latest' in data)
+    cell.html(data['latest'] ? 'CLOSED' : 'OPEN');
+  else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
 }
 
 function switchSafeTripped(row, cell, data) {
-  if (data) {
-    cell.html('SAFE');
-    cell.addClass('text-success');
-  } else {
-    cell.html('TRIPPED');
+  if ('latest' in data) {
+    if (data['latest']) {
+      cell.html('SAFE');
+      cell.addClass('text-success');
+    } else {
+      cell.html('TRIPPED');
+      cell.addClass('text-danger');
+    }
+  }
+  else {
+    cell.html('NO DATA');
     cell.addClass('text-danger');
   }
 }
