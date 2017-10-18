@@ -6,7 +6,7 @@ RPMBUILD = rpmbuild --define "_topdir %(pwd)/build" \
 
 all:
 	mkdir -p build
-	${RPMBUILD} -ba dashboard.spec
+	${RPMBUILD} -ba observatory-dashboard.spec
 	mv build/noarch/*.rpm .
 	rm -rf build
 

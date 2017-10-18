@@ -3,7 +3,7 @@ Description=uWSGI instance to serve the web dashboard
 After=network.target
 
 [Service]
-User=ops
+User=nginx
 Group=nginx
 WorkingDirectory=/srv/dashboard
 ExecStart=/usr/sbin/uwsgi --ini /srv/dashboard/dashboard.ini
