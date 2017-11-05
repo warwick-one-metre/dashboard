@@ -41,6 +41,13 @@ They can then be started immediately (without waiting for a reboot) using:
 sudo systemctl start nginx uwsgi dashboard update-dashboard-data
 ```
 
+Finally, allow access through the firewall:
+```
+sudo firewall-cmd --permanent --zone=public --add-service=http
+sudo firewall-cmd --permanent --zone=public --add-service=https
+sudo firewall-cmd --reload
+```
+
 The nginx configuration (`dashboard.conf`) explicitly defines the IP of the hosting machine (currently `10.2.6.100`).
 If the machine/ip changes then this should be updated to match.
 
