@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   2.0.4
+Version:   2.0.5
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
@@ -7,11 +7,11 @@ License:   GPL-3.0
 Group:     Unspecified
 BuildArch: noarch
 %if 0%{?suse_version}
-Requires:  nginx, python3, observatory-log-server, observatory-weather-database-updater, python34-Pyro4, python3-Flask, python3-Flask-OAuthlib, python34-PyMySQL, uwsgi, uwsgi-python3, mariadb, %{?systemd_requires}
+Requires:  nginx, python3, observatory-log-server, observatory-weather-database-updater, python34-Pyro4, python3-Flask, python3-Flask-OAuthlib, python34-PyMySQL, uwsgi, uwsgi-python3, mariadb, rsync, %{?systemd_requires}
 BuildRequires: systemd-rpm-macros
 %endif
 %if 0%{?centos_ver}
-Requires:  nginx, python34, observatory-log-server, observatory-weather-database-updater, python34-Pyro4, python34-Flask, python34-Flask-OAuthlib, python34-PyMySQL, uwsgi, uwsgi-plugin-python3, uwsgi-logger-file, mariadb-server, %{?systemd_requires}
+Requires:  nginx, python34, observatory-log-server, observatory-weather-database-updater, python34-Pyro4, python34-Flask, python34-Flask-OAuthlib, python34-PyMySQL, uwsgi, uwsgi-plugin-python3, uwsgi-logger-file, mariadb-server, rsync, %{?systemd_requires}
 %endif
 
 %description
