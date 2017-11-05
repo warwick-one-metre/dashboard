@@ -3,7 +3,7 @@ Description=Polls observatory systems and updates the cached dashboard json file
 Wants=update-dashboard-data.timer
 
 [Service]
-User=ops
+User=nginx
 Group=nginx
 ExecStart=/usr/bin/update-dashboard-data
 
