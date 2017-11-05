@@ -75,5 +75,5 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
 ])
 
 generate_json(BASE_OUTPUT_DIR + '/superwasp-log.json', [
-    (observatory.daemons.superwasp_log, 'superwasp', lambda d: d.last_measurement())
+    (daemons.superwasp_log, 'superwasp', lambda d: d.last_measurement())
 ])
