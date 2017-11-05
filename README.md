@@ -41,11 +41,19 @@ They can then be started immediately (without waiting for a reboot) using:
 sudo systemctl start nginx uwsgi dashboard update-dashboard-data
 ```
 
-Finally, allow access through the firewall:
+Next, allow access through the firewall:
 ```
 sudo firewall-cmd --permanent --zone=public --add-service=http
 sudo firewall-cmd --permanent --zone=public --add-service=https
 sudo firewall-cmd --reload
+```
+
+We then need to convince SELinux to let nginx talk to the dashboard:
+
+```
+sudo yum install policycoreutils-python
+sudo semanage fcontext -at httpd_sys_rw_content_t "/srv/dashboard(/.*)?"
+sudo restorecon -Rv /srv/dashboard
 ```
 
 The nginx configuration (`dashboard.conf`) explicitly defines the IP of the hosting machine (currently `10.2.6.100`).
@@ -54,3 +62,4 @@ If the machine/ip changes then this should be updated to match.
 The GitHub team IDs used to determine permissions are set in the `get_user_account` function in `dashboard/__init__.py`.
 The IDs can be queried from the GitHub API with `curl -H "Authorization: token <personal access token>" https://api.github.com/orgs/warwick-one-metre/teams`.  The `<personal access token>` can be generated from your GitHub settings, and should have at least the `repo` scope.
 
+The dashboard URL is also set in the "Authorization callback URL" in the GitHub settings.  If the dashboard is moved then this should be updated to match.
