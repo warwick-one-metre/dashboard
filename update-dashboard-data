@@ -25,6 +25,7 @@ import json
 import os
 from warwick.observatory.common import daemons, log
 
+# This directory must be shared with the TCS via NFS
 BASE_OUTPUT_DIR = '/srv/dashboard/generated'
 
 def generate_json(output_path, data):
@@ -61,13 +62,6 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
     (daemons.onemetre_blue_camera, 'blue', lambda d: d.report_status()),
     (daemons.onemetre_red_camera, 'red', lambda d: d.report_status())
 ])
-
-try:
-    pipeline_host = daemons.onemetre_pipeline.host
-    os.system('rsync -u ' + pipeline_host + ':/var/tmp/dashboard-* ' + BASE_OUTPUT_DIR)
-except Exception as e:
-    print('failed to rsync camera data with error: ' + str(e))
-    log.error('dashboardd', 'Failed to rsync camera data (' + str(e) + ')')
 
 # Raw data for GOTO operations
 generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [

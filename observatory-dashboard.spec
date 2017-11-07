@@ -1,12 +1,12 @@
 Name:      observatory-dashboard
-Version:   2.0.5
+Version:   2.0.6
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
 License:   GPL-3.0
 Group:     Unspecified
 BuildArch: noarch
-Requires: nginx, uwsgi
+Requires: nginx, uwsgi, nfs-utils
 Requires: observatory-log-server, observatory-weather-database-updater
 Requires: python34-Pyro4, python34-Flask, python34-Flask-OAuthlib, python34-PyMySQL
 %if 0%{?suse_version}
@@ -82,6 +82,9 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 %files
 %defattr(0744,nginx,nginx,0755)
 /srv/dashboard
+
+%defattr(0744,nfsnobody,nfsnobody,0755)
+/srv/dashboard/generated
 
 %defattr(-,root,root,-)
 %{_unitdir}/dashboard.service

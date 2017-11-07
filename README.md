@@ -56,6 +56,31 @@ sudo semanage fcontext -at httpd_sys_rw_content_t "/srv/dashboard(/.*)?"
 sudo restorecon -Rv /srv/dashboard
 ```
 
+Now we need to share the temp data directory so that the pipeline daemon (on the TCS) can write preview data.
+Edit `/etc/exports` and add the following line:
+```
+/srv/dashboard/generated    10.2.6.203(rw,sync,no_root_squash,no_all_squash)
+```
+
+Note that this is the IP of the machine running `pipelined` and should be updated if that changes.
+
+Next enable the NFS daemons:
+```
+sudo systemctl enable rpcbind
+sudo systemctl enable nfs-server
+sudo systemctl enable nfs-lock
+sudo systemctl enable nfs-idmap
+```
+and `systemctl start` them or reboot.
+
+Finally, allow NFS connections through the firewall:
+```
+sudo firewall-cmd --permanent --zone=public --add-service=nfs
+sudo firewall-cmd --permanent --zone=public --add-service=mountd
+sudo firewall-cmd --permanent --zone=public --add-service=rpc-bind
+sudo firewall-cmd --reload
+```
+
 The nginx configuration (`dashboard.conf`) explicitly defines the IP of the hosting machine (currently `10.2.6.100`).
 If the machine/ip changes then this should be updated to match.
 
@@ -63,3 +88,5 @@ The GitHub team IDs used to determine permissions are set in the `get_user_accou
 The IDs can be queried from the GitHub API with `curl -H "Authorization: token <personal access token>" https://api.github.com/orgs/warwick-one-metre/teams`.  The `<personal access token>` can be generated from your GitHub settings, and should have at least the `repo` scope.
 
 The dashboard URL is also set in the "Authorization callback URL" in the GitHub settings.  If the dashboard is moved then this should be updated to match.
+
+If you want to export / backup the database you must add the `--skip-tz-utc` argument to `mysqldump` to prevent it from breaking timestamps!
