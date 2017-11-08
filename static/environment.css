@@ -26,7 +26,7 @@
 }
 
 .xAxis, .yAxis { color: #fff; }
-.legendLabel { width: 55px; height: 17px;}
+.legendLabel { width: 45px; height: 17px; font-size: 9px; }
 .legendColorBox { display: none }
 .axisLabels { text-align: center; }
 

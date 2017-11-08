@@ -24,13 +24,13 @@ DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
 ONEMETRE_VAISALA = {
-    'temperature': ('N<sub>2</sub>&nbsp;Plant', 'vexttemp', '#009DDC'),
-    'relative_humidity': ('N<sub>2</sub>&nbsp;Plant', 'vexthumid', '#009DDC'),
-    'wind_direction': ('N<sub>2</sub>&nbsp;Plant', 'vwinddir', '#009DDC'),
-    'wind_speed': ('N<sub>2</sub>&nbsp;Plant', 'vwindspeed', '#009DDC'),
-    'pressure': ('N<sub>2</sub>&nbsp;Plant', 'vpressure', '#009DDC'),
-    'accumulated_rain': ('N<sub>2</sub>&nbsp;Plant&nbsp;(Accumulated&nbsp;mm)', 'vrain', '#009DDC'),
-    'dew_point_delta': ('N<sub>2</sub>&nbsp;Plant&nbsp;', 'vdewdelta', '#009DDC')
+    'temperature': ('1m&nbsp;Ext', 'vexttemp', '#009DDC'),
+    'relative_humidity': ('1m&nbsp;Ext', 'vexthumid', '#009DDC'),
+    'wind_direction': ('1m&nbsp;Ext', 'vwinddir', '#009DDC'),
+    'wind_speed': ('1m&nbsp;Ext', 'vwindspeed', '#009DDC'),
+    'pressure': ('1m&nbsp;Ext', 'vpressure', '#009DDC'),
+    'accumulated_rain': ('1m&nbsp;Ext&nbsp;(Accumulated&nbsp;mm)', 'vrain', '#009DDC'),
+    'dew_point_delta': ('1m&nbsp;Ext&nbsp;', 'vdewdelta', '#009DDC')
 }
 
 ROOMALERT = {
@@ -41,6 +41,16 @@ ROOMALERT = {
 NITES_ROOMALERT = {
     'internal_temperature': ('NITES', 'ninttemp', '#DE0D92'),
     'internal_humidity': ('NITES', 'ninthumid', '#DE0D92'),
+}
+
+GOTO_VAISALA = {
+    'temperature': ('GOTO&nbsp;Ext', 'gexttemp', '#80f030'),
+    'relative_humidity': ('GOTO&nbsp;Ext', 'gexthumid', '#80f030'),
+    'wind_direction': ('GOTO&nbsp;Ext', 'gwinddir', '#80f030'),
+    'wind_speed': ('GOTO&nbsp;Ext', 'gwindspeed', '#80f030'),
+    'pressure': ('GOTO&nbsp;Ext', 'gpressure', '#80f030'),
+    'accumulated_rain': ('GOTO&nbsp;Ext&nbsp;(Accumulated&nbsp;mm)', 'grain', '#80f030'),
+    'dew_point_delta': ('GOTO&nbsp;Ext', 'gdewdelta', '#80f030')
 }
 
 GOTO_ROOMALERT = {
@@ -108,6 +118,7 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', ONEMETRE_RAINDETECTOR, start_str,
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
+    data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
 
     return data, start_js, end_js

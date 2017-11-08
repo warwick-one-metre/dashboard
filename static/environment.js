@@ -58,7 +58,7 @@ function redrawPlot() {
     grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
     crosshair: { mode: "x", color: '#545454' },
     yaxis: { axisLabel: plot.data('axislabel'), axisLabelPadding: 9, labelWidth: 20 },
-    legend: { noColumns: 5, units: plot.data('labelunits'), backgroundColor: '#252830', backgroundOpacity: 0.5, margin: 1, labelFormatter: colorSeriesLabel },
+    legend: { noColumns: 6, units: plot.data('labelunits'), backgroundColor: '#252830', backgroundOpacity: 0.5, margin: 1, labelFormatter: colorSeriesLabel },
     linkedplots: [],
     hooks: { bindEvents: bindHoverHooks, processOptions: regenerateLinkedPlots }
   };
@@ -101,7 +101,7 @@ function setHoverXPosition(plot, offsetX) {
 
   if (fractionalPos < 0 || fractionalPos > 1) {
     // Clear labels
-    for (var i = 0; i < dataset.length; ++i)
+    for (var i = 0; i < dataset.length; i++)
       $(legend.eq(i)).html(dataset[i].label);
 
     // Clear crosshair
@@ -155,7 +155,7 @@ function bindHoverHooks(plot, eventHolder) {
 
 function redrawWindPlot() {
   var plot = $(this);
-  var speeds = [data.data.vwindspeed, data.data.swwindspeed];
+  var speeds = [data.data.vwindspeed, data.data.gwindspeed, data.data.swwindspeed];
 
   var getMaxSpeed = function(a,b) {
     if (a === null && b === null)
@@ -169,8 +169,9 @@ function redrawWindPlot() {
   };
 
   var maxVaisala = data.data.vwindspeed.data.reduce(getMaxSpeed, 0);
-  var maxSWASP = data.data.vwindspeed.data.reduce(getMaxSpeed, 0);
-  var maxRadius = 1.1 * Math.max(maxVaisala, maxSWASP, 15 / 1.1);
+  var maxSWASP = data.data.swwindspeed.data.reduce(getMaxSpeed, 0);
+  var maxGOTO = data.data.gwindspeed.data.reduce(getMaxSpeed, 0);
+  var maxRadius = 1.1 * Math.max(maxVaisala, maxSWASP, maxGOTO, 15 / 1.1);
 
   function drawPoints(plot, ctx) {
     var axes = plot.getAxes();
@@ -239,9 +240,9 @@ function redrawWindPlot() {
     var labelVCenter = offset.top + plot.height() / 2;
     var labelPlotWidth = plot.width();
     var labelPlotHeight = plot.height();
-    $('#wind-plot').append('<div style="left:' + (labelHCenter - 2) + 'px;top:' + (offset.top - 1) + 'px;" class="wind-labels axisLabels">N</div>');
+    $('#wind-plot').append('<div style="left:' + (labelHCenter - 17) + 'px;top:' + (offset.top - 1) + 'px;" class="wind-labels axisLabels">N</div>');
     $('#wind-plot').append('<div style="left:' + (offset.left + labelPlotWidth - 17) + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">E</div>');
-    $('#wind-plot').append('<div style="left:' + (labelHCenter - 2) + 'px;top:' + (offset.top + labelPlotHeight - 17) + 'px;" class="wind-labels axisLabels">S</div>');
+    $('#wind-plot').append('<div style="left:' + (labelHCenter - 17) + 'px;top:' + (offset.top + labelPlotHeight - 17) + 'px;" class="wind-labels axisLabels">S</div>');
     $('#wind-plot').append('<div style="left:' + offset.left + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">W</div>');
 
     // Historical data is drawn with constant opacity
@@ -320,7 +321,7 @@ function redrawWindPlot() {
   if (axis == 1)
     options.yaxis.position = 'right';
 
-  $.plot(this, [data.data.vwinddir, data.data.swwinddir], options);
+  $.plot(this, [data.data.vwinddir, data.data.gwinddir, data.data.swwinddir], options);
 }
 
 var queryUpdate;
