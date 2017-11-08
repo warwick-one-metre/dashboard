@@ -26,7 +26,7 @@
 }
 
 .xAxis, .yAxis { color: #fff; }
-.legendLabel { width: 45px; height: 17px; font-size: 9px; }
+.legendLabel { width: 48px; height: 17px; font-size: 9px; }
 .legendColorBox { display: none }
 .axisLabels { text-align: center; }
 
@@ -50,12 +50,10 @@
 }
 
 #rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
-#humidity-container, #temperature-container, #dew-container, #pressure-container { height: 110px; }
-#dew-container, #humidity-container, #skytemp-container, #pressure-container, #raindetector-container, #vaisala-rain-container { margin-top: -5px; }
-#pressure-container { margin-top: -20px; }
+#humidity-container, #temperature-container, #dew-container, #skytemp-container, #raindetector-container, #rainintensity-container { height: 110px; }
+#dew-container, #humidity-container, #skytemp-container, #pressure-container, #raindetector-container, #rainintensity-container, #accumrain-container { margin-top: -5px; }
+#raindetector-container { margin-top: -20px; }
 #wind-container { height: 230px; }
-#raindetector-container { height: 63px; }
-#vaisala-rain-container { height: 97px; }
 
 #main-ups-battery-container, #goto-main-ups-battery-container, #dome-ups-battery-container { height: 60px; }
 #goto-dome-ups-battery-container { height: 95px; }

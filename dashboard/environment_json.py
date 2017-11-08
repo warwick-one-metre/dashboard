@@ -29,8 +29,9 @@ ONEMETRE_VAISALA = {
     'wind_direction': ('1m&nbsp;Ext', 'vwinddir', '#009DDC'),
     'wind_speed': ('1m&nbsp;Ext', 'vwindspeed', '#009DDC'),
     'pressure': ('1m&nbsp;Ext', 'vpressure', '#009DDC'),
-    'accumulated_rain': ('1m&nbsp;Ext&nbsp;(Accumulated&nbsp;mm)', 'vrain', '#009DDC'),
-    'dew_point_delta': ('1m&nbsp;Ext&nbsp;', 'vdewdelta', '#009DDC')
+    'rain_intensity': ('1m&nbsp;Ext', 'vrainint', '#009DDC'),
+    'accumulated_rain': ('1m&nbsp;Ext', 'vrain', '#009DDC'),
+    'dew_point_delta': ('1m&nbsp;Ext', 'vdewdelta', '#009DDC')
 }
 
 ROOMALERT = {
@@ -44,18 +45,19 @@ NITES_ROOMALERT = {
 }
 
 GOTO_VAISALA = {
-    'temperature': ('GOTO&nbsp;Ext', 'gexttemp', '#80f030'),
-    'relative_humidity': ('GOTO&nbsp;Ext', 'gexthumid', '#80f030'),
-    'wind_direction': ('GOTO&nbsp;Ext', 'gwinddir', '#80f030'),
-    'wind_speed': ('GOTO&nbsp;Ext', 'gwindspeed', '#80f030'),
-    'pressure': ('GOTO&nbsp;Ext', 'gpressure', '#80f030'),
-    'accumulated_rain': ('GOTO&nbsp;Ext&nbsp;(Accumulated&nbsp;mm)', 'grain', '#80f030'),
-    'dew_point_delta': ('GOTO&nbsp;Ext', 'gdewdelta', '#80f030')
+    'temperature': ('GOTO&nbsp;Ext', 'gexttemp', '#22cc44'),
+    'relative_humidity': ('GOTO&nbsp;Ext', 'gexthumid', '#22cc44'),
+    'wind_direction': ('GOTO&nbsp;Ext', 'gwinddir', '#22cc44'),
+    'wind_speed': ('GOTO&nbsp;Ext', 'gwindspeed', '#22cc44'),
+    'pressure': ('GOTO&nbsp;Ext', 'gpressure', '#22cc44'),
+    'rain_intensity': ('GOTO&nbsp;Ext', 'grainint', '#22cc44'),
+    'accumulated_rain': ('GOTO&nbsp;Ext', 'grain', '#22cc44'),
+    'dew_point_delta': ('GOTO&nbsp;Ext', 'gdewdelta', '#22cc44')
 }
 
 GOTO_ROOMALERT = {
-    'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
-    'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
+    'internal_temp': ('GOTO', 'ginttemp', '#80f030'),
+    'internal_humidity': ('GOTO', 'ginthumid', '#80f030'),
 }
 
 SUPERWASP = {
@@ -68,7 +70,7 @@ SUPERWASP = {
 }
 
 ONEMETRE_RAINDETECTOR = {
-    'unsafe_boards': ('1m&nbsp;(Triggered&nbsp;boards)', 'rdboards', '#FDE74C')
+    'unsafe_boards': ('1m&nbsp;Ext', 'rdboards', '#FDE74C')
 }
 
 ONEMETRE_UPS = {
