@@ -114,12 +114,12 @@ def get_github_oauth_token():
 
 @app.route('/login')
 def login():
-    callback = request.args['next'] if 'next' in request.args else url_for('onemetre_dashboard', _external=True)
+    callback = request.args['next'] if 'next' in request.args else url_for('environment', _external=True)
     return github.authorize(callback=callback)
 
 @app.route('/logout')
 def logout():
-    next = request.args['next'] if 'next' in request.args else url_for('onemetre_dashboard')
+    next = request.args['next'] if 'next' in request.args else url_for('environment')
     session.pop('github_token', None)
     session.pop('username', None)
     session.pop('avatar', None)
