@@ -31,13 +31,14 @@ function updateLog(messages) {
 }
 
 function pollLog(logURL) {
+    var localURL = logURL;
     if (lastLogMessageId > 0)
-      logURL += '?from=' + lastLogMessageId;
+      localURL += '?from=' + lastLogMessageId;
 
    $.ajax({
       type: 'GET',
       dataType: 'json',
-      url: logURL,
+      url: localURL,
     }).done(function(data) {
        updateLog(data['messages']);
     });
