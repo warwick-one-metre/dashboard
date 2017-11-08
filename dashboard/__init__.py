@@ -255,6 +255,11 @@ def raw_onemetre_vaisala():
     data = json.load(open(GENERATED_DATA_DIR + '/onemetre-vaisala.json'))
     return jsonify(**data)
 
+@app.route('/data/raw/goto-vaisala')
+def raw_goto_vaisala():
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-vaisala.json'))
+    return jsonify(**data)
+
 @app.route('/data/raw/superwasp-log')
 def raw_superwasp_log():
     data = json.load(open(GENERATED_DATA_DIR + '/superwasp-log.json'))
