@@ -43,6 +43,16 @@ NITES_ROOMALERT = {
     'internal_humidity': ('NITES', 'ninthumid', '#DE0D92'),
 }
 
+GOTO_VAISALA = {
+    'temperature': ('GOTO&nbsp;Ext', 'gexttemp', '#008020'),
+    'relative_humidity': ('GOTO&nbsp;Ext', 'gexthumid', '#008020'),
+    'wind_direction': ('GOTO&nbsp;Ext', 'gwinddir', '#008020'),
+    'wind_speed': ('GOTO&nbsp;Ext', 'gwindspeed', '#008020'),
+    'pressure': ('GOTO&nbsp;Ext', 'gpressure', '#008020'),
+    'accumulated_rain': ('GOTO&nbsp;Ext&nbsp;(Accumulated&nbsp;mm)', 'grain', '#008020'),
+    'dew_point_delta': ('GOTO&nbsp;Ext', 'gdewdelta', '#008020')
+}
+
 GOTO_ROOMALERT = {
     'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
     'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
@@ -108,6 +118,7 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', ONEMETRE_RAINDETECTOR, start_str,
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
+    data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
 
     return data, start_js, end_js
