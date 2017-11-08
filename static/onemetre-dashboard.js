@@ -421,39 +421,7 @@ function updateGroups(data) {
   $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
 }
 
-var lastLogMessageId = 0;
-function updateLog(messages) {
-  if (messages) {
-    var length = messages.length;
-    for (var i in messages) {
-      var message = messages[length - i - 1];
-      var row = $('<tr>');
-      if (message[2] == 'warning')
-         row.addClass('text-warning');
-      if (message[2] == 'error')
-         row.addClass('text-danger');
-      row.append($('<td class="log-date">').html(formatUTCDate(parseUTCDate(message[1]+'.0')) + '<span class="visible-xs">' + message[3] + '</span>'));
-      row.append($('<td class="log-table hidden-xs">').html(message[3]));
-      row.append($('<td class="log-message">').html(message[4]));
-      $('#log-table').prepend(row);
-      lastLogMessageId = message[0];
-    }
-
-    // Remove excess rows as new messages arrive
-    var tbody = $('#log-table tbody');
-    while (tbody.children().length > 250)
-        tbody.children().last().remove();
-  } else {
-    $('#log-table').children().remove();
-    var row = $('<tr>');
-    row.append($('<td>').html('Error querying log'));
-    row.addClass('text-danger');
-    $('#log-table').prepend(row);
-    lastLogMessageId = 0;
-  }
-}
-
-function queryData(includeLog) {
+function pollDashboard() {
   $.ajax({
     type: 'GET',
     dataType: 'json',
@@ -467,20 +435,6 @@ function queryData(includeLog) {
     updateGroups(msg);
   });
 
-  if (includeLog) {
-    var logURL = '/data/onemetre/log';
-    if (lastLogMessageId > 0)
-      logURL += '?from=' + lastLogMessageId;
-
-   $.ajax({
-      type: 'GET',
-      dataType: 'json',
-      url: logURL,
-    }).done(function(data) {
-       updateLog(data['messages']);
-    });
-  }
-
-  window.setTimeout(function() { queryData(includeLog); }, 10000);
+  window.setTimeout(pollDashboard, 10000);
 }
 

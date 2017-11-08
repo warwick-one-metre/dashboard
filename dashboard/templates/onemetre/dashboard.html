@@ -139,12 +139,13 @@
 </div>
 {% endif %}
 <script src="{{ url_for('static', filename='onemetre-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
 <script>
+  $(document).ready(function() {
+    pollDashboard();
 {% if user_account != None and 'onemetre' in user_account['permissions'] %}
-  var includeLog = true;
-{% else %}
-  var includeLog = false;
+    pollLog('{{ url_for('onemetre_log') }}');
 {% endif %}
-  $(document).ready(function() { queryData(includeLog); });
+  });
 </script>
 {% endblock %}

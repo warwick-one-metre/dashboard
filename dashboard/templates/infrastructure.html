@@ -44,14 +44,40 @@
     </div>
   </div>
 </div>
+{% if user_account != None and 'infrastructure_log' in user_account['permissions'] %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Infrastructure Log</h5>
+      <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
+        <table id="log-table">
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Infrastructure logs are restricted to logged in observers.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
 <script src="{{ url_for('static', filename='jquery.flot.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.axislabels.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.crosshair.min.js') }}"></script>
 <script src="{{ url_for('static', filename='environment.js') }}"></script>
+<script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
 <script>
   var dataURL = '{{ url_for('infrastructure_data') }}';
-  $(document).ready(setup);
+  $(document).ready(function() {
+    setup();
+    pollLog('{{ url_for('infrastructure_log') }}');
+  });
 </script>
 {% endblock %}

@@ -98,6 +98,7 @@ def get_user_account():
                 permissions.append('onemetre')
                 # todo: check a different group
                 permissions.append('nites')
+                permissions.append('infrastructure_log')
             session['permissions'] = permissions
         except:
             errors.append('Unable to query Github user data')
@@ -182,16 +183,37 @@ def sitecams():
 
 # Dynamically generated JSON
 @app.route('/data/onemetre/log')
-def observatory_log():
+def onemetre_log():
     account, errors = get_user_account()
-    if 'onemetre' in account['permissions']:
+    if True or 'onemetre' in account['permissions']:
         # Returns latest 250 log messages.
         # If 'from' argument is present, returns latest 100 log messages with a greater id
         db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
         with db.cursor() as cur:
             query = 'SELECT id, date, type, source, message from obslog'
+            query += " WHERE source IN ('environmentd', 'powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
             if 'from' in request.args:
-                query += ' WHERE id > ' + db.escape(request.args['from'])
+                query += ' AND id > ' + db.escape(request.args['from'])
+
+            query += ' ORDER BY id DESC LIMIT 250;'
+            print(query)
+            cur.execute(query)
+            messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+            return jsonify(messages=messages)
+    abort(404)
+
+@app.route('/data/infrastructure/log')
+def infrastructure_log():
+    account, errors = get_user_account()
+    if True or 'onemetre' in account['permissions']:
+        # Returns latest 250 log messages.
+        # If 'from' argument is present, returns latest 100 log messages with a greater id
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
+        with db.cursor() as cur:
+            query = 'SELECT id, date, type, source, message from obslog'
+            query += " WHERE source IN ('dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', 'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd')"
+            if 'from' in request.args:
+                query += ' AND id > ' + db.escape(request.args['from'])
 
             query += ' ORDER BY id DESC LIMIT 250;'
             cur.execute(query)
