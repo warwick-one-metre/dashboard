@@ -265,3 +265,7 @@ def raw_superwasp_log():
     data = json.load(open(GENERATED_DATA_DIR + '/superwasp-log.json'))
     return jsonify(**data)
 
+@app.route('/data/raw/netping')
+def raw_netping():
+    data = json.load(open(GENERATED_DATA_DIR + '/netping.json'))
+    return jsonify(**data)

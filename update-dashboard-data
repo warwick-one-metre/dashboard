@@ -88,3 +88,7 @@ generate_json(BASE_OUTPUT_DIR + '/goto-vaisala.json', [
 generate_json(BASE_OUTPUT_DIR + '/superwasp-log.json', [
     (daemons.superwasp_log, 'superwasp', lambda d: d.last_measurement())
 ])
+
+generate_json(BASE_OUTPUT_DIR + '/netping.json', [
+    (daemons.netping_log, 'netping', lambda d: d.last_measurement())
+])
