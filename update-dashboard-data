@@ -22,11 +22,17 @@
 
 import datetime
 import json
-import os
 from warwick.observatory.common import daemons, log
 
 # This directory must be shared with the TCS via NFS
 BASE_OUTPUT_DIR = '/srv/dashboard/generated'
+STATUS_FILE = BASE_OUTPUT_DIR + '/update-dashboard-data.json'
+
+try:
+    with open(STATUS_FILE, 'r') as infile:
+        status = json.load(infile)
+except Exception:
+    status = {}
 
 def generate_json(output_path, data):
     """Queries a set of daemons and stores the save a json file to the specified path"""
@@ -38,13 +44,20 @@ def generate_json(output_path, data):
                     output = query(d)
                 else:
                     output[key] = query(d)
+            if key in status and not status[key]:
+                log.info('dashboardd', 'Restored contact with ' + key)
+            status[key] = True
         except Exception as e:
             print('failed to query ' + key + ' with error: ' + str(e))
-            log.error('dashboardd', 'Failed to query ' + key + ' (' + str(e) + ')')
-
+            if not key in status or status[key]:
+                log.error('dashboardd', 'Lost contact with ' + key + ' (' + str(e) + ')')
+            status[key] = False
     try:
         with open(output_path, 'w') as output_file:
             json.dump(output, output_file, sort_keys=True)
+
+        with open(STATUS_FILE, 'w') as output_file:
+            json.dump(status, output_file, sort_keys=True)
     except Exception as e:
         print('failed to write json with error: ' + str(e))
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
