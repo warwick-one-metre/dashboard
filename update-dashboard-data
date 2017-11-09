@@ -76,6 +76,15 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
     (daemons.onemetre_red_camera, 'red', lambda d: d.report_status())
 ])
 
+generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
+    (daemons.goto_gtecs_mnt, 'mnt', lambda d: d.get_info()),
+    (daemons.goto_gtecs_filt, 'filt', lambda d: d.get_info()),
+    (daemons.goto_gtecs_foc, 'foc', lambda d: d.get_info()),
+    (daemons.goto_gtecs_cam, 'cam', lambda d: d.get_info()),
+    (daemons.goto_gtecs_exq, 'exq', lambda d: d.get_info()),
+    (daemons.goto_gtecs_power, 'power', lambda d: d.get_info())
+])
+
 # Raw data for GOTO operations
 generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
     (daemons.onemetre_vaisala, 'vaisala', lambda d: d.last_measurement())

@@ -97,6 +97,7 @@ def get_user_account():
             if github.get('teams/2128810/memberships/' + username).data['state'] == 'active':
                 permissions.append('onemetre')
                 # todo: check a different group
+                permissions.append('goto')
                 permissions.append('nites')
                 permissions.append('infrastructure_log')
             session['permissions'] = permissions
@@ -248,6 +249,15 @@ def onemetre_generated_data(path):
     if 'onemetre' in account['permissions'] and path in ONEMETRE_GENERATED_DATA:
         return send_from_directory(GENERATED_DATA_DIR, ONEMETRE_GENERATED_DATA[path])
     abort(404)
+
+@app.route('/data/goto/')
+def goto_dashboard_data():
+    data = {}
+    account, errors = get_user_account()
+    if 'goto' in account['permissions']:
+        data.update(json.load(open(GENERATED_DATA_DIR + '/goto-private.json')))
+
+    return jsonify(**data)
 
 # Raw sensor data for GOTO ops
 @app.route('/data/raw/onemetre-vaisala')
