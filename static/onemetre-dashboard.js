@@ -34,9 +34,9 @@ function powerInstrument(row, cell, data) {
 
   var enabled = 0;
   for (i in fields) {
-    if (!(fields[i] in data))
+    if (!(fields[i] in data) || data[fields[i]] == 2)
       error = true;
-    else if (data[fields[i]])
+    else if (data[fields[i]] == 1)
       enabled += 1;
   }
 
@@ -58,7 +58,10 @@ function powerInstrument(row, cell, data) {
 }
 
 function powerOnOff(row, cell, data) {
-  if (data) {
+  if (data == 2) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data == 1) {
     cell.html('POWER ON');
     cell.addClass('text-success');
   } else {
