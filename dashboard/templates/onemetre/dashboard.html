@@ -138,11 +138,12 @@
   </div>
 </div>
 {% endif %}
+<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='onemetre-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
 <script>
   $(document).ready(function() {
-    pollDashboard();
+    pollDashboard('/data/onemetre');
 {% if user_account != None and 'onemetre' in user_account['permissions'] %}
     pollLog('{{ url_for('onemetre_log') }}');
 {% endif %}

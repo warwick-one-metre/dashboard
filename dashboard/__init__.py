@@ -162,6 +162,11 @@ def nites_dome():
     account, errors = get_user_account()
     return render_template('nites/dome.html', user_account=account, errors=errors)
 
+@app.route('/goto/')
+def goto_dashboard():
+    account, errors = get_user_account()
+    return render_template('goto/dashboard.html', user_account=account, errors=errors)
+
 @app.route('/goto/dome/')
 def goto_dome():
     account, errors = get_user_account()

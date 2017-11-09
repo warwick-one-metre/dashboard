@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+{% set title = 'GOTO &raquo; Dashboard' -%}
+{% set active_page = 'goto-dashboard' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
+  </div>
+</div>
+
+{% if user_account != None and 'goto' in user_account['permissions'] %}
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["power", "status_UPS1"]' data-generator="powerUPS">East UPS</span>
+      <span class="list-group-item" data-index='["power", "status_UPS2"]' data-generator="powerUPS">West UPS</span>
+      <span class="list-group-item" data-index='["power", "status_PDU2", "sitech"]' data-generator="powerOnOff">Mount</span>
+      <span class="list-group-item" data-index='["power", "status_PDU1", "leds"]' data-generator="powerOnOff">Dome Light</span>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Mount</h5>
+      <span class="list-group-item" data-index='["mnt", "status"]' data-generator="telStatus">Status</span>
+      <span class="list-group-item" data-index='["mnt", "mount_ra"]' data-generator="telRA">RA</span>
+      <span class="list-group-item" data-index='["mnt", "mount_dec"]' data-generator="telDec">Dec</span>
+      <span class="list-group-item" data-index='["mnt", "mount_alt"]' data-generator="telAlt">Altitude</span>
+    </div>
+  </div>
+  <div class="col-md-8 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Unit Telescopes</h5>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td>Cam. Status</td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+          </tr>
+          <tr>
+            <td>Cam. Temperature</td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td><span class="pull-right text-danger">ERROR</span></td>
+          </tr>
+          <tr>
+            <td>Filter</td>
+            <td data-index='["filt"]' data-generator="telFilt1"></td>
+            <td data-index='["filt"]' data-generator="telFilt2"></td>
+            <td data-index='["filt"]' data-generator="telFilt3"></td>
+            <td data-index='["filt"]' data-generator="telFilt4"></td>
+          </tr>
+          <tr>
+            <td>Focus</td>
+            <td data-index='["foc"]' data-generator="telFoc1"></td>
+            <td data-index='["foc"]' data-generator="telFoc2"></td>
+            <td data-index='["foc"]' data-generator="telFoc3"></td>
+            <td data-index='["foc"]' data-generator="telFoc4"></td>
+          </tr>
+          <tr>
+            <td>Fans</td>
+            <td data-index='["power", "status_WEST", "fans1"]' data-generator="telFans"></td>
+            <td data-index='["power", "status_EAST", "fans2"]' data-generator="telFans"></td>
+            <td data-index='["power", "status_WEST", "fans3"]' data-generator="telFans"></td>
+            <td data-index='["power", "status_EAST", "fans4"]' data-generator="telFans"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row dashboard-stats">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='goto-dashboard.js') }}"></script>
+<script>
+  $(document).ready(function() {
+{% if user_account != None and 'goto' in user_account['permissions'] %}
+    pollDashboard('/data/goto');
+{% endif %}
+  });
+</script>
+{% endblock %}
