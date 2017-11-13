@@ -95,15 +95,16 @@ NETWORK = {
 
 def environment_json(date=None):
     """Queries the data to be rendered on the "Environment" dashboard page
-       If date is specified, returns data for the specified full day (UTC times)
+       If date is specified, returns data for the specified night (UTC times: 12 through 12)
        If date is not specified, returns data for the last 6 hours.
 
        Returns a tuple of (<dictionary of flot-compatible series data>,
        <js timestamp for the series-start time>, <js timestamp for the series-end time>)
     """
     try:
-        start = datetime.datetime.strptime(date, '%Y-%m-%d') - datetime.timedelta(minutes=6)
-        end = start + datetime.timedelta(hours=24, minutes=6)
+        start = datetime.datetime.strptime(date, '%Y-%m-%d') \
+            + datetime.timedelta(hours=11, minutes=54)
+        end = start + datetime.timedelta(hours=24, minutes=12)
     except Exception:
         end = datetime.datetime.utcnow()
         start = end - datetime.timedelta(hours=6, minutes=6)

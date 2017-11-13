@@ -348,7 +348,7 @@ function queryData() {
       $('.wind-plot').each(redrawWindPlot);
 
       if (dateString)
-        $('#headerdesc').text('Archived data from ' + dateString);
+        $('#headerdesc').text('Archived data for night of ' + dateString);
       else
         $('#headerdesc').text('Live data (updates every 30 seconds)');
     }
