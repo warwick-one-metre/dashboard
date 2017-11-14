@@ -399,6 +399,11 @@ function setup() {
 
   picker.datepicker().on('changeDate', setDataSource);
 
+  // Date shouldn't advance until 12:00 UT
+  var endDate = new Date();
+  endDate.setHours(endDate.getHours()-12);
+  picker.datepicker('setEndDate', endDate.toISOString().substr(0, 10));
+
   var incrementDate = function(increment) {
     if (dateString) {
       var date = new Date(dateString)
@@ -406,7 +411,9 @@ function setup() {
       picker.datepicker('setUTCDate', date);
     } else {
       // Change from Live to today
-      picker.datepicker('update', new Date().toISOString().substr(0, 10));
+      var endDate = new Date();
+      endDate.setHours(endDate.getHours()-12);
+      picker.datepicker('update', endDate.toISOString().substr(0, 10));
     }
 
     setDataSource();
