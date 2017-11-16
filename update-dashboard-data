@@ -100,5 +100,5 @@ generate_json(BASE_OUTPUT_DIR + '/superwasp-log.json', [
 ])
 
 generate_json(BASE_OUTPUT_DIR + '/netping.json', [
-    (daemons.netping_log, 'netping', lambda d: d.last_measurement())
+    (daemons.observatory_network_ping, 'netping', lambda d: d.last_measurement())
 ])
