@@ -124,3 +124,94 @@ function telFans(row, cell, data) {
   cell.html(status);
   cell.addClass(style);
 }
+
+function conditionInner(row, cell, data, condition, flag) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  var flag_valid = flag === undefined || (data && 'flags' in data && flag in data['flags'] && data['flags'][flag] != 2);
+  var condition_valid = data && 'weather' in data;
+
+  if (flag_valid && condition_valid) {
+    if (flag === undefined) {
+      style = '';
+    } else if (data['flags'][flag] == 0) {
+      style = 'text-success';
+    }
+
+    var minValue = undefined;
+    var maxValue = undefined;
+    for (var sensor in data['weather']) {
+      if (!(condition in data['weather'][sensor])) {
+        continue;
+      }
+
+      var sensorValue = data['weather'][sensor][condition];
+      minValue = minValue === undefined ? sensorValue : Math.min(minValue, sensorValue);
+      maxValue = maxValue === undefined ? sensorValue : Math.max(maxValue, sensorValue);
+    }
+
+    status = minValue + ' &mdash; ' + maxValue;
+    var units = row.data('units');
+    if (units)
+      status += units;
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function conditionExtHumidity(row, cell, data) {
+  conditionInner(row, cell, data, 'humidity', 'humidity');
+}
+
+function conditionIntHumidity(row, cell, data) {
+  conditionInner(row, cell, data, 'int_humidity', 'humidity');
+}
+
+function conditionExtTemp(row, cell, data) {
+  conditionInner(row, cell, data, 'temperature', 'temperature');
+}
+
+function conditionIntTemp(row, cell, data) {
+  conditionInner(row, cell, data, 'int_temperature');
+}
+
+function conditionWind(row, cell, data) {
+  conditionInner(row, cell, data, 'windspeed', 'windspeed');
+}
+
+function conditionNetwork(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if (data && 'flags' in data && 'link' in data['flags'] && data['flags']['link'] != 2) {
+    if (data['flags']['link'] == 0) {
+      status = 'ONLINE';
+      style = 'text-success';
+    } else {
+      status = 'OFFLINE';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function conditionSunElevation(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if (data && 'flags' in data && 'dark' in data['flags'] && data['flags']['dark'] != 2) {
+    if (data['flags']['dark'] == 0) {
+      status = 'DARK';
+      style = 'text-success';
+    } else {
+      status = 'BRIGHT';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
