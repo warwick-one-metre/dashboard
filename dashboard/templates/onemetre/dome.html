@@ -63,7 +63,6 @@ $(document).ready(function () {
     if (videoPlaying) {
       $('#video-button-text').html('Play');
       $('#video').attr('src', '/webcam/onemetre/static?' + Date.now());
-      console.log($('#video').attr('src'));
       videoPlaying = false;
     } else {
       $('#video-button-text').html('Stop');

@@ -1,15 +1,14 @@
 {% extends "layout.html" %}
 
 {% set cameras = [
-  ('/webcam/ext1/static', '/webcam/ext1/live'),
   ('http://en.sat24.com/image?type=infraPolair&region=ce', None),
   ('http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg', None),
   ('http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png', None),
   ('http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg', None)
 ] -%}
 
-{% set title = 'Site Cameras' -%}
-{% set active_page = 'sitecams' -%}
+{% set title = 'Sky Cameras' -%}
+{% set active_page = 'skycams' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">

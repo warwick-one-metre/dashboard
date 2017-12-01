@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% set title = 'GOTO &raquo; External Camera' -%}
+{% set active_page = 'onemetre-external' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div id="container" class="col-md-12 m-b" style="position: relative">
+    <img id="video" src="/webcam/ext1/static" width="100%">
+    <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
+      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function () {
+  var videoPlaying = false;
+  $('#video-button').click(function() {
+    if (videoPlaying) {
+      $('#video-button-text').html('Play');
+      $('#video').attr('src', '/webcam/ext1/static?' + Date.now());
+      videoPlaying = false;
+    } else {
+      $('#video-button-text').html('Stop');
+      $('#video').attr('src', '/webcam/ext1/live?' + Date.now());
+
+      videoPlaying = true;
+    }
+  })
+});
+</script>
+{% endblock %}

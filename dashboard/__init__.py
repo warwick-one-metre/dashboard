@@ -150,6 +150,11 @@ def onemetre_dome():
     account, errors = get_user_account()
     return render_template('onemetre/dome.html', user_account=account, errors=errors)
 
+@app.route('/onemetre/external/')
+def onemetre_external():
+    account, errors = get_user_account()
+    return render_template('onemetre/external.html', user_account=account, errors=errors)
+
 @app.route('/onemetre/resources/')
 def onemetre_resources():
     account, errors = get_user_account()
@@ -172,6 +177,11 @@ def goto_dome():
     account, errors = get_user_account()
     return render_template('goto/dome.html', user_account=account, errors=errors)
 
+@app.route('/goto/external/')
+def goto_external():
+    account, errors = get_user_account()
+    return render_template('goto/external.html', user_account=account, errors=errors)
+
 @app.route('/environment/')
 def environment():
     account, errors = get_user_account()
@@ -182,10 +192,10 @@ def infrastructure():
     account, errors = get_user_account()
     return render_template('infrastructure.html', user_account=account, errors=errors)
 
-@app.route('/sitecams/')
-def sitecams():
+@app.route('/skycams/')
+def skycams():
     account, errors = get_user_account()
-    return render_template('sitecams.html', user_account=account, errors=errors)
+    return render_template('skycams.html', user_account=account, errors=errors)
 
 # Dynamically generated JSON
 @app.route('/data/onemetre/log')
