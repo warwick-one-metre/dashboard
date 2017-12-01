@@ -411,7 +411,7 @@ function seeingIfAvailable(row, cell, data) {
 }
 
 function envLatestMinMax(row, cell, data) {
-  if ('latest' in data) {
+  if ('latest' in data && 'current' in data && data['current']) {
     var display = data['latest'].toFixed(1);
     var units = row.data('units');
     if (units)
