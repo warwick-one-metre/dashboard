@@ -228,8 +228,55 @@ function opsStatus(row, cell, data) {
 }
 
 function opsEnvironment(row, cell, data) {
-  cell.html(data ? 'SAFE' : 'NOT SAFE');
-  row.addClass(data ? 'list-group-item-success' : 'list-group-item-danger');
+  if (('safe' in data) && ('conditions' in data)) {
+    cell.html(data['safe'] ? 'SAFE' : 'NOT SAFE');
+    row.addClass(data['safe'] ? 'list-group-item-success' : 'list-group-item-danger');
+
+    // Build the conditions tooltip
+    var conditions = data['conditions']
+    var conditions = {
+        'wind': 'Wind',
+        'median_wind': 'Median&nbsp;Wind',
+        'temperature': 'Temperature',
+        'humidity': 'Humidity',
+        'internal_humidity': 'Int.&nbsp;Humidity',
+        'dewpt': 'Dew&nbsp;Point',
+        'rain': 'Rain',
+        'secsys': 'Sec.&nbsp;System',
+        'netping': 'Network',
+        'main_ups': 'Main&nbsp;UPS',
+        'dome_ups': 'Dome&nbsp;UPS',
+        'diskspace': 'Disk&nbsp;Space'
+    }
+
+    var status_classes = ['', 'text-success', 'text-warning', 'text-danger']
+
+    var tooltip = '<table style="margin: 5px">';
+    for (var c in conditions) {
+        if (!(c in data['conditions']))
+          continue;
+        tooltip += '<tr><td style="text-align: right;">' + conditions[c] + ':</td>';
+        var params = data['conditions'][c];
+        for (var p in params) {
+          tooltip += '<td style="padding: 0 5px" class="' + status_classes[params[p][1]] + '">' + params[p][0] + '</td>';
+        }
+        tooltip += '</tr>';
+    }
+    tooltip += '</table>';
+
+    var tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
+    if (tooltip_active)
+      row.tooltip('hide');
+
+    row.data('bs.tooltip', false);
+    row.tooltip({ html: true, title: tooltip });
+
+    if (tooltip_active)
+      row.tooltip('show');
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
 }
 
 // Pipeline generators
