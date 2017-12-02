@@ -356,10 +356,13 @@ function fieldLimitsColor(field, value) {
   if (field['disabled'])
     return 'text-info';
 
-  if (value >= field['limits'][0] && value <= field['limits'][1])
-    return 'text-success';
+  if (value < field['limits'][0] || value > field['limits'][1])
+    return 'text-danger';
 
-  return 'text-danger';
+  if ('warn_limits' in field && (value < field['warn_limits'][0] || value > field['warn_limits'][1]))
+    return 'text-warning';
+
+  return 'text-success';
 }
 
 function switchClosedOpen(row, cell, data) {
