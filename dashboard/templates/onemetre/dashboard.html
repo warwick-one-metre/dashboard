@@ -39,6 +39,7 @@
       <span class="list-group-item" data-index='["power", "telescope_12v"]' data-generator="powerOnOff">Tel Controllers</span>
       <span class="list-group-item" data-index='["power"]' data-generator="powerInstrument">Instrument</span>
       <span class="list-group-item" data-index='["power", "light"]' data-generator="powerOnOff">Dome Light</span>
+      <span class="list-group-item" data-index='["power", "dehumidifier"]' data-generator="powerOnOff">Dehumidifier</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -49,26 +50,29 @@
       <span class="list-group-item" data-index='["environment", "roomalert", "internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
       <span class="list-group-item" data-index='["environment", "roomalert", "truss_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Truss Temp.</span>
       <span class="list-group-item" data-index='["environment", "superwasp", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
-    </div>
-  </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["environment", "vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
-      <span class="list-group-item" data-index='["environment", "vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
-      <span class="list-group-item" data-index='["environment", "vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
       <span class="list-group-item" data-index='["environment", "vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
-      <span class="list-group-item" data-index='["environment", "tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
-      <span class="list-group-item" data-index='["environment", "tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["environment", "vaisala", "accumulated_rain"]' data-generator="envLatestMinMax" data-units=" mm">Total Rain</span>
+      <span class="list-group-item" data-index='["environment", "vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
+      <span class="list-group-item" data-index='["environment", "vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
+      <span class="list-group-item" data-index='["environment", "vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
+      <span class="list-group-item" data-index='["environment", "tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["environment", "tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
+      <span class="list-group-item" data-index='["environment", "tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
       <span class="list-group-item" data-index='["environment", "diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">TCS Disk Space</span>
       <span class="list-group-item" data-index='["environment", "roomalert", "security_system_safe"]' data-generator="switchSafeTripped">Hard Limits</span>
       <span class="list-group-item" data-index='["environment", "roomalert", "trap_closed"]' data-generator="switchClosedOpen">Trap Door</span>
       <span class="list-group-item" data-index='["environment", "roomalert", "hatch_closed"]' data-generator="switchClosedOpen">Side Hatch</span>
-      <span class="list-group-item" data-index='["environment", "tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+      <span class="list-group-item" data-index='["environment", "ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
+      <span class="list-group-item" data-index='["environment", "ephem", "moon_phase"]' data-generator="envMoon">Moon Phase</span>
+      <span class="list-group-item" data-index='["environment", "ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
     </div>
   </div>
 </div>

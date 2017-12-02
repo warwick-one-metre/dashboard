@@ -246,7 +246,8 @@ function opsEnvironment(row, cell, data) {
         'netping': 'Network',
         'main_ups': 'Main&nbsp;UPS',
         'dome_ups': 'Dome&nbsp;UPS',
-        'diskspace': 'Disk&nbsp;Space'
+        'diskspace': 'Disk&nbsp;Space',
+        'sun': 'Sun'
     }
 
     var status_classes = ['', 'text-success', 'text-warning', 'text-danger']
@@ -437,5 +438,23 @@ function envLatestMinMax(row, cell, data) {
     maxMinValue.append('<br>');
     maxMinValue.append(minValue);
     cell.append(maxMinValue);
+  }
+}
+
+function envMoon(row, cell, data) {
+  if ('latest' in data && 'current' in data && data['current']) {
+    display = 'BRIGHT';
+    if (data['latest'] < 0.25)
+      display = 'DARK';
+    else if (data['latest'] < 0.65)
+      display = 'GRAY';
+
+    display += ' (' + data['latest'].toFixed(1) + '%)';
+
+    cell.html(display);
+    cell.addClass(fieldLimitsColor(data, data['latest']));
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
   }
 }
