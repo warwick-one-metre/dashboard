@@ -182,6 +182,13 @@ def goto_external():
     account, errors = get_user_account()
     return render_template('goto/external.html', user_account=account, errors=errors)
 
+@app.route('/goto/resources/')
+def goto_resources():
+    account, errors = get_user_account()
+    if 'goto' in account['permissions']:
+        return render_template('goto/resources.html', user_account=account, errors=errors)
+    abort(404)
+
 @app.route('/environment/')
 def environment():
     account, errors = get_user_account()

@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% set title = 'GOTO &raquo; Observing Resources' -%}
+{% set active_page = 'goto-resources' -%}
+{% block body %}
+
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+
+<div class="row">
+  <ul>
+    <li><a href="https://github.com/GOTO-OBS/gotoops/wiki/Observing-Manual">Observing manual</a></li>
+
+    <li><a href="https://github.com/GOTO-OBS/gotoops/wiki/Control-System">Control system manual</a></li>
+    <li><a href="https://github.com/GOTO-OBS/gotoops/wiki/Operations-Log">Operations logs</a></li>
+    <li><a href="http://www.mountain-forecast.com/peaks/Roque-de-los-Muchachos/forecasts/2423">Mountain weather forecast</a></li>
+    <li><a href="http://www.not.iac.es/weather/">NOT weather page</a></li>
+  </ul>
+</div>
+
+{% endblock %}
+
+
+
+
+
