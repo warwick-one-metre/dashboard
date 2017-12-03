@@ -94,12 +94,22 @@ def get_user_account():
             user = github.get('user')
             username = session['username'] = user.data['login']
             avatar = session['avatar'] = user.data['avatar_url']
-            if github.get('teams/2128810/memberships/' + username).data['state'] == 'active':
+
+            onemetre_team = github.get('teams/2128810/memberships/' + username).data
+            if 'state' in onemetre_team and onemetre_team['state'] == 'active':
                 permissions.append('onemetre')
-                # todo: check a different group
+                permissions.append('infrastructure_log')
+
+            goto_team = github.get('teams/2308649/memberships/' + username).data
+            if 'state' in goto_team and goto_team['state'] == 'active':
                 permissions.append('goto')
+                permissions.append('infrastructure_log')
+
+            nites_team = github.get('teams/2576073/memberships/' + username).data
+            if 'state' in nites_team and nites_team['state'] == 'active':
                 permissions.append('nites')
                 permissions.append('infrastructure_log')
+
             session['permissions'] = permissions
         except:
             errors.append('Unable to query Github user data')

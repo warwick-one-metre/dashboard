@@ -20,11 +20,6 @@
   ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera', 'icon-video-camera', None)]),
 ] %}
 
-{% set permissions = {
-    'onemetre': 'One-metre observer',
-    'nites': 'NITES observer'
-} %}
-
 <nav class="sidebar-nav">
   <div class="sidebar-header">
     <button class="nav-toggler nav-toggler-sm sidebar-toggler" type="button" data-toggle="collapse" data-target="#nav-toggleable-sm">
@@ -58,6 +53,9 @@
       {% if user_account['permissions']|length > 0 %}
         {% if 'onemetre' in user_account['permissions'] %}
           <li>One-metre observer</li>
+        {% endif %}
+        {% if 'goto' in user_account['permissions'] %}
+          <li>GOTO observer</li>
         {% endif %}
         {% if 'nites' in user_account['permissions'] %}
           <li>NITES observer</li>
