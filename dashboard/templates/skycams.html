@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% set cameras = [
-  ('http://en.sat24.com/image?type=infraPolair&region=ce', None),
-  ('http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg', None),
-  ('http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png', None),
-  ('http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg', None)
+  ('http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg'),
+  ('http://en.sat24.com/image?type=infraPolair&region=ce'),
+  ('http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png'),
+  ('http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg')
 ] -%}
 
 {% set title = 'Sky Cameras' -%}
@@ -19,15 +19,15 @@
 
 <style>
 .thumb-panel {
-  padding:0; height: 90px; width: 90px; overflow: hidden; margin: auto auto;
+  padding:0; height: 110px; width: 110px; overflow: hidden; margin: auto auto;
 }
 </style>
 
 <div class="row">
 {% for cam in cameras %}
-  <div class="col-md-2 col-xs-4 m-b">
+  <div class="col-sm-3 col-xs-6 m-b">
     <a class="btn list-group list-group-item thumb-panel" onclick="selectCamera(this);">
-      <img src="{{ cam[0] }}" data-url="{{ cam[0] }}" {% if cam[1] != None %} data-liveurl="{{ cam[1] }}"{% endif %}height="100%">
+      <img src="{{ cam }}" data-url="{{ cam }}" height="100%">
     </a>
   </div>
 {% endfor %}
@@ -45,42 +45,13 @@
 </div>
 
 <script>
-var videoPlaying = undefined;
-
-function viewLive(url) {
-  $('#video-button-text').html('Stop');
-  $('#main').attr('src', url +'?' + Date.now());
-  videoPlaying = url;
-}
-
-function viewStatic(url) {
-  $('#video-button-text').html('Play');
-  $('#main').attr('src', url + '?' + Date.now());
-  videoPlaying = undefined;
-}
 
 function selectCamera(element) {
   var img = $(element).children('img');
   var url = img.data('url');
-  var liveurl = img.data('liveurl');
   var main = $('#main');
-  var video = $('#video-button');
-
   main.data('url', url);
-  main.data('liveurl', liveurl);
-  viewStatic(url);
-
-  if (liveurl) {
-    video.show();
-    video.unbind();
-    video.click(function() {
-      if (videoPlaying)
-        viewStatic(url);
-      else
-        viewLive(liveurl);
-    });
-  } else
-    video.hide();
+  main.attr('src', url + '?' + Date.now());
 }
 
 function reloadImages() {
@@ -91,11 +62,8 @@ function reloadImages() {
     if (!url)
       return;
 
-    // Don't refresh live images
-    if ($(this).attr('id') != 'main' || !videoPlaying) {
-      var sep = url.indexOf('?') < 0 ? '?' : '&';
-      $(this).attr('src', url + sep + Date.now());
-    }
+    var sep = url.indexOf('?') < 0 ? '?' : '&';
+    $(this).attr('src', url + sep + Date.now());
   });
 }
 
