@@ -43,12 +43,12 @@ function parseUTCDate(str) {
   while (d[7] > 1000)
     d[7] /= 10;
 
-  var utc = Date.UTC(d[1], d[2], d[3], d[4], d[5], d[6], d[7]);
+  var utc = Date.UTC(d[1], d[2] - 1, d[3], d[4], d[5], d[6], d[7]);
   return new Date(utc);
 }
 
 function formatUTCDate(date) {
-  var d = [date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+  var d = [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(),
     date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()];
 
   for (i = 0; i < d.length; i++)
