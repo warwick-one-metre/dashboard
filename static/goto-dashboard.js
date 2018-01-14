@@ -60,16 +60,79 @@ function telDec(row, cell, data) {
   cell.html(sexagesimal(data));
 }
 
-function telAlt(row, cell, data) {
-  cell.html(data.toFixed(1) + '&deg;');
+function telImageType(row, cell, data) {
+  status = 'current_imgtype' in data ? data['current_imgtype'].toUpperCase() : 'NONE';
+  cell.html(status);
+}
+
+function telCamStatus(row, cell, data, index) {
+  status = 'ERROR';
+  style = 'text-danger';
+  if (data && 'status'+index in data) {
+    status = data['status'+index].toUpperCase();
+    if (status == 'READY')
+      style = '';
+    else if (status == 'EXPOSING')
+      style = 'text-success';
+    else if (status == 'READING')
+      style = 'text-warning';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function telCamStatus1(row, cell, data) {
+  telCamStatus(row, cell, data, 1);
+}
+
+function telCamStatus2(row, cell, data) {
+  telCamStatus(row, cell, data, 2);
+}
+
+function telCamStatus3(row, cell, data) {
+  telCamStatus(row, cell, data, 3);
+}
+
+function telCamStatus4(row, cell, data) {
+  telCamStatus(row, cell, data, 4);
+}
+
+function telCamTemp(row, cell, data, index) {
+  status = 'ERROR';
+  style = 'text-danger';
+  if (data && 'ccd_temp'+index in data) {
+    status = data['ccd_temp'+index].toFixed(0) + '&deg;C';
+    style = '';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function telCamTemp1(row, cell, data) {
+  telCamTemp(row, cell, data, 1);
+}
+
+function telCamTemp2(row, cell, data) {
+  telCamTemp(row, cell, data, 2);
+}
+
+function telCamTemp3(row, cell, data) {
+  telCamTemp(row, cell, data, 3);
+}
+
+function telCamTemp4(row, cell, data) {
+  telCamTemp(row, cell, data, 4);
 }
 
 function telFilt(row, cell, data, index) {
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'current_filter_num'+index in data) {
+  filters = ['L', 'R', 'G', 'B'];
+  if (data && 'current_filter_num'+index in data && data['current_filter_num'+index] < 4 ) {
     if (data['homed'+index]) {
-      status = data['current_filter_num'+index];
+      status = filters[data['current_filter_num'+index]];
       style = '';
     } else if (data['status'+index] == 'Moving') {
       status = 'MOVING';
@@ -98,34 +161,6 @@ function telFilt3(row, cell, data) {
 
 function telFilt4(row, cell, data) {
   telFilt(row, cell, data, 4);
-}
-
-function telFoc(row, cell, data, index) {
-  status = 'ERROR';
-  style = 'text-danger';
-  if (data && 'current_pos'+index in data) {
-    status = data['current_pos'+index];
-    style = '';
-  }
-
-  cell.html(status);
-  cell.addClass(style);
-}
-
-function telFoc1(row, cell, data) {
-  telFoc(row, cell, data, 1);
-}
-
-function telFoc2(row, cell, data) {
-  telFoc(row, cell, data, 2);
-}
-
-function telFoc3(row, cell, data) {
-  telFoc(row, cell, data, 3);
-}
-
-function telFoc4(row, cell, data) {
-  telFoc(row, cell, data, 4);
 }
 
 function telFans(row, cell, data) {

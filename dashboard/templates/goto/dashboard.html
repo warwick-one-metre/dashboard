@@ -74,7 +74,7 @@
       <span class="list-group-item" data-index='["mnt", "status"]' data-generator="telStatus">Status</span>
       <span class="list-group-item" data-index='["mnt", "mount_ra"]' data-generator="telRA">RA</span>
       <span class="list-group-item" data-index='["mnt", "mount_dec"]' data-generator="telDec">Dec</span>
-      <span class="list-group-item" data-index='["mnt", "mount_alt"]' data-generator="telAlt">Altitude</span>
+      <span class="list-group-item" data-index='["exq"]' data-generator="telImageType">Exposure Type</span>
     </div>
   </div>
   <div class="col-md-8 col-sm-12 col-xs-12">
@@ -84,17 +84,17 @@
         <tbody>
           <tr>
             <td>Cam. Status</td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td data-index='["cam"]' data-generator="telCamStatus1"></td>
+            <td data-index='["cam"]' data-generator="telCamStatus2"></td>
+            <td data-index='["cam"]' data-generator="telCamStatus3"></td>
+            <td data-index='["cam"]' data-generator="telCamStatus4"></td>
           </tr>
           <tr>
             <td>Cam. Temperature</td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
-            <td><span class="pull-right text-danger">ERROR</span></td>
+            <td data-index='["cam"]' data-generator="telCamTemp1"></td>
+            <td data-index='["cam"]' data-generator="telCamTemp2"></td>
+            <td data-index='["cam"]' data-generator="telCamTemp3"></td>
+            <td data-index='["cam"]' data-generator="telCamTemp4"></td>
           </tr>
           <tr>
             <td>Filter</td>
@@ -102,13 +102,6 @@
             <td data-index='["filt"]' data-generator="telFilt2"></td>
             <td data-index='["filt"]' data-generator="telFilt3"></td>
             <td data-index='["filt"]' data-generator="telFilt4"></td>
-          </tr>
-          <tr>
-            <td>Focus</td>
-            <td data-index='["foc"]' data-generator="telFoc1"></td>
-            <td data-index='["foc"]' data-generator="telFoc2"></td>
-            <td data-index='["foc"]' data-generator="telFoc3"></td>
-            <td data-index='["foc"]' data-generator="telFoc4"></td>
           </tr>
           <tr>
             <td>Fans</td>
