@@ -32,6 +32,21 @@ function powerOnOff(row, cell, data) {
   }
 }
 
+function ledsOnOff(row, cell, data) {
+  if (data && 'status_PDU1' in data && 'leds1' in data['status_PDU1'] && 'status_PDU2' in data && 'leds2' in data['status_PDU2']) {
+    if (data['status_PDU1']['leds1'] == 'On' || data['status_PDU2']['leds2'] == 'On') {
+      cell.html('POWER ON');
+      cell.addClass('text-success');
+    } else {
+      cell.html('POWER OFF');
+      cell.addClass('text-danger');
+    }
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  }
+}
+
 function telStatus(row, cell, data) {
   // TODO
   cell.html(data.toUpperCase());
@@ -125,93 +140,102 @@ function telFans(row, cell, data) {
   cell.addClass(style);
 }
 
-function conditionInner(row, cell, data, condition, flag) {
+function onemetreParameter(row, cell, data) {
   status = 'ERROR';
   style = 'text-danger';
 
-  var flag_valid = flag === undefined || (data && 'flags' in data && flag in data['flags'] && data['flags'][flag] != 2);
-  var condition_valid = data && 'weather' in data;
-
-  if (flag_valid && condition_valid) {
-    if (flag === undefined) {
+  var units = row.data('units');
+  if (data && 'current' in data) {
+    if ('latest' in data && data['current']) {
       style = '';
-    } else if (data['flags'][flag] == 0) {
-      style = 'text-success';
-    }
-
-    var minValue = undefined;
-    var maxValue = undefined;
-    for (var sensor in data['weather']) {
-      if (!(condition in data['weather'][sensor])) {
-        continue;
-      }
-
-      var sensorValue = data['weather'][sensor][condition];
-      minValue = minValue === undefined ? sensorValue : Math.min(minValue, sensorValue);
-      maxValue = maxValue === undefined ? sensorValue : Math.max(maxValue, sensorValue);
-    }
-
-    status = minValue + ' &mdash; ' + maxValue;
-    var units = row.data('units');
-    if (units)
-      status += units;
+      status = data['latest'];
+      if (units)
+        status += units;
+    } else
+      status = 'NO DATA';
   }
 
   cell.html(status);
   cell.addClass(style);
 }
 
-function conditionExtHumidity(row, cell, data) {
-  conditionInner(row, cell, data, 'humidity', 'humidity');
-}
+function onemetreMoon(row, cell, data) {
+  if ('latest' in data && 'current' in data && data['current']) {
+    display = 'BRIGHT';
+    if (data['latest'] < 0.25)
+      display = 'DARK';
+    else if (data['latest'] < 0.65)
+      display = 'GRAY';
 
-function conditionIntHumidity(row, cell, data) {
-  conditionInner(row, cell, data, 'int_humidity', 'humidity');
-}
+    display += ' (' + data['latest'].toFixed(1) + '%)';
 
-function conditionExtTemp(row, cell, data) {
-  conditionInner(row, cell, data, 'temperature', 'temperature');
-}
-
-function conditionIntTemp(row, cell, data) {
-  conditionInner(row, cell, data, 'int_temperature');
-}
-
-function conditionWind(row, cell, data) {
-  conditionInner(row, cell, data, 'windspeed', 'windspeed');
-}
-
-function conditionNetwork(row, cell, data) {
-  status = 'ERROR';
-  style = 'text-danger';
-
-  if (data && 'flags' in data && 'link' in data['flags'] && data['flags']['link'] != 2) {
-    if (data['flags']['link'] == 0) {
-      status = 'ONLINE';
-      style = 'text-success';
-    } else {
-      status = 'OFFLINE';
-    }
+    cell.html(display);
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
   }
+}
+
+function conditionSimple(row, cell, data) {
+  status = data;
+  var units = row.data('units');
+  if (units)
+    status += units;
 
   cell.html(status);
-  cell.addClass(style);
 }
 
-function conditionSunElevation(row, cell, data) {
-  status = 'ERROR';
-  style = 'text-danger';
+function conditionFlags(row, cell, data) {
+  if (data) {
 
-  if (data && 'flags' in data && 'dark' in data['flags'] && data['flags']['dark'] != 2) {
-    if (data['flags']['dark'] == 0) {
-      status = 'DARK';
-      style = 'text-success';
-    } else {
-      status = 'BRIGHT';
+    // Build the conditions tooltip
+    var conditions = {
+        'dark': 'Sun',
+        'diskspace': 'Disk&nbsp;Space',
+        'hatch': 'Dome&nbsp;Hatch',
+        'humidity': 'Humidity',
+        'link': 'Network',
+        'low_battery': 'UPS&nbsp;Battery',
+        'rain': 'Rain',
+        'temperature': 'Temperature',
+        'ups': 'UPS&nbsp;Status',
+        'windspeed': 'Wind',
     }
+
+    var status_classes = ['text-success', 'text-danger']
+
+    var safe = true;
+    var tooltip = '<table style="margin: 5px">';
+    for (var c in conditions) {
+        if (!(c in data)) {
+          safe = false;
+          continue;
+        }
+
+        if (data[c] == 1)
+          safe = false;
+
+        tooltip += '<tr><td style="text-align: right;">' + conditions[c] + ':</td>';
+        tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'UNSAFE') + '</td>';
+        tooltip += '</tr>';
+
+    }
+    tooltip += '</table>';
+
+    cell.html(safe ? 'SAFE' : 'NOT SAFE');
+    row.addClass(safe ? 'list-group-item-success' : 'list-group-item-danger');
+
+    var tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
+    if (tooltip_active)
+      row.tooltip('hide');
+
+    row.data('bs.tooltip', false);
+    row.tooltip({ html: true, title: tooltip });
+
+    if (tooltip_active)
+      row.tooltip('show');
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
   }
-
-  cell.html(status);
-  cell.addClass(style);
 }
-

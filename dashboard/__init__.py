@@ -282,9 +282,36 @@ def onemetre_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, ONEMETRE_GENERATED_DATA[path])
     abort(404)
 
+def extract_onemetre_environment(data, group):
+    """Extract a minimal set of data from the onemetre environment
+       output for use on other dashboard pages"""
+    if 'environment' not in data or group not in data['environment']:
+        return {}
+
+    ret = {}
+    for k in data['environment'][group]:
+        v = data['environment'][group][k]
+        ret[k] = {'current': v['current']}
+        if v['current']:
+            ret[k]['latest'] = round(v['latest'], 2)
+
+    return ret
+
 @app.route('/data/goto/')
 def goto_dashboard_data():
-    data = {}
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
+
+    # Extract additional data from the 1m dashboard
+    onemetre = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
+    data.update({
+        'onemetre': {
+            'superwasp': extract_onemetre_environment(onemetre, 'superwasp'),
+            'goto_vaisala': extract_onemetre_environment(onemetre, 'goto_vaisala'),
+            'tng': extract_onemetre_environment(onemetre, 'tng'),
+            'ephem': extract_onemetre_environment(onemetre, 'ephem')
+        }
+    })
+
     account, errors = get_user_account()
     if 'goto' in account['permissions']:
         data.update(json.load(open(GENERATED_DATA_DIR + '/goto-private.json')))

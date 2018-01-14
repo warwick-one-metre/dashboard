@@ -9,32 +9,64 @@
   </div>
 </div>
 
-{% if user_account != None and 'goto' in user_account['permissions'] %}
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["ops", "telescope_status"]' data-generator="telStatus">Tel. Status</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["ops", "dome_status"]' data-generator="opsDomeStatus">Dome Status</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["conditions", "flags"]' data-generator="conditionFlags" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+    </div>
+  </div>
+</div>
+
 <div class="row dashboard-stats">
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["power", "status_UPS1"]' data-generator="powerUPS">East UPS</span>
       <span class="list-group-item" data-index='["power", "status_UPS2"]' data-generator="powerUPS">West UPS</span>
       <span class="list-group-item" data-index='["power", "status_PDU2", "sitech"]' data-generator="powerOnOff">Mount</span>
-      <span class="list-group-item" data-index='["power", "status_PDU1", "leds"]' data-generator="powerOnOff">Dome Light</span>
+      <span class="list-group-item" data-index='["power"]' data-generator="ledsOnOff">Dome Lights</span>
+      <span class="list-group-item" data-index='["power"]' data-generator="powerOnOff">Dehumidifier</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionExtHumidity" data-units=" %RH">Ext. Humidity</span>
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionIntHumidity" data-units=" %RH">Int. Humidity</span>
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionExtTemp" data-units=" &deg;C">Ext. Temp</span>
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionIntTemp" data-units=" &deg;C">Int. Temp</span>
+      <span class="list-group-item" data-index='["conditions", "weather", "goto", "humidity"]' data-generator="conditionSimple" data-units=" %RH">Ext. Humidity</span>
+      <span class="list-group-item" data-index='["conditions", "weather", "dome", "int_humidity"]' data-generator="conditionSimple" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["conditions", "weather", "goto", "temperature"]' data-generator="conditionSimple" data-units=" &deg;C">Ext. Temp</span>
+      <span class="list-group-item" data-index='["conditions", "weather", "dome", "int_temperature"]' data-generator="conditionSimple" data-units=" &deg;C">Int. Temp</span>
+      <span class="list-group-item" data-index='["onemetre", "goto_vaisala", "dew_point_delta"]' data-generator="onemetreParameter" data-units=" &deg;C">T > Dew Pt.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionWind" data-units=" km/h">Peak Wind</span>
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionNetwork">Network</span>
-      <span class="list-group-item" data-index='["conditions"]' data-generator="conditionSunElevation">Sun Elevation</span>
+      <span class="list-group-item" data-index='["onemetre", "superwasp", "sky_temp"]' data-generator="onemetreParameter" data-units=" &deg;C">Sky. Temp</span>
+
+      <span class="list-group-item" data-index='["onemetre", "goto_vaisala", "accumulated_rain"]' data-generator="onemetreParameter" data-units=" mm">Total Rain</span>
+      <span class="list-group-item" data-index='["conditions", "weather", "goto", "windspeed"]' data-generator="conditionSimple" data-units=" km/h">Peak Wind</span>
+      <span class="list-group-item" data-index='["onemetre", "goto_vaisala", "pressure"]' data-generator="onemetreParameter" data-units=" hPa">Pressure</span>
+      <span class="list-group-item" data-index='["onemetre", "tng", "seeing"]' data-generator="onemetreParameter" data-units=" arcsec">Seeing (TNG)</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["onemetre", "tng", "dust"]' data-generator="onemetreParameter" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["onemetre", "tng", "solarimeter"]' data-generator="onemetreParameter" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+      <span class="list-group-item" data-index='["onemetre", "ephem", "sun_alt"]' data-generator="onemetreParameter" data-units="&deg;">Sun Altitude</span>
+      <span class="list-group-item" data-index='["onemetre", "ephem", "moon_phase"]' data-generator="onemetreMoon">Moon Phase</span>
+      <span class="list-group-item" data-index='["onemetre", "ephem", "moon_alt"]' data-generator="onemetreParameter" data-units="&deg;">Moon Altitude</span>
     </div>
   </div>
 </div>
+{% if user_account != None and 'goto' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -102,11 +134,11 @@
 {% endif %}
 <script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='goto-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
 <script>
   $(document).ready(function() {
-{% if user_account != None and 'goto' in user_account['permissions'] %}
+    $('[data-toggle="tooltip"]').tooltip();
     pollDashboard('/data/goto');
-{% endif %}
   });
 </script>
 {% endblock %}
