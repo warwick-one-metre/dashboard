@@ -447,9 +447,9 @@ function envLatestMinMax(row, cell, data) {
 function envMoon(row, cell, data) {
   if ('latest' in data && 'current' in data && data['current']) {
     display = 'BRIGHT';
-    if (data['latest'] < 0.25)
+    if (data['latest'] < 25)
       display = 'DARK';
-    else if (data['latest'] < 0.65)
+    else if (data['latest'] < 65)
       display = 'GRAY';
 
     display += ' (' + data['latest'].toFixed(1) + '%)';
