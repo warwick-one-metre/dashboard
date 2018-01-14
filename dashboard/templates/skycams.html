@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
 
 {% set cameras = [
-  ('http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg'),
-  ('http://en.sat24.com/image?type=infraPolair&region=ce'),
-  ('http://catserver.ing.iac.es/weather/archive/concam/tmp/concam.png'),
-  ('http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg')
+  'http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg',
+  'http://catserver.ing.iac.es/weather/archive/concam/concam_labels.png',
+  'http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg',
+  'http://en.sat24.com/image?type=infraPolair&region=ce',
+  'http://oiswww.eumetsat.org/IPPS/html/latestImages/EUMETSAT_MSG_MPE_WesternAfrica.png',
+  'http://oiswww.eumetsat.org/IPPS/html/latestImages/EUMETSAT_MSG_RGBDust_WesternAfrica.jpg'
 ] -%}
 
 {% set title = 'Sky Cameras' -%}
@@ -25,7 +27,7 @@
 
 <div class="row">
 {% for cam in cameras %}
-  <div class="col-sm-3 col-xs-6 m-b">
+  <div class="col-md-2 col-sm-4 col-xs-6 m-b">
     <a class="btn list-group list-group-item thumb-panel" onclick="selectCamera(this);">
       <img src="{{ cam }}" data-url="{{ cam }}" height="100%">
     </a>
@@ -51,7 +53,9 @@ function selectCamera(element) {
   var url = img.data('url');
   var main = $('#main');
   main.data('url', url);
-  main.attr('src', url + '?' + Date.now());
+
+  var sep = url.indexOf('?') < 0 ? '?' : '&';
+  main.attr('src', url + sep + Date.now());
 }
 
 function reloadImages() {
