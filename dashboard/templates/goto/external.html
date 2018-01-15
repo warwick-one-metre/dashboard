@@ -31,7 +31,13 @@ $(document).ready(function () {
 
       videoPlaying = true;
     }
-  })
+  });
+
+  // Refresh the view every 30 seconds if not live
+  window.setInterval(function() {
+    if (!videoPlaying)
+      $('#video').attr('src', '/webcam/ext2/static?' + Date.now());
+  }, 30000);
 });
 </script>
 {% endblock %}
