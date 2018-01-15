@@ -61,7 +61,7 @@ function telDec(row, cell, data) {
 }
 
 function telImageType(row, cell, data) {
-  status = 'current_imgtype' in data ? data['current_imgtype'].toUpperCase() : 'NONE';
+  status = data && 'current_imgtype' in data ? data['current_imgtype'].toUpperCase() : 'NONE';
   cell.html(status);
 }
 
