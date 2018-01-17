@@ -49,7 +49,7 @@ app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = -1
 
 # Read secret data from the database
-db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
+db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
 with db.cursor() as cur:
     query = 'SELECT keyname, value from dashboard_config WHERE 1'
     cur.execute(query)
@@ -70,59 +70,90 @@ github = oauth.remote_app(
     authorize_url='https://github.com/login/oauth/authorize'
 )
 
-def get_user_account():
-    username = None
-    avatar = None
-    permissions = []
-    errors = []
+def is_github_team_member(user, team_id):
+    """Queries the GitHub API to check if the given user is a member of the given team."""
+    team = github.get('teams/' + str(team_id) + '/memberships/' + user.data['login']).data
+    return 'state' in team and team['state'] == 'active'
 
-    # Check for OAuth login response
+def get_user_account():
+    """Queries user account details from the local cache or GitHub API
+       Returns a dictionary with fields:
+          'username': GitHub username (or None if not logged in)
+          'avatar': GitHub profile picture (or None if not logged in)
+          'permissions': list of permission types, a subset of
+                         ['onemetre', 'nites', 'goto', 'infrastructure_log']
+    """
+    # Expire cached sessions after 12 hours
+    # This forces the permissions to be queried again from github
+    try:
+        with db.cursor() as cur:
+            cur.execute('DELETE FROM `dashboard_sessions` WHERE `timestamp` < ADDDATE(NOW(), INTERVAL -12 HOUR)')
+    except Exception as e:
+        print('Failed to clean expired session data with error')
+        print(e)
+
+    # Check whether we have received a callback argument from a login attempt
     if 'code' in request.args:
         resp = github.authorized_response()
         if resp is not None and 'access_token' in resp:
-            session['github_token'] = (resp['access_token'], '')
+            session['github_token'] = resp['access_token']
 
-    if 'error' in request.args and 'error_description' in request.args:
-        errors.append('Unable to authenticate with Github')
+    # Logged in users store an encrypted version of their github token in the session cookie
+    if 'github_token' in session:
+        # Check whether we have any cached state
+        try:
+            with db.cursor() as cur:
+                query = 'SELECT data from `dashboard_sessions` WHERE github_token = %s'
+                if cur.execute(query, (session['github_token'],)):
+                    return json.loads(cur.fetchone()[0])
+        except Exception as e:
+            print('Failed to query local session data with error')
+            print(e)
 
-    if 'username' in session and 'avatar' in session and 'permissions' in session:
-        username = session['username']
-        avatar = session['avatar']
-        permissions = session['permissions']
-    elif 'github_token' in session:
+        # Query user data and permissions from GitHub
         try:
             user = github.get('user')
-            username = session['username'] = user.data['login']
-            avatar = session['avatar'] = user.data['avatar_url']
+            permissions = set()
 
-            onemetre_team = github.get('teams/2128810/memberships/' + username).data
-            if 'state' in onemetre_team and onemetre_team['state'] == 'active':
-                permissions.append('onemetre')
-                permissions.append('infrastructure_log')
+            # https://github.com/orgs/warwick-one-metre/teams/observers
+            if is_github_team_member(user, 2128810):
+                permissions.update(['onemetre', 'infrastructure_log'])
 
-            goto_team = github.get('teams/2308649/memberships/' + username).data
-            if 'state' in goto_team and goto_team['state'] == 'active':
-                permissions.append('goto')
-                permissions.append('infrastructure_log')
+            # https://github.com/orgs/NITES-40cm/teams/observers
+            if is_github_team_member(user, 2576073):
+                permissions.update(['nites', 'infrastructure_log'])
 
-            nites_team = github.get('teams/2576073/memberships/' + username).data
-            if 'state' in nites_team and nites_team['state'] == 'active':
-                permissions.append('nites')
-                permissions.append('infrastructure_log')
+            # https://github.com/orgs/GOTO-OBS/teams/ops-team/
+            if is_github_team_member(user, 2308649):
+                permissions.update(['goto', 'infrastructure_log'])
 
-            session['permissions'] = permissions
-        except:
-            errors.append('Unable to query Github user data')
+            data = {
+                'username': user.data['login'],
+                'avatar': user.data['avatar_url'],
+                'permissions': list(permissions)
+            }
+
+            # Cache the state for next time
+            with db.cursor() as cur:
+                query = 'REPLACE into `dashboard_sessions` (`github_token`, `data`) VALUES (%s, %s)'
+                cur.execute(query, (session['github_token'], json.dumps(data)))
+
+            return data
+        except Exception as e:
+            print('Failed to query GitHub API with error')
+            print(e)
 
     return {
-        'username': username,
-        'avatar': avatar,
-        'permissions': permissions
-    }, errors
+        'username': None,
+        'avatar': None,
+        'permissions': []
+    }
 
 @github.tokengetter
 def get_github_oauth_token():
-    return session.get('github_token')
+    """Fetch the github oauth token.
+       Used internally by the OAuth API"""
+    return (session.get('github_token'), '')
 
 @app.route('/login')
 def login():
@@ -132,10 +163,11 @@ def login():
 @app.route('/logout')
 def logout():
     next = request.args['next'] if 'next' in request.args else url_for('environment')
-    session.pop('github_token', None)
-    session.pop('username', None)
-    session.pop('avatar', None)
-    session.pop('permissions', None)
+    token = session.pop('github_token', None)
+    if token:
+        with db.cursor() as cur:
+            cur.execute('DELETE FROM `dashboard_sessions` WHERE `github_token` = %s', (token,))
+
     return redirect(next)
 
 # Main pages
@@ -145,80 +177,70 @@ def main_redirect():
 
 @app.route('/onemetre/')
 def onemetre_dashboard():
-    account, errors = get_user_account()
-    return render_template('onemetre/dashboard.html', user_account=account, errors=errors)
+    return render_template('onemetre/dashboard.html', user_account=get_user_account())
 
 @app.route('/onemetre/live/')
 def onemetre_live():
-    account, errors = get_user_account()
+    account = get_user_account()
     if 'onemetre' in account['permissions']:
-        return render_template('onemetre/live.html', user_account=account, errors=errors)
+        return render_template('onemetre/live.html', user_account=account)
     abort(404)
 
 @app.route('/onemetre/dome/')
 def onemetre_dome():
-    account, errors = get_user_account()
-    return render_template('onemetre/dome.html', user_account=account, errors=errors)
+    return render_template('onemetre/dome.html', user_account=get_user_account())
 
 @app.route('/onemetre/external/')
 def onemetre_external():
-    account, errors = get_user_account()
-    return render_template('onemetre/external.html', user_account=account, errors=errors)
+    return render_template('onemetre/external.html', user_account=get_user_account())
 
 @app.route('/onemetre/resources/')
 def onemetre_resources():
-    account, errors = get_user_account()
+    account = get_user_account()
     if 'onemetre' in account['permissions']:
-        return render_template('onemetre/resources.html', user_account=account, errors=errors)
+        return render_template('onemetre/resources.html', user_account=account)
     abort(404)
 
 @app.route('/nites/dome/')
 def nites_dome():
-    account, errors = get_user_account()
-    return render_template('nites/dome.html', user_account=account, errors=errors)
+    return render_template('nites/dome.html', user_account=get_user_account())
 
 @app.route('/goto/')
 def goto_dashboard():
-    account, errors = get_user_account()
-    return render_template('goto/dashboard.html', user_account=account, errors=errors)
+    return render_template('goto/dashboard.html', user_account=get_user_account())
 
 @app.route('/goto/dome/')
 def goto_dome():
-    account, errors = get_user_account()
-    return render_template('goto/dome.html', user_account=account, errors=errors)
+    return render_template('goto/dome.html', user_account=get_user_account())
 
 @app.route('/goto/external/')
 def goto_external():
-    account, errors = get_user_account()
-    return render_template('goto/external.html', user_account=account, errors=errors)
+    return render_template('goto/external.html', user_account=get_user_account())
 
 @app.route('/goto/resources/')
 def goto_resources():
-    account, errors = get_user_account()
+    account = get_user_account()
     if 'goto' in account['permissions']:
-        return render_template('goto/resources.html', user_account=account, errors=errors)
+        return render_template('goto/resources.html', user_account=account)
     abort(404)
 
 @app.route('/environment/')
 def environment():
-    account, errors = get_user_account()
-    return render_template('environment.html', user_account=account, errors=errors)
+    return render_template('environment.html', user_account=get_user_account())
 
 @app.route('/infrastructure/')
 def infrastructure():
-    account, errors = get_user_account()
-    return render_template('infrastructure.html', user_account=account, errors=errors)
+    return render_template('infrastructure.html', user_account=get_user_account())
 
 @app.route('/skycams/')
 def skycams():
-    account, errors = get_user_account()
-    return render_template('skycams.html', user_account=account, errors=errors)
+    return render_template('skycams.html', user_account=get_user_account())
 
 # Dynamically generated JSON
 @app.route('/data/onemetre/log')
 def onemetre_log():
-    account, errors = get_user_account()
-    if True or 'onemetre' in account['permissions']:
+    account = get_user_account()
+    if 'onemetre' in account['permissions']:
         # Returns latest 250 log messages.
         # If 'from' argument is present, returns latest 100 log messages with a greater id
         db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
@@ -237,8 +259,8 @@ def onemetre_log():
 
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
-    account, errors = get_user_account()
-    if True or 'onemetre' in account['permissions']:
+    account = get_user_account()
+    if 'onemetre' in account['permissions']:
         # Returns latest 250 log messages.
         # If 'from' argument is present, returns latest 100 log messages with a greater id
         db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
@@ -269,7 +291,7 @@ def infrastructure_data():
 @app.route('/data/onemetre/')
 def onemetre_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
-    account, errors = get_user_account()
+    account = get_user_account()
     if 'onemetre' in account['permissions']:
         data.update(json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json')))
 
@@ -277,7 +299,7 @@ def onemetre_dashboard_data():
 
 @app.route('/data/onemetre/<path:path>')
 def onemetre_generated_data(path):
-    account, errors = get_user_account()
+    account = get_user_account()
     if 'onemetre' in account['permissions'] and path in ONEMETRE_GENERATED_DATA:
         return send_from_directory(GENERATED_DATA_DIR, ONEMETRE_GENERATED_DATA[path])
     abort(404)
@@ -312,7 +334,7 @@ def goto_dashboard_data():
         }
     })
 
-    account, errors = get_user_account()
+    account = get_user_account()
     if 'goto' in account['permissions']:
         data.update(json.load(open(GENERATED_DATA_DIR + '/goto-private.json')))
 

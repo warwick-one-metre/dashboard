@@ -12,7 +12,7 @@ Installing `observatory-dashboard` will pull in the `nginx` web server, `uwsgi` 
 
 The first step should be to configure the database as described in the `weatherlogd` and `obslogd` repository READMEs.
 
-The web dashboard requires an additional `dashboard_config` table in the `ops` database, which can be created using:
+The web dashboard requires two additional tables in the `ops` database, which can be created using:
 
 ```sql
 CREATE TABLE `dashboard_config` (
@@ -20,9 +20,16 @@ CREATE TABLE `dashboard_config` (
   `keyname` text NOT NULL,
   `value` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `dashboard_sessions` (
+  `github_token` VARCHAR(40) UNIQUE,
+  `data` text NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ```
 
-The table should contain three rows:
+The `dashboard_config` table is expected to contain three rows:
 
 | `id` | `keyname`    | Description    |
 | ---- | ------------ | -------------- |
