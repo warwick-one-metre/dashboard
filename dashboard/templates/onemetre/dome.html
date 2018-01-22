@@ -8,75 +8,9 @@
   </div>
 </div>
 
-<div class="row">
-  <div id="container" class="col-md-12 m-b" style="position: relative">
-    <img id="video" src="/webcam/onemetre/static" width="100%">
-    <div style="position: absolute; left: 25px; top: 10px; text-align: center;">
-      <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
-    </div>
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
-    <div style="position: absolute; right: 25px; top: 10px; text-align: center;">
-      <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='speaker.svg') }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
-      <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="5" data-slider-selection="after" data-slider-tooltip="hide">
-    </div>
-{% endif %}
-  </div>
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
-  <div id="container" class="col-md-12">
-    <p class="description">Please note that audio playback requires browser support for WebSockets and WebAudio.<br />
-    <p class="description">Video sync may drift over time. You may need to stop and restart playback periodically.</p>
-  </div>
-{% endif %}
-</div>
-<script src="{{ url_for('static', filename='bootstrap-slider.js') }}"></script>
+{% set enable_microphone = user_account != None and 'onemetre' in user_account['permissions'] -%}
+{% set video = 'onemetre' %}
+{% set audio = 'onemetre' %}
+{% include 'camera.html' %}
 
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
-<script src="https://cdn.jsdelivr.net/binaryjs/0.2.1/binary.min.js"></script>
-<script src="{{ url_for('static', filename='audio.js') }}"></script>
-{% endif %}
-
-<script>
-$(document).ready(function () {
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
-  $('#audio-volume').slider()
-  $('#audio-volume').on('slide', function(ev){
-    setAudioStreamVolume(ev.value);
-  });
-
-  var audioPlaying = false;
-  $('#audio-button').click(function() {
-    if (audioPlaying) {
-      $('#audio-button-text').html('Play');
-      stopAudioStream();
-      audioPlaying = false;
-    } else {
-      $('#audio-button-text').html('Stop');
-      var gain = $('#audio-volume').data('slider').getValue();
-      startAudioStream("{{ url_for('static', filename='../microphone/onemetre', _external=True, _scheme='ws') }}", 22050, 0.2, gain);
-      audioPlaying = true;
-    }
-  });
-{% endif %}
-
-  var videoPlaying = false;
-  $('#video-button').click(function() {
-    if (videoPlaying) {
-      $('#video-button-text').html('Play');
-      $('#video').attr('src', '/webcam/onemetre/static?' + Date.now());
-      videoPlaying = false;
-    } else {
-      $('#video-button-text').html('Stop');
-      $('#video').attr('src', '/webcam/onemetre/live?' + Date.now());
-
-      videoPlaying = true;
-    }
-  });
-
-  // Refresh the view every 30 seconds if not live
-  window.setInterval(function() {
-    if (!videoPlaying)
-      $('#video').attr('src', '/webcam/onemetre/static?' + Date.now());
-  }, 30000);
-});
-</script>
 {% endblock %}
