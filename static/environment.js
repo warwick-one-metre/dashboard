@@ -282,11 +282,11 @@ function redrawWindPlot() {
     if (!dateString) {
       ctx.strokeStyle = '#fff';
       for (var i = 0; i < series.length; i++) {
-        if (!speed.data[0])
-          continue;
-
         var dir = series[i];
         var speed = speeds[i];
+        if (speed.data[0] === undefined)
+          continue;
+
         var dy = speed.data[0][1] * Math.cos(dir.data[0][1] * Math.PI / 180);
         var dx = speed.data[0][1] * Math.sin(dir.data[0][1] * Math.PI / 180);
         var x = offset.left + axes.xaxis.p2c(xScale * dx);
