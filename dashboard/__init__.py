@@ -260,7 +260,7 @@ def onemetre_log():
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
     account = get_user_account()
-    if 'onemetre' in account['permissions']:
+    if 'infrastructure_log' in account['permissions']:
         # Returns latest 250 log messages.
         # If 'from' argument is present, returns latest 100 log messages with a greater id
         db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
