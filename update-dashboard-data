@@ -40,13 +40,22 @@ def generate_json(output_path, data):
     for daemon, key, query in data:
         try:
             with daemon.connect() as d:
+                response = query(d)
+
+            # Some daemons will return None on error
+            if response is None:
+                if not key in status or status[key]:
+                    print('recieved empty response from ' + key + '')
+                    log.error('dashboardd', 'Lost contact with ' + key + ' (empty response)')
+                status[key] = False
+            else:
                 if len(data) == 1:
-                    output = query(d)
+                    output = response
                 else:
-                    output[key] = query(d)
-            if key in status and not status[key]:
-                log.info('dashboardd', 'Restored contact with ' + key)
-            status[key] = True
+                    output[key] = response
+                if key in status and not status[key]:
+                    log.info('dashboardd', 'Restored contact with ' + key)
+                status[key] = True
         except Exception as e:
             print('failed to query ' + key + ' with error: ' + str(e))
             if not key in status or status[key]:
@@ -54,7 +63,7 @@ def generate_json(output_path, data):
             status[key] = False
     try:
         with open(output_path, 'w') as output_file:
-            json.dump(output, output_file, sort_keys=True)
+            json.dump(output or {}, output_file, sort_keys=True)
 
         with open(STATUS_FILE, 'w') as output_file:
             json.dump(status, output_file, sort_keys=True)
