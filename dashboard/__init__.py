@@ -86,6 +86,9 @@ def get_user_account():
     # Expire cached sessions after 12 hours
     # This forces the permissions to be queried again from github
     try:
+        # Restore the connection if needed
+        db.ping()
+
         with db.cursor() as cur:
             cur.execute('DELETE FROM `dashboard_sessions` WHERE `timestamp` < ADDDATE(NOW(), INTERVAL -12 HOUR)')
     except Exception as e:
@@ -165,6 +168,9 @@ def logout():
     next = request.args['next'] if 'next' in request.args else url_for('environment')
     token = session.pop('github_token', None)
     if token:
+        # Restore the connection if needed
+        db.ping()
+
         with db.cursor() as cur:
             cur.execute('DELETE FROM `dashboard_sessions` WHERE `github_token` = %s', (token,))
 
@@ -241,9 +247,11 @@ def skycams():
 def onemetre_log():
     account = get_user_account()
     if 'onemetre' in account['permissions']:
+        # Restore the connection if needed
+        db.ping()
+
         # Returns latest 250 log messages.
         # If 'from' argument is present, returns latest 100 log messages with a greater id
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
         with db.cursor() as cur:
             query = 'SELECT id, date, type, source, message from obslog'
             query += " WHERE source IN ('environmentd', 'powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
@@ -261,9 +269,11 @@ def onemetre_log():
 def infrastructure_log():
     account = get_user_account()
     if 'infrastructure_log' in account['permissions']:
+        # Restore the connection if needed
+        db.ping()
+
         # Returns latest 250 log messages.
         # If 'from' argument is present, returns latest 100 log messages with a greater id
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
         with db.cursor() as cur:
             query = 'SELECT id, date, type, source, message from obslog'
             query += " WHERE source IN ('dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', 'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd')"
