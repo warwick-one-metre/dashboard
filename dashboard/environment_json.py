@@ -117,7 +117,7 @@ def environment_json(date=None):
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
     data = __vaisala_json(db, 'weather_onemetre_vaisala', ONEMETRE_VAISALA, start_str, end_str)
     data.update(__sensor_json(db, 'weather_onemetre_roomalert', ROOMALERT, start_str, end_str))
-    data.update(__sensor_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
+    data.update(__superwasp_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', ONEMETRE_RAINDETECTOR, start_str,
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
@@ -195,6 +195,28 @@ def __sensor_json(db, table, channels, start, end):
         c.update(__query_table(db, query))
         data[value[1]] = c
     return data
+
+def __superwasp_json(db, table, channels, start, end):
+    """Hacky workaround for bogus SuperWASP wind speed measurements"""
+    data = {}
+
+    for key in channels:
+        value = channels[key]
+        c = {'label': value[0], 'color': value[2]}
+
+        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
+            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
+            + db.escape(end)
+
+        if key in ['wind_speed', 'wind_direction']:
+            query += ' AND  `wind_speed` <= 180'
+
+        query += ' ORDER BY `date` DESC;'
+
+        c.update(__query_table(db, query))
+        data[value[1]] = c
+    return data
+
 
 def __ping_json(db, table, channels, start, end):
     """Queries data for the network ping graph, applying the -1 = invalid point filter"""
