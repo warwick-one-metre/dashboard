@@ -123,6 +123,7 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
+    db.close()
 
     return data, start_js, end_js
 
@@ -150,6 +151,7 @@ def infrastructure_json(date=None):
     data = __sensor_json(db, 'weather_onemetre_ups', ONEMETRE_UPS, start_str, end_str)
     data.update(__sensor_json(db, 'weather_goto_ups', GOTO_UPS, start_str, end_str))
     data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
+    db.close()
 
     return data, start_js, end_js
 

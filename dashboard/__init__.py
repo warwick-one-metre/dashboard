@@ -55,6 +55,7 @@ with db.cursor() as cur:
     cur.execute(query)
     for x in cur:
         app.config[x[0]] = x[1]
+db.close()
 
 # Use github's OAuth interface for verifying user identity
 oauth = OAuth(app)
@@ -85,72 +86,73 @@ def get_user_account():
     """
     # Expire cached sessions after 12 hours
     # This forces the permissions to be queried again from github
+    db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
     try:
-        # Restore the connection if needed
-        db.ping()
-
-        with db.cursor() as cur:
-            cur.execute('DELETE FROM `dashboard_sessions` WHERE `timestamp` < ADDDATE(NOW(), INTERVAL -12 HOUR)')
-    except Exception as e:
-        print('Failed to clean expired session data with error')
-        print(e)
-
-    # Check whether we have received a callback argument from a login attempt
-    if 'code' in request.args:
-        resp = github.authorized_response()
-        if resp is not None and 'access_token' in resp:
-            session['github_token'] = resp['access_token']
-
-    # Logged in users store an encrypted version of their github token in the session cookie
-    if 'github_token' in session:
-        # Check whether we have any cached state
         try:
             with db.cursor() as cur:
-                query = 'SELECT data from `dashboard_sessions` WHERE github_token = %s'
-                if cur.execute(query, (session['github_token'],)):
-                    return json.loads(cur.fetchone()[0])
+                cur.execute('DELETE FROM `dashboard_sessions` WHERE `timestamp` < ADDDATE(NOW(), INTERVAL -12 HOUR)')
         except Exception as e:
-            print('Failed to query local session data with error')
+            print('Failed to clean expired session data with error')
             print(e)
 
-        # Query user data and permissions from GitHub
-        try:
-            user = github.get('user')
-            permissions = set()
+        # Check whether we have received a callback argument from a login attempt
+        if 'code' in request.args:
+            resp = github.authorized_response()
+            if resp is not None and 'access_token' in resp:
+                session['github_token'] = resp['access_token']
 
-            # https://github.com/orgs/warwick-one-metre/teams/observers
-            if is_github_team_member(user, 2128810):
-                permissions.update(['onemetre', 'infrastructure_log'])
+        # Logged in users store an encrypted version of their github token in the session cookie
+        if 'github_token' in session:
+            # Check whether we have any cached state
+            try:
+                with db.cursor() as cur:
+                    query = 'SELECT data from `dashboard_sessions` WHERE github_token = %s'
+                    if cur.execute(query, (session['github_token'],)):
+                        return json.loads(cur.fetchone()[0])
+            except Exception as e:
+                print('Failed to query local session data with error')
+                print(e)
 
-            # https://github.com/orgs/NITES-40cm/teams/observers
-            if is_github_team_member(user, 2576073):
-                permissions.update(['nites', 'infrastructure_log'])
+            # Query user data and permissions from GitHub
+            try:
+                user = github.get('user')
+                permissions = set()
 
-            # https://github.com/orgs/GOTO-OBS/teams/ops-team/
-            if is_github_team_member(user, 2308649):
-                permissions.update(['goto', 'infrastructure_log'])
+                # https://github.com/orgs/warwick-one-metre/teams/observers
+                if is_github_team_member(user, 2128810):
+                    permissions.update(['onemetre', 'infrastructure_log'])
 
-            data = {
-                'username': user.data['login'],
-                'avatar': user.data['avatar_url'],
-                'permissions': list(permissions)
-            }
+                # https://github.com/orgs/NITES-40cm/teams/observers
+                if is_github_team_member(user, 2576073):
+                    permissions.update(['nites', 'infrastructure_log'])
 
-            # Cache the state for next time
-            with db.cursor() as cur:
-                query = 'REPLACE into `dashboard_sessions` (`github_token`, `data`) VALUES (%s, %s)'
-                cur.execute(query, (session['github_token'], json.dumps(data)))
+                # https://github.com/orgs/GOTO-OBS/teams/ops-team/
+                if is_github_team_member(user, 2308649):
+                    permissions.update(['goto', 'infrastructure_log'])
 
-            return data
-        except Exception as e:
-            print('Failed to query GitHub API with error')
-            print(e)
+                data = {
+                    'username': user.data['login'],
+                    'avatar': user.data['avatar_url'],
+                    'permissions': list(permissions)
+                }
 
-    return {
-        'username': None,
-        'avatar': None,
-        'permissions': []
-    }
+                # Cache the state for next time
+                with db.cursor() as cur:
+                    query = 'REPLACE into `dashboard_sessions` (`github_token`, `data`) VALUES (%s, %s)'
+                    cur.execute(query, (session['github_token'], json.dumps(data)))
+
+                return data
+            except Exception as e:
+                print('Failed to query GitHub API with error')
+                print(e)
+
+        return {
+            'username': None,
+            'avatar': None,
+            'permissions': []
+        }
+    finally:
+        db.close()
 
 @github.tokengetter
 def get_github_oauth_token():
@@ -169,10 +171,10 @@ def logout():
     token = session.pop('github_token', None)
     if token:
         # Restore the connection if needed
-        db.ping()
-
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
         with db.cursor() as cur:
             cur.execute('DELETE FROM `dashboard_sessions` WHERE `github_token` = %s', (token,))
+        db.close()
 
     return redirect(next)
 
@@ -247,43 +249,45 @@ def skycams():
 def onemetre_log():
     account = get_user_account()
     if 'onemetre' in account['permissions']:
-        # Restore the connection if needed
-        db.ping()
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('environmentd', 'powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
 
-        # Returns latest 250 log messages.
-        # If 'from' argument is present, returns latest 100 log messages with a greater id
-        with db.cursor() as cur:
-            query = 'SELECT id, date, type, source, message from obslog'
-            query += " WHERE source IN ('environmentd', 'powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
-            if 'from' in request.args:
-                query += ' AND id > ' + db.escape(request.args['from'])
-
-            query += ' ORDER BY id DESC LIMIT 250;'
-            print(query)
-            cur.execute(query)
-            messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-            return jsonify(messages=messages)
+                query += ' ORDER BY id DESC LIMIT 250;'
+                print(query)
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                return jsonify(messages=messages)
+        finally:
+            db.close()
     abort(404)
 
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
     account = get_user_account()
     if 'infrastructure_log' in account['permissions']:
-        # Restore the connection if needed
-        db.ping()
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', 'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
 
-        # Returns latest 250 log messages.
-        # If 'from' argument is present, returns latest 100 log messages with a greater id
-        with db.cursor() as cur:
-            query = 'SELECT id, date, type, source, message from obslog'
-            query += " WHERE source IN ('dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', 'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd')"
-            if 'from' in request.args:
-                query += ' AND id > ' + db.escape(request.args['from'])
-
-            query += ' ORDER BY id DESC LIMIT 250;'
-            cur.execute(query)
-            messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-            return jsonify(messages=messages)
+                query += ' ORDER BY id DESC LIMIT 250;'
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                return jsonify(messages=messages)
+        finally:
+            db.close()
     abort(404)
 
 @app.route('/data/environment')
