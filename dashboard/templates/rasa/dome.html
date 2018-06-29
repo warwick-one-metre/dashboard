@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% set title = 'RASA &raquo; Dome Camera' -%}
+{% set active_page = 'rasa-dome' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+
+{% set enable_microphone = False -%}
+{% set video = 'rasa' %}
+{% include 'camera.html' %}
+
+{% endblock %}

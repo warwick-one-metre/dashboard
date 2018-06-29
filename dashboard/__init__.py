@@ -209,6 +209,10 @@ def onemetre_resources():
         return render_template('onemetre/resources.html', user_account=account)
     abort(404)
 
+@app.route('/rasa/dome/')
+def rasa_dome():
+    return render_template('rasa/dome.html', user_account=get_user_account())
+
 @app.route('/nites/dome/')
 def nites_dome():
     return render_template('nites/dome.html', user_account=get_user_account())
