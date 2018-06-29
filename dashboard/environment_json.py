@@ -81,13 +81,17 @@ ONEMETRE_UPS = {
     'dome_ups_battery_remaining': ('NITES', 'dupsbat', '#DE0D92'),
 }
 
+RASA_UPS = {
+    'ups_battery_remaining': ('RASA', 'rupsbat', '#FDE74C'),
+}
+
 GOTO_UPS = {
     'main_ups_battery_remaining': ('GOTO&nbsp;Main', 'goto-mupsbat', '#22CC44'),
     'dome_ups_battery_remaining': ('GOTO&nbsp;Dome', 'goto-dupsbat', '#22CC44'),
 }
 
 SUPERWASP_ROOFBATTERY = {
-    'voltage': ('SWASP', 'swroofbat', '#F26430'),
+    'voltage': ('SWASP Roof Battery', 'swroofbat', '#F26430'),
 }
 
 NETWORK = {
@@ -156,6 +160,7 @@ def infrastructure_json(date=None):
 
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
     data = __sensor_json(db, 'weather_onemetre_ups', ONEMETRE_UPS, start_str, end_str)
+    data.update(__sensor_json(db, 'weather_rasa_ups', RASA_UPS, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_ups', GOTO_UPS, start_str, end_str))
     data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp_roofbattery', SUPERWASP_ROOFBATTERY, start_str,

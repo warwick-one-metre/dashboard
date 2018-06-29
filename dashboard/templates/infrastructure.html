@@ -23,24 +23,30 @@
 <div class="row">
   <div class="col-md-6" style="padding: 0; margin: 0">
     <div id="main-ups-battery-container" class="plot-container">
-      <div id="main-ups-battery-plot" data-linkedplots='["dome-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["mupsbat"]' data-axislabel='UPS Battery (%)' data-labelfudge="74" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+      <div id="main-ups-battery-plot" data-linkedplots='["dome-ups-battery-plot", "rasa-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["mupsbat"]' data-axislabel='&nbsp;' data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="dome-ups-battery-container" class="plot-container">
-      <div id="dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+      <div id="dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "rasa-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+    </div>
+    <div id="rasa-ups-battery-container" class="plot-container">
+      <div id="rasa-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "goto-main-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["rupsbat"]' data-axislabel="UPS Battery (%)" data-labelfudge="-9" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="goto-main-ups-battery-container" class="plot-container">
-      <div id="goto-main-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["goto-mupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
+      <div id="goto-main-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "rasa-ups-battery-plot", "goto-dome-ups-battery-plot"]' class="weather-plot" data-series='["goto-mupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="goto-dome-ups-battery-container" class="plot-container">
-      <div id="goto-dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "goto-main-ups-battery-plot"]' class="weather-plot" data-series='["goto-dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%'></div>
+      <div id="goto-dome-ups-battery-plot" data-linkedplots='["main-ups-battery-plot", "dome-ups-battery-plot", "rasa-ups-battery-plot", "goto-main-ups-battery-plot"]' class="weather-plot" data-series='["goto-dupsbat"]' data-axislabel="&nbsp;" data-min="0" data-max="105" data-labelunits='%'></div>
     </div>
   </div>
   <div class="col-md-6" style="padding: 0; margin: 0" id="right-container">
     <div id="network-internal-container" class="plot-container">
-      <div id="network-internal-plot" class="weather-plot" data-linkedplots='["network-external-plot"]' data-series='["pingint1m", "pingintnites", "pingintswasp", "pingintgoto", "pingintwht"]' data-axislabel='Ping (ms)' data-sidesensor="right-container" data-labelfudge="-9" data-labelunits=' ms' data-max="2.5" data-hidetime></div>
+      <div id="network-internal-plot" class="weather-plot" data-linkedplots='["network-external-plot", "wasp-roofbattery-plot"]' data-series='["pingint1m", "pingintnites", "pingintswasp", "pingintgoto", "pingintwht"]' data-axislabel='Ping (ms)' data-sidesensor="right-container" data-labelfudge="-9" data-labelunits=' ms' data-max="2.5" data-hidetime></div>
     </div>
     <div id="network-external-container" class="plot-container">
-      <div id="network-external-plot" class="weather-plot" data-linkedplots='["network-internal-plot"]' data-series='["pinggoogle", "pingngts"]' data-axislabel='Ping (ms)' data-sidesensor="right-container" data-labelfudge="-9" data-labelunits=' ms'></div>
+      <div id="network-external-plot" class="weather-plot" data-linkedplots='["network-internal-plot", "wasp-roofbattery-plot"]' data-series='["pinggoogle", "pingngts"]' data-axislabel='Ping (ms)' data-sidesensor="right-container" data-labelfudge="-9" data-labelunits=' ms' data-hidetime></div>
+    </div>
+    <div id="wasp-roofbattery-container" class="plot-container">
+      <div id="wasp-roofbattery-plot" class="weather-plot" data-linkedplots='["network-external-plot", "network-internal-plot"]' data-series='["swroofbat"]' data-axislabel='Voltage (V)' data-sidesensor="right-container" data-min="0" data-max="18" data-labelfudge="-9" data-labelunits=' V'></div>
     </div>
   </div>
 </div>
