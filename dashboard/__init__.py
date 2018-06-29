@@ -294,13 +294,19 @@ def infrastructure_log():
 def environment_data():
     date = request.args['date'] if 'date' in request.args else None
     data, start, end = environment_json.environment_json(date)
-    return jsonify(data=data, start=start, end=end)
+
+    response = jsonify(data=data, start=start, end=end)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/data/infrastructure')
 def infrastructure_data():
     date = request.args['date'] if 'date' in request.args else None
     data, start, end = environment_json.infrastructure_json(date)
-    return jsonify(data=data, start=start, end=end)
+
+    response = jsonify(data=data, start=start, end=end)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/data/onemetre/')
 def onemetre_dashboard_data():
