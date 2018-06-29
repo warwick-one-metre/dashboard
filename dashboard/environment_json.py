@@ -35,8 +35,8 @@ ONEMETRE_VAISALA = {
 }
 
 ROOMALERT = {
-    'internal_temp': ('1m', 'rinttemp', '#F3A712'),
-    'internal_humidity': ('1m', 'rinthumid', '#F3A712'),
+    'internal_temp': ('1m', 'winttemp', '#F3A712'),
+    'internal_humidity': ('1m', 'winthumid', '#F3A712'),
 }
 
 NITES_ROOMALERT = {
@@ -56,8 +56,10 @@ GOTO_VAISALA = {
 }
 
 GOTO_ROOMALERT = {
-    'internal_temp': ('GOTO', 'ginttemp', '#80f030'),
-    'internal_humidity': ('GOTO', 'ginthumid', '#80f030'),
+    'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
+    'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
+    'dome2_internal_temp': ('RASA', 'rinttemp', '#80f030'),
+    'dome2_internal_humidity': ('RASA', 'rinthumid', '#80f030'),
 }
 
 SUPERWASP = {
@@ -122,7 +124,7 @@ def environment_json(date=None):
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
-    data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
+    data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
     db.close()
 
     return data, start_js, end_js
@@ -194,6 +196,26 @@ def __sensor_json(db, table, channels, start, end):
             + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
             + db.escape(end) + ' ORDER BY `date` DESC;'
 
+        c.update(__query_table(db, query))
+        data[value[1]] = c
+    return data
+
+def __goto_roomalert_json(db, table, channels, start, end):
+    """Hacky workaround for additional dome sensor added 2018-06-29"""
+    data = {}
+
+    for key in channels:
+        value = channels[key]
+        c = {'label': value[0], 'color': value[2]}
+
+        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
+            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
+            + db.escape(end)
+
+        if key.startswith('dome2_'):
+            query += ' AND `bin` > 262172'
+
+        query += ' ORDER BY `date` DESC;'
         c.update(__query_table(db, query))
         data[value[1]] = c
     return data

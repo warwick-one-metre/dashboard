@@ -27,13 +27,13 @@
       <div id="ext-temperature-plot" data-linkedplots='["int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["vexttemp", "gexttemp", "swtemp"]' data-axislabel='Ext. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="int-temperature-container" class="plot-container">
-      <div id="int-temperature-plot" data-linkedplots='["ext-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["rinttemp", "ninttemp", "ginttemp"]' data-axislabel='Int. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
+      <div id="int-temperature-plot" data-linkedplots='["ext-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["winttemp", "ninttemp", "ginttemp", "rinttemp"]' data-axislabel='Int. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="ext-humidity-container" class="plot-container">
       <div id="ext-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["vexthumid", "gexthumid", "swhumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Ext. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="int-humidity-container" class="plot-container">
-      <div id="int-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["rinthumid", "ninthumid", "ginthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Int. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
+      <div id="int-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["winthumid", "ninthumid", "ginthumid", "rinthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Int. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="dew-container" class="plot-container">
       <div id="dew-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-sidesensor="dew-container" data-series='["vdewdelta", "gdewdelta", "swdewdelta"]' data-axislabel='T. &gt; Dew Pt. (&deg;C)' data-min="0" data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
@@ -70,7 +70,7 @@
 <script src="{{ url_for('static', filename='jquery.flot.crosshair.min.js') }}"></script>
 <script src="{{ url_for('static', filename='environment.js') }}"></script>
 <script>
-  var dataURL = 'http://lapalma-observatory.warwick.ac.uk/data/environment';//'{{ url_for('environment_data') }}';
+  var dataURL = '{{ url_for('environment_data') }}';
   $(document).ready(setup);
 </script>
 {% endblock %}
