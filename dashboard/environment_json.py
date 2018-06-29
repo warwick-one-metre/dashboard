@@ -86,6 +86,10 @@ GOTO_UPS = {
     'dome_ups_battery_remaining': ('GOTO&nbsp;Dome', 'goto-dupsbat', '#22CC44'),
 }
 
+SUPERWASP_ROOFBATTERY = {
+    'voltage': ('SWASP', 'swroofbat', '#F26430'),
+}
+
 NETWORK = {
     'ngtshead': ('Warwick', 'pingngts', '#FDE74C'),
     'google': ('Google', 'pinggoogle', '#009DDC'),
@@ -154,6 +158,8 @@ def infrastructure_json(date=None):
     data = __sensor_json(db, 'weather_onemetre_ups', ONEMETRE_UPS, start_str, end_str)
     data.update(__sensor_json(db, 'weather_goto_ups', GOTO_UPS, start_str, end_str))
     data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_superwasp_roofbattery', SUPERWASP_ROOFBATTERY, start_str,
+                              end_str))
     db.close()
 
     return data, start_js, end_js
