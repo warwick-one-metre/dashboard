@@ -28,7 +28,7 @@
 .xAxis, .yAxis { color: #fff; }
 .legendLabel { width: 48px; height: 17px; font-size: 9px; }
 .legendColorBox { display: none }
-.axisLabels { text-align: center; }
+.axisLabels { text-align: center; font-size: 12px; }
 
 .datepicker tfoot tr th {
   text-align: center;
@@ -50,10 +50,10 @@
 }
 
 #rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
-#humidity-container, #temperature-container, #dew-container, #skytemp-container, #raindetector-container, #rainintensity-container { height: 110px; }
-#dew-container, #humidity-container, #skytemp-container, #pressure-container, #raindetector-container, #rainintensity-container, #accumrain-container { margin-top: -5px; }
-#raindetector-container { margin-top: -20px; }
-#wind-container { height: 230px; }
+#ext-humidity-container, #int-humidity-container,  #ext-temperature-container, #int-temperature-container, #dew-container, #skytemp-container, #windspeed-container, #raindetector-container, #rainintensity-container { height: 110px; }
+#dew-container, #int-temperature-container, #ext-humidity-container, #int-humidity-container, #skytemp-container, #pressure-container, #windspeed-container, #raindetector-container, #rainintensity-container, #accumrain-container { margin-top: -5px; }
+#windspeed-container { margin-top: -20px; }
+#wind-container { height: 335px; }
 
 #main-ups-battery-container, #goto-main-ups-battery-container, #dome-ups-battery-container { height: 60px; }
 #goto-dome-ups-battery-container { height: 95px; }
