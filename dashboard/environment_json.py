@@ -24,42 +24,43 @@ DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
 ONEMETRE_VAISALA = {
-    'temperature': ('1m&nbsp;Ext', 'vexttemp', '#009DDC'),
-    'relative_humidity': ('1m&nbsp;Ext', 'vexthumid', '#009DDC'),
-    'wind_direction': ('1m&nbsp;Ext', 'vwinddir', '#009DDC'),
-    'wind_speed': ('1m&nbsp;Ext', 'vwindspeed', '#009DDC'),
-    'pressure': ('1m&nbsp;Ext', 'vpressure', '#009DDC'),
-    'rain_intensity': ('1m&nbsp;Ext', 'vrainint', '#009DDC'),
-    'accumulated_rain': ('1m&nbsp;Ext', 'vrain', '#009DDC'),
-    'dew_point_delta': ('1m&nbsp;Ext', 'vdewdelta', '#009DDC')
+    'temperature': ('W1m', 'wexttemp', '#009DDC'),
+    'relative_humidity': ('W1m', 'wexthumid', '#009DDC'),
+    'wind_direction': ('W1m', 'wwinddir', '#009DDC'),
+    'wind_speed': ('W1m', 'wwindspeed', '#009DDC'),
+    'pressure': ('W1m', 'wpressure', '#009DDC'),
+    'rain_intensity': ('W1m', 'wrainint', '#009DDC'),
+    'accumulated_rain': ('W1m', 'wrain', '#009DDC'),
+    'dew_point_delta': ('W1m', 'wdewdelta', '#009DDC')
 }
 
 ROOMALERT = {
-    'internal_temp': ('1m', 'winttemp', '#F3A712'),
-    'internal_humidity': ('1m', 'winthumid', '#F3A712'),
+    'internal_temp': ('W1m', 'winttemp', '#009DDC'),
+    'internal_humidity': ('W1m', 'winthumid', '#009DDC'),
 }
 
+# NOTE: internal/rack probes connected backwards in hardware
 NITES_ROOMALERT = {
-    'internal_temperature': ('NITES', 'ninttemp', '#DE0D92'),
-    'internal_humidity': ('NITES', 'ninthumid', '#DE0D92'),
+    'rack_temperature': ('NITES', 'ninttemp', '#DE0D92'),
+    'rack_humidity': ('NITES', 'ninthumid', '#DE0D92'),
 }
 
 GOTO_VAISALA = {
-    'temperature': ('GOTO&nbsp;Ext', 'gexttemp', '#22cc44'),
-    'relative_humidity': ('GOTO&nbsp;Ext', 'gexthumid', '#22cc44'),
-    'wind_direction': ('GOTO&nbsp;Ext', 'gwinddir', '#22cc44'),
-    'wind_speed': ('GOTO&nbsp;Ext', 'gwindspeed', '#22cc44'),
-    'pressure': ('GOTO&nbsp;Ext', 'gpressure', '#22cc44'),
-    'rain_intensity': ('GOTO&nbsp;Ext', 'grainint', '#22cc44'),
-    'accumulated_rain': ('GOTO&nbsp;Ext', 'grain', '#22cc44'),
-    'dew_point_delta': ('GOTO&nbsp;Ext', 'gdewdelta', '#22cc44')
+    'temperature': ('GOTO', 'gexttemp', '#22cc44'),
+    'relative_humidity': ('GOTO', 'gexthumid', '#22cc44'),
+    'wind_direction': ('GOTO', 'gwinddir', '#22cc44'),
+    'wind_speed': ('GOTO', 'gwindspeed', '#22cc44'),
+    'pressure': ('GOTO', 'gpressure', '#22cc44'),
+    'rain_intensity': ('GOTO', 'grainint', '#22cc44'),
+    'accumulated_rain': ('GOTO', 'grain', '#22cc44'),
+    'dew_point_delta': ('GOTO', 'gdewdelta', '#22cc44')
 }
 
 GOTO_ROOMALERT = {
     'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
     'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
-    'dome2_internal_temp': ('RASA', 'rinttemp', '#80f030'),
-    'dome2_internal_humidity': ('RASA', 'rinthumid', '#80f030'),
+    'dome2_internal_temp': ('RASA', 'rinttemp', '#FDE74C'),
+    'dome2_internal_humidity': ('RASA', 'rinthumid', '#FDE74C'),
 }
 
 SUPERWASP = {
@@ -72,17 +73,17 @@ SUPERWASP = {
 }
 
 ONEMETRE_RAINDETECTOR = {
-    'unsafe_boards': ('1m&nbsp;Ext', 'rdboards', '#FDE74C')
+    'unsafe_boards': ('W1m', 'rdboards', '#009DDC')
 }
 
 ONEMETRE_UPS = {
-    'main_ups_battery_remaining': ('1m&nbsp;Main', 'mupsbat', '#FDE74C'),
-    'dome_ups_battery_remaining': ('1m&nbsp;Dome', 'dupsbat', '#009DDC'),
+    'main_ups_battery_remaining': ('W1m', 'mupsbat', '#009DDC'),
+    'dome_ups_battery_remaining': ('NITES', 'dupsbat', '#DE0D92'),
 }
 
 GOTO_UPS = {
     'main_ups_battery_remaining': ('GOTO&nbsp;Main', 'goto-mupsbat', '#22CC44'),
-    'dome_ups_battery_remaining': ('GOTO&nbsp;Dome', 'goto-dupsbat', '#CC0000'),
+    'dome_ups_battery_remaining': ('GOTO&nbsp;Dome', 'goto-dupsbat', '#22CC44'),
 }
 
 NETWORK = {

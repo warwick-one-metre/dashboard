@@ -50,13 +50,14 @@
 }
 
 #rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
-#ext-humidity-container, #int-humidity-container,  #ext-temperature-container, #int-temperature-container, #dew-container, #skytemp-container, #windspeed-container, #raindetector-container, #rainintensity-container { height: 110px; }
+#ext-humidity-container, #int-humidity-container,  #ext-temperature-container, #int-temperature-container, #dew-container, #skytemp-container, #windspeed-container, #raindetector-container, #rainintensity-container { height: 105px; }
+#pressure-container, #accumrain-container { height: 139px; }
 #dew-container, #int-temperature-container, #ext-humidity-container, #int-humidity-container, #skytemp-container, #pressure-container, #windspeed-container, #raindetector-container, #rainintensity-container, #accumrain-container { margin-top: -5px; }
 #windspeed-container { margin-top: -20px; }
-#wind-container { height: 335px; }
+#wind-container { height: 320px; }
 
 #main-ups-battery-container, #goto-main-ups-battery-container, #dome-ups-battery-container { height: 60px; }
-#goto-dome-ups-battery-container { height: 95px; }
+#goto-dome-ups-battery-container { height: 95px; margin-top: -5px; }
 #main-ups-load-container, #dome-ups-battery-container, #goto-main-ups-battery-container { margin-top: -5px; }
 #network-internal-container { height: 115px; margin-top: 0px; }
 #network-external-container { height: 150px; margin-top: -5px; }

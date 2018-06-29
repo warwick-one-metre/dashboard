@@ -155,7 +155,7 @@ function bindHoverHooks(plot, eventHolder) {
 
 function redrawWindPlot() {
   var plot = $(this);
-  var speeds = [data.data.vwindspeed, data.data.gwindspeed, data.data.swwindspeed];
+  var speeds = [data.data.wwindspeed, data.data.gwindspeed, data.data.swwindspeed];
 
   var getMaxSpeed = function(a,b) {
     if (a === null && b === null)
@@ -168,7 +168,7 @@ function redrawWindPlot() {
     return Math.max(a, b[1]);
   };
 
-  var maxVaisala = data.data.vwindspeed.data.reduce(getMaxSpeed, 0);
+  var maxVaisala = data.data.wwindspeed.data.reduce(getMaxSpeed, 0);
   var maxSWASP = data.data.swwindspeed.data.reduce(getMaxSpeed, 0);
   var maxGOTO = data.data.gwindspeed.data.reduce(getMaxSpeed, 0);
   var maxRadius = 1.1 * Math.max(maxVaisala, maxSWASP, maxGOTO, 15 / 1.1);
@@ -321,7 +321,7 @@ function redrawWindPlot() {
   if (axis == 1)
     options.yaxis.position = 'right';
 
-  $.plot(this, [data.data.vwinddir, data.data.gwinddir, data.data.swwinddir], options);
+  $.plot(this, [data.data.wwinddir, data.data.gwinddir, data.data.swwinddir], options);
 }
 
 var queryUpdate;
