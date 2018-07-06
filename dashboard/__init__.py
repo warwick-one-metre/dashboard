@@ -43,6 +43,10 @@ ONEMETRE_GENERATED_DATA = {
     'red/image': 'dashboard-RED-thumb.png',
 }
 
+RASA_GENERATED_DATA = {
+
+}
+
 app = Flask(__name__)
 
 # Stop Flask from telling the browser to cache our onemetre_generated_data
@@ -120,7 +124,7 @@ def get_user_account():
 
                 # https://github.com/orgs/warwick-one-metre/teams/observers
                 if is_github_team_member(user, 2128810):
-                    permissions.update(['onemetre', 'infrastructure_log'])
+                    permissions.update(['onemetre', 'infrastructure_log', 'rasa'])
 
                 # https://github.com/orgs/NITES-40cm/teams/observers
                 if is_github_team_member(user, 2576073):
@@ -128,7 +132,7 @@ def get_user_account():
 
                 # https://github.com/orgs/GOTO-OBS/teams/ops-team/
                 if is_github_team_member(user, 2308649):
-                    permissions.update(['goto', 'infrastructure_log'])
+                    permissions.update(['goto', 'infrastructure_log', 'rasa'])
 
                 data = {
                     'username': user.data['login'],
@@ -272,6 +276,29 @@ def onemetre_log():
             db.close()
     abort(404)
 
+@app.route('/data/rasa/log')
+def rasa_log():
+    account = get_user_account()
+    if 'rasa' in account['permissions']:
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('rasa_environmentd', 'rasa_powerd', 'rasa_domed', 'rasa_opsd', 'rasa_camd', 'rasa_diskspaced', 'rasa_pipelined', 'rasa_teld', 'rasa_focusd')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
+
+                query += ' ORDER BY id DESC LIMIT 250;'
+                print(query)
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                return jsonify(messages=messages)
+        finally:
+            db.close()
+    abort(404)
+
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
     account = get_user_account()
@@ -326,6 +353,22 @@ def onemetre_generated_data(path):
     account = get_user_account()
     if 'onemetre' in account['permissions'] and path in ONEMETRE_GENERATED_DATA:
         return send_from_directory(GENERATED_DATA_DIR, ONEMETRE_GENERATED_DATA[path])
+    abort(404)
+
+@app.route('/data/rasa/')
+def rasa_dashboard_data():
+    data = json.load(open(GENERATED_DATA_DIR + '/rasa-public.json'))
+    account = get_user_account()
+    if 'rasa' in account['permissions']:
+        data.update(json.load(open(GENERATED_DATA_DIR + '/rasa-private.json')))
+
+    return jsonify(**data)
+
+@app.route('/data/rasa/<path:path>')
+def rasa_generated_data(path):
+    account = get_user_account()
+    if 'rasa' in account['permissions'] and path in RASA_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, RASA_GENERATED_DATA[path])
     abort(404)
 
 def extract_onemetre_environment(data, group):
