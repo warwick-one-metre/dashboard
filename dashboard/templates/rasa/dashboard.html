@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+{% set title = 'RASA &raquo; Dashboard' -%}
+{% set active_page = 'rasa-dashboard' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["ops", "telescope_status"]' data-generator="telStatus">Tel. Status</span>
+      <span class="list-group-item" data-index='["ops", "dome_status"]' data-generator="opsDomeStatus">Dome Status</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["ops"]' data-generator="opsTelescopeControl">Tel. Control</span>
+      <span class="list-group-item" data-index='["ops", "dome_mode"]' data-generator="opsDomeControl">Dome Control</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["ops", "observing"]' data-generator="opsStatus">Operations</span>
+      <span class="list-group-item" data-index='["ops", "environment"]' data-generator="opsEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+    </div>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["power"]' data-generator="powerMainUPS">UPS</span>
+      <span class="list-group-item" data-index='["power", "telescope"]' data-generator="powerOnOff">Telescope</span>
+      <span class="list-group-item" data-index='["power", "light"]' data-generator="powerOnOff">Dome Light</span>
+      <span class="list-group-item" data-index='["power", "dehumidifier"]' data-generator="powerOnOff">Dehumidifier</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
+      <span class="list-group-item" data-index='["environment", "goto_roomalert", "dome2_internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
+      <span class="list-group-item" data-index='["environment", "goto_roomalert", "dome2_internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+      <span class="list-group-item" data-index='["environment", "superwasp", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "accumulated_rain"]' data-generator="envLatestMinMax" data-units=" mm">Total Rain</span>
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
+      <span class="list-group-item" data-index='["environment", "tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["environment", "tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
+      <span class="list-group-item" data-index='["environment", "tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["environment", "goto_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
+      <span class="list-group-item" data-index='["environment", "diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">TCS Disk Space</span>
+      <span class="list-group-item" data-index='["environment", "ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
+      <span class="list-group-item" data-index='["environment", "ephem", "moon_phase"]' data-generator="envMoon">Moon Phase</span>
+      <span class="list-group-item" data-index='["environment", "ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
+    </div>
+  </div>
+</div>
+{% if True or user_account != None and 'rasa' in user_account['permissions'] %}
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Telescope</h5>
+      <span class="list-group-item" data-index='["telescope"]' data-generator="telStatus">Status</span>
+      <span class="list-group-item" data-index='["telescope", "ra"]' data-generator="telRA">RA</span>
+      <span class="list-group-item" data-index='["telescope", "dec"]' data-generator="telDec">Dec</span>
+      <span class="list-group-item" data-index='["telescope", "alt"]' data-generator="telAlt">Altitude</span>
+      <span class="list-group-item" data-index='["focus", "channels", "1", "status"]' data-generator="telFocus">Focus</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Camera</h5>
+      <span class="list-group-item" data-index='["cam"]' data-generator="camStatus">Status</span>
+      <span class="list-group-item" data-index='["cam"]' data-generator="camTemperature">Temperature</span>
+      <span class="list-group-item" data-index='["cam", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-index='["cam", "exposure_time"]' data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-index='["cam", "timer"]' data-generator="camGPS">GPS</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
+      <span class="list-group-item" data-index='["ops"]' data-generator="opsActionType">Action</span>
+      <span class="list-group-item" data-index='["ops"]' data-generator="opsActionStatus">Status</span>
+      <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineObject">Object</span>
+      <span class="list-group-item" data-index='["pipeline", "archive_directory"]' data-generator="pipelineSaveDir">Archive Dir</span>
+      <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">System Log</h5>
+      <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
+        <table id="log-table">
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row dashboard-stats">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='rasa-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
+<script>
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+    pollDashboard('/hack/rasa');
+{% if user_account != None and 'rasa' in user_account['permissions'] %}
+    pollLog('{{ url_for('rasa_log') }}');
+{% endif %}
+  });
+</script>
+{% endblock %}
