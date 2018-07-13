@@ -221,7 +221,8 @@ def rasa_dome():
 def nites_dome():
     return render_template('nites/dome.html', user_account=get_user_account())
 
-@app.route('/goto/')
+# disabled until we can display all information
+#@app.route('/goto/')
 def goto_dashboard():
     return render_template('goto/dashboard.html', user_account=get_user_account())
 
