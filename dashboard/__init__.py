@@ -86,7 +86,7 @@ def get_user_account():
           'username': GitHub username (or None if not logged in)
           'avatar': GitHub profile picture (or None if not logged in)
           'permissions': list of permission types, a subset of
-                         ['onemetre', 'nites', 'goto', 'infrastructure_log']
+                         ['onemetre', 'nites', 'goto', 'rasa', 'infrastructure_log']
     """
     # Expire cached sessions after 12 hours
     # This forces the permissions to be queried again from github

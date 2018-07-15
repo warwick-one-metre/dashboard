@@ -60,6 +60,9 @@
         {% if 'nites' in user_account['permissions'] %}
           <li>NITES observer</li>
         {% endif %}
+        {% if 'rasa' in user_account['permissions'] %}
+          <li>RASA observer</li>
+        {% endif %}
       {% else %}
         <li>No Permissions</li>
       {% endif %}
