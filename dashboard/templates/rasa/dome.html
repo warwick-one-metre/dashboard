@@ -8,8 +8,9 @@
   </div>
 </div>
 
-{% set enable_microphone = False -%}
+{% set enable_microphone = user_account != None and 'rasa' in user_account['permissions'] -%}
 {% set video = 'rasa' %}
+{% set audio = 'rasa' %}
 {% include 'camera.html' %}
 
 {% endblock %}
