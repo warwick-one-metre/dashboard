@@ -363,9 +363,35 @@ def onemetre_generated_data(path):
 @app.route('/data/rasa/')
 def rasa_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/rasa-public.json'))
+
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/rasa-private.json'))
+
     account = get_user_account()
     if 'rasa' in account['permissions']:
-        data.update(json.load(open(GENERATED_DATA_DIR + '/rasa-private.json')))
+        data.update(private)
+
+    # Tel status:
+    #   0: error
+    #   1: offline
+    #   2: online
+    tel_status = 0
+    if 'telescope' in private and 'state' in private['telescope']:
+        tel_status = 2 if private['telescope']['state'] != 0 else 1
+
+    # Dome status:
+    #   0: error
+    #   1: closed
+    #   2: open
+    dome_status = 0
+    if 'dome' in private and 'closed' in private['dome'] and 'heartbeat_status' in private['dome']:
+        if private['dome']['heartbeat_status'] != 2 and private['dome']['heartbeat_status'] != 3:
+            dome_status = 2 if not private['dome']['closed'] else 1
+
+    data['status'] = {
+        'tel': tel_status,
+        'dome': dome_status
+    }
 
     return jsonify(**data)
 

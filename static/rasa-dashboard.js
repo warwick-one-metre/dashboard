@@ -1,3 +1,40 @@
+// Header generators
+function telHeaderStatus(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+  rowstyle = 'list-group-item-danger';
+
+  if (data == 1) {
+    status = 'OFFLINE';
+  } else if (data == 2) {
+    status = 'ONLINE';
+    style = 'text-success';
+    rowstyle = 'list-group-item-success';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+  row.addClass(rowstyle);
+}
+
+function domeHeaderStatus(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+  rowstyle = 'list-group-item-danger';
+
+  if (data == 1) {
+    status = 'CLOSED';
+  } else if (data == 2) {
+    status = 'OPEN';
+    style = 'text-success';
+    rowstyle = 'list-group-item-success';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+  row.addClass(rowstyle);
+}
+
 // Power generators
 function powerUPS(row, cell, data) {
   status = 'ERROR';

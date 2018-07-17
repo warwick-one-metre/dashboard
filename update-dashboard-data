@@ -94,6 +94,7 @@ generate_json(BASE_OUTPUT_DIR + '/rasa-public.json', [
 
 generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
     (daemons.rasa_telescope, 'telescope', lambda d: d.report_status()),
+    (daemons.rasa_dome, 'dome', lambda d: d.status()),
     (daemons.rasa_camera, 'cam', lambda d: d.report_status()),
     (daemons.rasa_focus, 'focus', lambda d: d.report_status()),
     (daemons.rasa_pipeline, 'pipeline', lambda d: d.report_status()),
