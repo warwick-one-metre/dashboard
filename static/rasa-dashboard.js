@@ -1,27 +1,23 @@
 // Power generators
-function powerUPS(row, cell, data, status_field, remaining_field) {
+function powerUPS(row, cell, data) {
   status = 'ERROR';
   style = 'text-danger';
 
-  if (data && status_field in data && remaining_field in data) {
-    if (data[status_field] == 2) {
+  if (data && 'ups_status' in data && 'ups_battery_remaining' in data) {
+    if (data['ups_status'] == 2) {
       status = 'ONLINE';
       style = 'text-success';
     }
-    else if (data[status_field] == 3) {
+    else if (data['ups_status'] == 3) {
       status = 'BATTERY';
       style = 'text-warning';
     }
 
-    status += ' (' + data[remaining_field] + '%)';
+    status += ' (' + data['ups_battery_remaining'] + '%)';
   }
 
   cell.html(status);
   cell.addClass(style);
-}
-
-function powerUPS(row, cell, data) {
-  powerUPS(row, cell, data, 'ups_status', 'ups_battery_remaining');
 }
 
 function powerOnOff(row, cell, data) {
@@ -119,13 +115,12 @@ function camGPS(row, cell, data) {
 }
 
 // Telescope generators
-
 var telescopeStatus = [
-  ['DISABLED', 'text-danger', 'list-group-item-danger'],
-  ['NOT HOMED', 'text-danger', 'list-group-item-danger'],
-  ['IDLE'],
-  ['TRACKING', 'text-success', 'list-group-item-success'],
-  ['GUIDING', 'text-success', 'list-group-item-success']
+  ['DISABLED', 'text-danger'],
+  ['INITIALIZING', 'text-warning'],
+  ['SLEWING', 'text-warning'],
+  ['STOPPED'],
+  ['TRACKING', 'text-success'],
 ];
 
 var focusStatus = [
@@ -144,7 +139,6 @@ function telStatus(row, cell, data) {
     var s = telescopeStatus[data['state']];
     cell.html(s[0]);
     cell.addClass(s[1]);
-    row.addClass(s[2]);
   }
 }
 
@@ -161,17 +155,25 @@ function telAlt(row, cell, data) {
 }
 
 function telFocus(row, cell, data) {
-  cell.html(focusStatus[data][0]);
-  cell.addClass(focusStatus[data][1]);
-}
-
-function telInstrumentFocus(row, cell, data) {
-  cell.html(data.toFixed(0));
+  if (!('status' in data) || !('current_steps' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['status'] == 2) {
+    cell.html(data['current_steps'] + ' steps');
+  } else {
+    cell.html(focusStatus[data][0]);
+    cell.addClass(focusStatus[data][1]);
+  }
 }
 
 function opsTelescopeControl(row, cell, data) {
-  cell.html('MANUAL');
-  row.addClass('list-group-item-warning');
+  if (data == 1) {
+    cell.html('AUTO');
+    row.addClass('list-group-item-success');
+  } else {
+    cell.html('MANUAL');
+    row.addClass('list-group-item-warning');
+  }
 }
 
 // Ops generators
@@ -262,6 +264,28 @@ function opsEnvironment(row, cell, data) {
 }
 
 // Pipeline generators
+
+function opsActionName(row, cell, data) {
+  if (!('mode' in data) || (data['mode'] == 1 && !('action_name' in data))) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['mode'] == 2) {
+    cell.html('MANUAL');
+    cell.addClass('text-warning');
+  } else
+    cell.html(data['action_name']);
+}
+
+function opsActionTask(row, cell, data) {
+  if (!('mode' in data) || (data['mode'] == 1 && !('action_task' in data))) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['mode'] == 2) {
+    cell.html('MANUAL');
+    cell.addClass('text-warning');
+  } else
+    cell.html(data['action_task']);
+}
 
 function pipelineObject(row, cell, data) {
   if (!('frame_type' in data) || !('frame_object' in data)) {

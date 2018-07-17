@@ -18,8 +18,8 @@
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["ops"]' data-generator="opsTelescopeControl">Tel. Control</span>
-      <span class="list-group-item" data-index='["ops", "dome_mode"]' data-generator="opsDomeControl">Dome Control</span>
+      <span class="list-group-item" data-index='["ops", "telescope", "mode"]' data-generator="opsTelescopeControl">Tel. Control</span>
+      <span class="list-group-item" data-index='["ops", "dome", "mode"]' data-generator="opsDomeControl">Dome Control</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
@@ -33,7 +33,7 @@
 <div class="row dashboard-stats">
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["power"]' data-generator="powerMainUPS">UPS</span>
+      <span class="list-group-item" data-index='["power"]' data-generator="powerUPS">UPS</span>
       <span class="list-group-item" data-index='["power", "telescope"]' data-generator="powerOnOff">Telescope</span>
       <span class="list-group-item" data-index='["power", "light"]' data-generator="powerOnOff">Dome Light</span>
       <span class="list-group-item" data-index='["power", "dehumidifier"]' data-generator="powerOnOff">Dehumidifier</span>
@@ -69,7 +69,7 @@
     </div>
   </div>
 </div>
-{% if True or user_account != None and 'rasa' in user_account['permissions'] %}
+{% if user_account != None and 'rasa' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -78,7 +78,7 @@
       <span class="list-group-item" data-index='["telescope", "ra"]' data-generator="telRA">RA</span>
       <span class="list-group-item" data-index='["telescope", "dec"]' data-generator="telDec">Dec</span>
       <span class="list-group-item" data-index='["telescope", "alt"]' data-generator="telAlt">Altitude</span>
-      <span class="list-group-item" data-index='["focus", "channels", "1", "status"]' data-generator="telFocus">Focus</span>
+      <span class="list-group-item" data-index='["focus", "channels", "1"]' data-generator="telFocus">Focus</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
@@ -94,8 +94,8 @@
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
-      <span class="list-group-item" data-index='["ops"]' data-generator="opsActionType">Action</span>
-      <span class="list-group-item" data-index='["ops"]' data-generator="opsActionStatus">Status</span>
+      <span class="list-group-item" data-index='["ops", "telescope"]' data-generator="opsActionName">Action</span>
+      <span class="list-group-item" data-index='["ops", "telescope"]' data-generator="opsActionTask">Status</span>
       <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineObject">Object</span>
       <span class="list-group-item" data-index='["pipeline", "archive_directory"]' data-generator="pipelineSaveDir">Archive Dir</span>
       <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
@@ -130,7 +130,7 @@
 <script>
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
-    pollDashboard('/hack/rasa');
+    pollDashboard('/data/rasa');
 {% if user_account != None and 'rasa' in user_account['permissions'] %}
     pollLog('{{ url_for('rasa_log') }}');
 {% endif %}
