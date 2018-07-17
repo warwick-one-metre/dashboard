@@ -303,25 +303,29 @@ function opsEnvironment(row, cell, data) {
 // Pipeline generators
 
 function opsActionName(row, cell, data) {
-  if (!('mode' in data) || (data['mode'] == 1 && !('action_name' in data))) {
+  if (!('mode' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else if (data['mode'] == 2) {
     cell.html('MANUAL');
     cell.addClass('text-warning');
-  } else
+  } else if ('action_name' in data)
     cell.html(data['action_name']);
+  else
+    cell.html('IDLE');
 }
 
 function opsActionTask(row, cell, data) {
-  if (!('mode' in data) || (data['mode'] == 1 && !('action_task' in data))) {
+  if (!('mode' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else if (data['mode'] == 2) {
     cell.html('MANUAL');
     cell.addClass('text-warning');
-  } else
+  } else if ('action_task' in data)
     cell.html(data['action_task']);
+  else
+    cell.html('IDLE');
 }
 
 function pipelineObject(row, cell, data) {
