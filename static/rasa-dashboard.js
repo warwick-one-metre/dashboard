@@ -309,8 +309,12 @@ function opsActionName(row, cell, data) {
   } else if (data['mode'] == 2) {
     cell.html('MANUAL');
     cell.addClass('text-warning');
-  } else if ('action_name' in data)
-    cell.html(data['action_name']);
+  } else if ('action_name' in data) {
+    label = data['action_name'];
+    if ('action_number' in data && data['action_number'] > 0)
+      label += ' (' + data['action_number'] + ' / ' + data['action_count'] + ')';
+    cell.html(label);
+  }
   else
     cell.html('IDLE');
 }
