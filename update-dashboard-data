@@ -88,11 +88,11 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
 # RASA dashboard pages
 generate_json(BASE_OUTPUT_DIR + '/rasa-public.json', [
     (daemons.rasa_environment, 'environment', lambda d: d.status()),
-    (daemons.rasa_operations, 'ops', lambda d: d.status()),
     (daemons.rasa_power, 'power', lambda d: d.last_measurement()),
 ])
 
 generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
+    (daemons.rasa_operations, 'ops', lambda d: d.status()),
     (daemons.rasa_telescope, 'telescope', lambda d: d.report_status()),
     (daemons.rasa_dome, 'dome', lambda d: d.status()),
     (daemons.rasa_camera, 'cam', lambda d: d.report_status()),

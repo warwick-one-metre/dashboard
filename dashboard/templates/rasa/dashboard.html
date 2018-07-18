@@ -18,14 +18,14 @@
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["ops", "telescope", "mode"]' data-generator="opsTelescopeControl">Tel. Control</span>
-      <span class="list-group-item" data-index='["ops", "dome", "mode"]' data-generator="opsDomeControl">Dome Control</span>
+      <span class="list-group-item" data-index='["status", "tel_mode"]' data-generator="opsTelescopeControl">Tel. Control</span>
+      <span class="list-group-item" data-index='["status", "dome_mode"]' data-generator="opsDomeControl">Dome Control</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["ops", "observing"]' data-generator="opsStatus">Operations</span>
-      <span class="list-group-item" data-index='["ops", "environment"]' data-generator="opsEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+      <span class="list-group-item" data-index='["status"]' data-generator="opsStatus">Operations</span>
+      <span class="list-group-item" data-index='["status", "environment"]' data-generator="opsEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
@@ -92,6 +92,18 @@
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Dome</h5>
+      <span class="list-group-item" data-index='["ops", "dome", "requested_open_date"]' data-generator="domeTime">Sched. Open</span>
+      <span class="list-group-item" data-index='["ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
+      <span class="list-group-item" data-index='["dome", "west_shutter"]' data-generator="domeShutter">N. Shutter</span>
+      <span class="list-group-item" data-index='["dome", "east_shutter"]' data-generator="domeShutter">S. Shutter</span>
+      <span class="list-group-item" data-index='["dome"]' data-generator="domeHeartbeat">Heartbeat</span>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
       <span class="list-group-item" data-index='["ops", "telescope"]' data-generator="opsActionName">Action</span>
       <span class="list-group-item" data-index='["ops", "telescope"]' data-generator="opsActionTask">Status</span>
@@ -100,12 +112,11 @@
       <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
     </div>
   </div>
-</div>
-<div class="row dashboard-stats">
-  <div class="col-md-12">
+  <div class="clearfix visible-sm-block visible-xs-block"></div>
+  <div class="col-md-8">
     <div class="list-group">
       <h5 class="list-group-header text-center">System Log</h5>
-      <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
+      <div class="list-group-item" style="overflow-y: scroll; height: 140px;">
         <table id="log-table">
         </table>
       </div>

@@ -199,7 +199,8 @@ function telFocus(row, cell, data) {
     cell.html(data['current_steps'] + ' steps');
   } else {
     cell.html(focusStatus[data][0]);
-    cell.addClass(focusStatus[data][1]);
+    if (focusStatus[data].length > 1)
+        cell.addClass(focusStatus[data][1]);
   }
 }
 
@@ -211,6 +212,66 @@ function opsTelescopeControl(row, cell, data) {
     cell.html('MANUAL');
     row.addClass('list-group-item-warning');
   }
+}
+
+// Dome generators
+
+function domeTime(row, cell, data) {
+  if (data == null) {
+    cell.html('Not Scheduled');
+    cell.addClass('text-warning');
+  } else 
+    cell.html(data);
+}
+
+var domeShutterStatus = [
+  ['CLOSED', 'text-danger'],
+  ['OPEN', 'text-success'],
+  ['PARTIALLY OPEN', 'text-info'],
+  ['OPENING', 'text-warning'],
+  ['CLOSING', 'text-warning'],
+  ['FORCE CLOSING', 'text-error']
+];
+
+function domeShutter(row, cell, data) {
+  if (data >= 0 && data < domeShutterStatus.length) {
+    cell.html(domeShutterStatus[data][0]);
+    cell.addClass(domeShutterStatus[data][1]);
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  }
+}
+
+var domeHeartbeatStatus = [
+  ['DISABLED', ''],
+  ['ACTIVE', 'text-success'],
+  ['CLOSING DOME', 'text-error'],
+  ['TRIPPED', 'text-error'],
+  ['UNAVAILABLE', 'text-warning']
+];
+
+function domeHeartbeat(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if ('heartbeat_status' in data && 'heartbeat_remaining' in data) {
+    if (data['heartbeat_status'] == 1) {
+      status = data['heartbeat_remaining'] + 's remaining';
+      if (data['heartbeat_remaining'] < 30)
+        style = 'text-danger'
+      else if (data['heartbeat_remaining'] < 60)
+        style = 'text-warning';
+      else
+        style = 'text-success';
+    } else {
+      status = domeHeartbeatStatus[data['heartbeat_status']][0];
+      style = domeHeartbeatStatus[data['heartbeat_status']][1];
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
 }
 
 // Ops generators

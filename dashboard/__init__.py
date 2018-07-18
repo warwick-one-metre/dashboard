@@ -31,6 +31,8 @@ from flask_oauthlib.client import OAuth
 
 from dashboard import environment_json
 
+# pylint: disable=missing-docstring
+
 # Log and weather data are stored in the database
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
@@ -371,6 +373,8 @@ def rasa_dashboard_data():
     if 'rasa' in account['permissions']:
         data.update(private)
 
+    # Extract safe public info from private daemons
+
     # Tel status:
     #   0: error
     #   1: offline
@@ -388,9 +392,24 @@ def rasa_dashboard_data():
         if private['dome']['heartbeat_status'] != 2 and private['dome']['heartbeat_status'] != 3:
             dome_status = 2 if not private['dome']['closed'] else 1
 
+    dome_mode = 0
+    if 'ops' in private and 'dome' in private['ops'] and 'mode' in private['ops']['dome']:
+        dome_mode = private['ops']['dome']['mode']
+
+    tel_mode = 0
+    if 'ops' in private and 'telescope' in private['ops'] and 'mode' in private['ops']['dome']:
+        tel_mode = private['ops']['telescope']['mode']
+
+    env = {}
+    if 'ops' in private and 'environment' in private['ops']:
+        env = private['ops']['environment']
+
     data['status'] = {
         'tel': tel_status,
-        'dome': dome_status
+        'dome': dome_status,
+        'tel_mode': tel_mode,
+        'dome_mode': dome_mode,
+        'environment': env
     }
 
     return jsonify(**data)
