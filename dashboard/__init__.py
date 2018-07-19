@@ -46,7 +46,9 @@ ONEMETRE_GENERATED_DATA = {
 }
 
 RASA_GENERATED_DATA = {
-
+    'rasa': 'dashboard-RASA.json',
+    'rasa/thumb': 'dashboard-RASA-thumb.jpg',
+    'rasa/clip': 'dashboard-RASA-clip.jpg',
 }
 
 app = Flask(__name__)
@@ -218,6 +220,13 @@ def onemetre_resources():
 @app.route('/rasa/')
 def rasa_dashboard():
     return render_template('rasa/dashboard.html', user_account=get_user_account())
+
+@app.route('/rasa/live/')
+def rasa_live():
+    account = get_user_account()
+    if 'rasa' in account['permissions']:
+        return render_template('rasa/live.html', user_account=account)
+    abort(404)
 
 @app.route('/rasa/dome/')
 def rasa_dome():

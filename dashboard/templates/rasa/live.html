@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% set title = 'RASA &raquo; Live Data' -%}
+{% set active_page = 'rasa-live' -%}
+{% block body %}
+<style>
+.overlaybutton {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+a:hover .overlaybutton {
+  color: #1ca8dd;
+}
+
+</style>
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+
+<div class="row m-b">
+  <div class="col-md-12" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="rasa-thumb" data-url="/data/rasa/rasa/thumb" width="100%" style="border-radius: 3px">
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 dashboard-stats">
+    <div class="list-group">
+      <h5 class="list-group-header">RASA <span id="rasa-updated" class="pull-right dashhead-subtitle">Loading...</span></h5>
+      <span id="rasa-object" class="list-group-item">Object: </span>
+      <span id="rasa-date" class="list-group-item">Exposure started: </span>
+      <span id="rasa-exposure" class="list-group-item">Exposure length:</span>
+      <span id="rasa-saved" class="list-group-item">Saved as:</span>
+      <span id="rasa-fwhm" class="list-group-item">Median FWHM:</span>
+      <span id="rasa-medcnts" class="list-group-item">Median Counts:</span>
+    </div>
+  </div>
+  <div class="col-md-6 dashboard-stats">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="rasa-clip" data-url="/data/rasa/rasa/clip" width="100%" style="border-radius: 3px">
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='rasa-live.js') }}"></script>
+
+{% endblock %}
