@@ -117,7 +117,9 @@ function camStatus(row, cell, data) {
 }
 
 function camTemperature(row, cell, data) {
-  if (!data || !('temperature' in data)) {
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('temperature' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else {
@@ -127,7 +129,12 @@ function camTemperature(row, cell, data) {
 }
 
 function camShutter(row, cell, data) {
-  if (data) {
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('shutter_enabled' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['shutter_enabled']) {
     cell.html('AUTO');
     cell.addClass('text-success');
   } else {
@@ -137,7 +144,14 @@ function camShutter(row, cell, data) {
 }
 
 function camExposure(row, cell, data) {
-  cell.html(data.toFixed(2) + ' s');
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('exposure_time' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else {
+    cell.html(data['exposure_time'].toFixed(2) + ' s');
+  }
 }
 
 function camGPS(row, cell, data) {
@@ -180,15 +194,33 @@ function telStatus(row, cell, data) {
 }
 
 function telRA(row, cell, data) {
-  cell.html(sexagesimal(data * 12 / Math.PI));
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('ra' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html(sexagesimal(data['ra'] * 12 / Math.PI));
 }
 
 function telDec(row, cell, data) {
-  cell.html(sexagesimal(data * 180 / Math.PI));
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('dec' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html(sexagesimal(data['dec'] * 180 / Math.PI));
 }
 
 function telAlt(row, cell, data) {
-  cell.html((data * 180 / Math.PI).toFixed(1) + '&deg;');
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('alt' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html((data['alt'] * 180 / Math.PI).toFixed(1) + '&deg;');
 }
 
 function telFocus(row, cell, data) {
@@ -205,13 +237,13 @@ function telFocus(row, cell, data) {
 }
 
 // Dome generators
-
 function domeTime(row, cell, data) {
-  if (data == null) {
-    cell.html('Not Scheduled');
-    cell.addClass('text-warning');
-  } else 
+  if (data == null)
+    cell.html('N/A');
+  else {
     cell.html(data);
+    cell.addClass('text-warning');
+  }
 }
 
 var domeShutterStatus = [
@@ -234,7 +266,7 @@ function domeShutter(row, cell, data) {
 }
 
 var domeHeartbeatStatus = [
-  ['DISABLED', ''],
+  ['DISABLED', 'text-warning'],
   ['ACTIVE', 'text-success'],
   ['CLOSING DOME', 'text-danger'],
   ['TRIPPED', 'text-danger'],
