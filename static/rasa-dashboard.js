@@ -204,16 +204,6 @@ function telFocus(row, cell, data) {
   }
 }
 
-function opsTelescopeControl(row, cell, data) {
-  if (data == 1) {
-    cell.html('AUTO');
-    row.addClass('list-group-item-success');
-  } else {
-    cell.html('MANUAL');
-    row.addClass('list-group-item-warning');
-  }
-}
-
 // Dome generators
 
 function domeTime(row, cell, data) {
@@ -230,7 +220,7 @@ var domeShutterStatus = [
   ['PARTIALLY OPEN', 'text-info'],
   ['OPENING', 'text-warning'],
   ['CLOSING', 'text-warning'],
-  ['FORCE CLOSING', 'text-error']
+  ['FORCE CLOSING', 'text-danger']
 ];
 
 function domeShutter(row, cell, data) {
@@ -246,8 +236,8 @@ function domeShutter(row, cell, data) {
 var domeHeartbeatStatus = [
   ['DISABLED', ''],
   ['ACTIVE', 'text-success'],
-  ['CLOSING DOME', 'text-error'],
-  ['TRIPPED', 'text-error'],
+  ['CLOSING DOME', 'text-danger'],
+  ['TRIPPED', 'text-danger'],
   ['UNAVAILABLE', 'text-warning']
 ];
 
@@ -275,7 +265,7 @@ function domeHeartbeat(row, cell, data) {
 }
 
 // Ops generators
-function opsDomeControl(row, cell, data) {
+function opsTelDomeControl(row, cell, data) {
   var modes = [
     ['ERROR', 'list-group-item-danger'],
     ['AUTO', 'list-group-item-success'],
@@ -398,7 +388,7 @@ function pipelineObject(row, cell, data) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else if (data['frame_type'] == 'SCIENCE')
-    cell.html('SCIENCE (' + data['frame_object'] + ')');
+    cell.html(data['frame_object']);
   else
     cell.html(data['frame_type']);
 }
