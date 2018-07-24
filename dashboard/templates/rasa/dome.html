@@ -2,12 +2,13 @@
 {% set title = 'RASA &raquo; Dome Camera' -%}
 {% set active_page = 'rasa-dome' -%}
 {% block body %}
+{% if not dashboard_mode %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
-
+{% endif %}
 {% set enable_microphone = user_account != None and 'rasa' in user_account['permissions'] -%}
 {% set video = 'rasa' %}
 {% set audio = 'rasa' %}

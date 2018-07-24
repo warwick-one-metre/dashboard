@@ -391,38 +391,44 @@ function setup() {
   });
 
   var picker = $('#datepicker');
-  var setDataSource = function() {
-    // e.date is in local time, but we need UTC - fetch it directly from the picker.
-    dateString = picker.data('datepicker').getFormattedDate('yyyy-mm-dd');
-    queryData();
-  }
 
-  picker.datepicker().on('changeDate', setDataSource);
-
-  // Date shouldn't advance until 12:00 UT
-  var endDate = new Date();
-  endDate.setHours(endDate.getHours()-12);
-  picker.datepicker('setEndDate', endDate.toISOString().substr(0, 10));
-
-  var incrementDate = function(increment) {
-    if (dateString) {
-      var date = new Date(dateString)
-      date.setUTCDate(date.getUTCDate() + increment);
-      picker.datepicker('setUTCDate', date);
-    } else {
-      // Change from Live to today
-      var endDate = new Date();
-      endDate.setHours(endDate.getHours()-12);
-      picker.datepicker('update', endDate.toISOString().substr(0, 10));
+  if (picker && picker.data('datepicker')) {
+    var setDataSource = function() {
+      // e.date is in local time, but we need UTC - fetch it directly from the picker.
+      dateString = picker.data('datepicker').getFormattedDate('yyyy-mm-dd');
+      queryData();
     }
 
+    picker.datepicker().on('changeDate', setDataSource);
+
+    // Date shouldn't advance until 12:00 UT
+    var endDate = new Date();
+    endDate.setHours(endDate.getHours()-12);
+    picker.datepicker('setEndDate', endDate.toISOString().substr(0, 10));
+
+    var incrementDate = function(increment) {
+      if (dateString) {
+        var date = new Date(dateString)
+        date.setUTCDate(date.getUTCDate() + increment);
+        picker.datepicker('setUTCDate', date);
+      } else {
+        // Change from Live to today
+        var endDate = new Date();
+        endDate.setHours(endDate.getHours()-12);
+        picker.datepicker('update', endDate.toISOString().substr(0, 10));
+      }
+
+      setDataSource();
+    }
+
+    $('#prev-date').click(function() { incrementDate(-1); });
+    $('#next-date').click(function() { incrementDate(+1); });
+
+    init = false;
     setDataSource();
+  } else {
+    init = false;
+    queryData();
   }
-
-  $('#prev-date').click(function() { incrementDate(-1); });
-  $('#next-date').click(function() { incrementDate(+1); });
-
-  init = false;
-  setDataSource();
 };
 

@@ -148,11 +148,13 @@ div.tooltip-inner {
   <body>
     <div class="container">
       <div class="row">
+        {% if not dashboard_mode %}
         <div class="col-sm-3 sidebar">
           {% set active_page = active_page -%}
           {% include "sidebar.html" %}
         </div>
-        <div class="col-sm-9 content">
+        {% endif %}
+        <div class="{% if not dashboard_mode %}col-sm-9 {% endif %}content">
           {% block body %}{% endblock %}
         </div>
       </div>

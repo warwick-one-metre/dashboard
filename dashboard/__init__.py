@@ -168,6 +168,13 @@ def get_github_oauth_token():
        Used internally by the OAuth API"""
     return (session.get('github_token'), '')
 
+def __parse_dashboard_mode():
+    try:
+        return request.args.get('dashboard') == 'true'
+    except:
+        pass
+    return False
+
 @app.route('/login')
 def login():
     callback = request.args['next'] if 'next' in request.args else url_for('environment', _external=True)
@@ -204,11 +211,13 @@ def onemetre_live():
 
 @app.route('/onemetre/dome/')
 def onemetre_dome():
-    return render_template('onemetre/dome.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('onemetre/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/onemetre/external/')
 def onemetre_external():
-    return render_template('onemetre/external.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('onemetre/external.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/onemetre/resources/')
 def onemetre_resources():
@@ -230,24 +239,28 @@ def rasa_live():
 
 @app.route('/rasa/dome/')
 def rasa_dome():
-    return render_template('rasa/dome.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('rasa/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/nites/dome/')
 def nites_dome():
-    return render_template('nites/dome.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('nites/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 # disabled until we can display all information
 #@app.route('/goto/')
 def goto_dashboard():
-    return render_template('goto/dashboard.html', user_account=get_user_account())
+    return render_template('goto/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/goto/dome/')
 def goto_dome():
-    return render_template('goto/dome.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('goto/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/goto/external/')
 def goto_external():
-    return render_template('goto/external.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('goto/external.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/goto/resources/')
 def goto_resources():
@@ -258,7 +271,8 @@ def goto_resources():
 
 @app.route('/environment/')
 def environment():
-    return render_template('environment.html', user_account=get_user_account())
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('environment.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/infrastructure/')
 def infrastructure():

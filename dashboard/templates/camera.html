@@ -3,6 +3,7 @@
   <div id="container" class="col-md-12" style="position: relative">
     <div class="list-group list-group-item" style="padding: 0">
       <img id="video" src="/webcam/{{ video }}/static" width="100%" style="border-radius: 3px; min-height: 105px;">
+{% if not dashboard_mode %}
       <div style="position: absolute; left: 10px; top: 10px; text-align: center;">
         <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
       </div>
@@ -12,10 +13,11 @@
         <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="5" data-slider-selection="after" data-slider-tooltip="hide">
       </div>
 {% endif %}
+{% endif %}
     </div>
   </div>
 </div>
-
+{% if not dashboard_mode %}
 <div class="row">
   <div class="col-md-12">
     <p class="description">Video sync may drift over time. You may need to stop and restart playback periodically.</p>
@@ -30,10 +32,10 @@
 <script src="https://cdn.jsdelivr.net/binaryjs/0.2.1/binary.min.js"></script>
 <script src="{{ url_for('static', filename='audio.js') }}"></script>
 {% endif %}
-
+{% endif %}
 <script>
 $(document).ready(function () {
-{% if enable_microphone %}
+{% if enable_microphone and not dashboard_mode %}
   $('#audio-volume').slider()
   $('#audio-volume').on('slide', function(ev){
     setAudioStreamVolume(ev.value);

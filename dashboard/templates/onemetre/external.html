@@ -2,12 +2,13 @@
 {% set title = 'One Metre &raquo; External Camera' -%}
 {% set active_page = 'onemetre-external' -%}
 {% block body %}
+{% if not dashboard_mode %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
-
+{% endif %}
 {% set enable_microphone = False -%}
 {% set video = 'ext1' %}
 {% include 'camera.html' %}

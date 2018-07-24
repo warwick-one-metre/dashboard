@@ -2,12 +2,13 @@
 {% set title = 'GOTO &raquo; External Camera' -%}
 {% set active_page = 'goto-external' -%}
 {% block body %}
+{% if not dashboard_mode %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
-
+{% endif %}
 {% set enable_microphone = False -%}
 {% set video = 'ext2' %}
 {% include 'camera.html' %}

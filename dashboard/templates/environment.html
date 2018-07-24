@@ -3,6 +3,7 @@
 {% set active_page = 'environment' -%}
 {% block body %}
 
+{% if not dashboard_mode %}
 <div class="row">
   <div class="dashhead-titles col-md-8 col-sm-8 col-xs-7">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
@@ -20,7 +21,7 @@
     </div>
   </div>
 </div>
-
+{% endif %}
 <div class="row">
   <div class="col-md-6" style="padding: 0; margin: 0">
     <div id="ext-temperature-container" class="plot-container">

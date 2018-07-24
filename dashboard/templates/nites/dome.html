@@ -2,12 +2,13 @@
 {% set title = 'NITES &raquo; Dome Camera' -%}
 {% set active_page = 'nites-dome' -%}
 {% block body %}
+{% if not dashboard_mode %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
   </div>
 </div>
-
+{% endif %}
 {% set enable_microphone = user_account != None and 'onemetre' in user_account['permissions'] -%}
 {% set video = 'nites' %}
 {% set audio = 'onemetre' %}
