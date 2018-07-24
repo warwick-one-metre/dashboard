@@ -230,9 +230,9 @@ function telFocus(row, cell, data) {
   } else if (data['status'] == 2) {
     cell.html(data['current_steps'] + ' steps');
   } else {
-    cell.html(focusStatus[data][0]);
-    if (focusStatus[data].length > 1)
-        cell.addClass(focusStatus[data][1]);
+    cell.html(focusStatus[data['status']][0]);
+    if (focusStatus[data['status']].length > 1)
+        cell.addClass(focusStatus[data['status']][1]);
   }
 }
 
