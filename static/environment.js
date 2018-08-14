@@ -391,8 +391,7 @@ function setup() {
   });
 
   var picker = $('#datepicker');
-
-  if (picker && picker.data('datepicker')) {
+  if (picker.length) {
     var setDataSource = function() {
       // e.date is in local time, but we need UTC - fetch it directly from the picker.
       dateString = picker.data('datepicker').getFormattedDate('yyyy-mm-dd');
