@@ -22,14 +22,14 @@ function reductionFrameFilename(data) {
   return [data['filename'], 'filename']
 }
 
-function reductionFrameFWHM(data) {
-  if (!data || !('fwhm' in data))
+function reductionFrameHFD(data) {
+  if (!data || !('hfd' in data))
     return ['ERROR', 'text-danger']
 
-  if (data['fwhm'] < 0)
+  if (data['hfd'] < 0)
     return ['N/A']
 
-  return [data['fwhm'] + ' arcsec']
+  return [data['hfd'] + ' arcsec']
 }
 
 function reductionFrameMedianCounts(data) {
@@ -54,7 +54,7 @@ var cameraFields = {
   'date': reductionFrameDate,
   'exposure': reductionFrameExposure,
   'saved': reductionFrameFilename,
-  'fwhm': reductionFrameFWHM,
+  'hfd': reductionFrameHFD,
   'medcnts': reductionFrameMedianCounts,
 }
 

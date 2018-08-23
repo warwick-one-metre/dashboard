@@ -440,13 +440,13 @@ function pipelineSaveDir(row, cell, data) {
 }
 
 function pipelineProcess(row, cell, data) {
-  if (!data || !('wcs_enabled' in data) || !('fwhm_enabled' in data) || !('intensity_stats_enabled' in data)
+  if (!data || !('wcs_enabled' in data) || !('hfd_enabled' in data) || !('intensity_stats_enabled' in data)
         || !('compression_enabled' in data) || !('dashboard_enabled' in data)) {
     return ['ERROR', 'text-danger'];
   } else {
     steps = {
       'wcs_enabled': 'WCS',
-      'fwhm_enabled': 'FWHM',
+      'hfd_enabled': 'HFD',
       'intensity_stats_enabled': 'IntStats',
       'compression_enabled': 'Compress',
       'dashboard_enabled': 'Dashboard'
