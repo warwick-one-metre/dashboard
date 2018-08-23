@@ -91,29 +91,39 @@ var cameraTimerStatus = [
 
 // Camera generators
 function camStatus(row, cell, data) {
+  var camera = $('<span>');
+  cell.append(camera);
+  cell.append('&nbsp;/&nbsp;');
+
   if (!data || !('state' in data)) {
-    cell.html('ERROR');
-    cell.addClass('text-danger');
-    return;
-  }
-
-  if (data['state'] == 3 || data['state'] == 4 || data['state'] == 5) {
+    camera.html('ERROR');
+    camera.addClass('text-danger');
+  } else if (data['state'] == 3 || data['state'] == 4 || data['state'] == 5) {
     if (!('sequence_frame_count' in data) || !('sequence_frame_limit' in data)) {
-      cell.html('ERROR');
-      cell.addClass('text-danger');
-      return;
+      camera.html('ERROR');
+      camera.addClass('text-danger');
+    } else {
+      camera.addClass('text-success');
+      if (data['sequence_frame_limit'] > 0)
+        camera.html('ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')');
+      else
+        camera.html('ACQUIRING (until stopped)');
     }
-
-    cell.addClass('text-success');
-    if (data['sequence_frame_limit'] > 0)
-      cell.html('ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')');
-    else
-      cell.html('ACQUIRING (until stopped)');
-    return;
+  } else {
+    camera.html(cameraStatus[data['state']][0]);
+    camera.addClass(cameraStatus[data['state']][1]);
   }
 
-  cell.html(cameraStatus[data['state']][0]);
-  cell.addClass(cameraStatus[data['state']][1]);
+  var timer = $('<span>');
+  cell.append(timer);
+
+  if (!data || !('timer' in data) || !('fix_type' in data['timer']) || !('satellites' in data['timer'])) {
+    timer.html('ERROR');
+    timer.addClass('text-danger');
+  } else {
+    timer.html(cameraTimerStatus[data['timer']['fix_type']][0] + ' (' + data['timer']['satellites'] + ' SATS)');
+    timer.addClass(cameraTimerStatus[data['timer']['fix_type']][1]);
+  }
 }
 
 function camTemperature(row, cell, data) {
@@ -154,15 +164,13 @@ function camExposure(row, cell, data) {
   }
 }
 
-function camGPS(row, cell, data) {
-  if (!data || !('fix_type' in data) || !('satellites' in data)) {
+function camGeometry(row, cell, data) {
+  if (!data || !data.length || data.length < 4) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-    return;
+  } else {
+    cell.html('[' + data[0] + ':' + data[1] + ',' + data[2] + ':' + data[3] + ']');
   }
-
-  cell.html(cameraTimerStatus[data['fix_type']][0] + ' (' + data['satellites'] + ' SATS)');
-  cell.addClass(cameraTimerStatus[data['fix_type']][1]);
 }
 
 // Telescope generators
