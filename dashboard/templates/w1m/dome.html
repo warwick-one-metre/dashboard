@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'One Metre &raquo; Dome Camera' -%}
-{% set active_page = 'onemetre-dome' -%}
+{% set title = 'W1m &raquo; Dome Camera' -%}
+{% set active_page = 'w1m-dome' -%}
 {% block body %}
 {% if not dashboard_mode %}
 <div class="dashhead m-b">
@@ -9,9 +9,9 @@
   </div>
 </div>
 {% endif %}
-{% set enable_microphone = user_account != None and 'onemetre' in user_account['permissions'] -%}
-{% set video = 'onemetre' %}
-{% set audio = 'onemetre' %}
+{% set enable_microphone = user_account != None and 'w1m' in user_account['permissions'] -%}
+{% set video = 'w1m' %}
+{% set audio = 'w1m' %}
 {% include 'camera.html' %}
 
 {% endblock %}

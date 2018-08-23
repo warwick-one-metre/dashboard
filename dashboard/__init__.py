@@ -1,16 +1,16 @@
 #
-# onemetre-dashboard is free software: you can redistribute it and/or modify
+# observatory-dashboard is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# onemetre-dashboard is distributed in the hope that it will be useful,
+# observatory-dashboard is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with onemetre-dashboard.  If not, see <http://www.gnu.org/licenses/>.
+# along with observatory-dashboard.  If not, see <http://www.gnu.org/licenses/>.
 
 # pylint: disable=invalid-name
 
@@ -38,7 +38,7 @@ DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
 GENERATED_DATA_DIR = '/srv/dashboard/generated'
-ONEMETRE_GENERATED_DATA = {
+W1M_GENERATED_DATA = {
     'blue': 'dashboard-BLUE.json',
     'blue/image': 'dashboard-BLUE-thumb.png',
     'red': 'dashboard-RED.json',
@@ -53,7 +53,7 @@ RASA_GENERATED_DATA = {
 
 app = Flask(__name__)
 
-# Stop Flask from telling the browser to cache our onemetre_generated_data
+# Stop Flask from telling the browser to cache dynamic files
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = -1
 
 # Read secret data from the database
@@ -90,7 +90,7 @@ def get_user_account():
           'username': GitHub username (or None if not logged in)
           'avatar': GitHub profile picture (or None if not logged in)
           'permissions': list of permission types, a subset of
-                         ['onemetre', 'nites', 'goto', 'rasa', 'infrastructure_log']
+                         ['w1m', 'nites', 'goto', 'rasa', 'infrastructure_log']
     """
     # Expire cached sessions after 12 hours
     # This forces the permissions to be queried again from github
@@ -128,7 +128,7 @@ def get_user_account():
 
                 # https://github.com/orgs/warwick-one-metre/teams/observers
                 if is_github_team_member(user, 2128810):
-                    permissions.update(['onemetre', 'infrastructure_log', 'rasa'])
+                    permissions.update(['w1m', 'infrastructure_log', 'rasa'])
 
                 # https://github.com/orgs/NITES-40cm/teams/observers
                 if is_github_team_member(user, 2576073):
@@ -198,27 +198,27 @@ def logout():
 def main_redirect():
     return redirect(url_for('environment'))
 
-@app.route('/onemetre/')
-def onemetre_dashboard():
-    return render_template('onemetre/dashboard.html', user_account=get_user_account())
+@app.route('/w1m/')
+def w1m_dashboard():
+    return render_template('w1m/dashboard.html', user_account=get_user_account())
 
-@app.route('/onemetre/live/')
-def onemetre_live():
+@app.route('/w1m/live/')
+def w1m_live():
     account = get_user_account()
-    if 'onemetre' in account['permissions']:
-        return render_template('onemetre/live.html', user_account=account)
+    if 'w1m' in account['permissions']:
+        return render_template('w1m/live.html', user_account=account)
     abort(404)
 
-@app.route('/onemetre/dome/')
-def onemetre_dome():
+@app.route('/w1m/dome/')
+def w1m_dome():
     dashboard_mode = __parse_dashboard_mode()
-    return render_template('onemetre/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    return render_template('w1m/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
-@app.route('/onemetre/resources/')
-def onemetre_resources():
+@app.route('/w1m/resources/')
+def w1m_resources():
     account = get_user_account()
-    if 'onemetre' in account['permissions']:
-        return render_template('onemetre/resources.html', user_account=account)
+    if 'w1m' in account['permissions']:
+        return render_template('w1m/resources.html', user_account=account)
     abort(404)
 
 @app.route('/rasa/')
@@ -283,10 +283,10 @@ def west_camera():
     return render_template('west.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 # Dynamically generated JSON
-@app.route('/data/onemetre/log')
-def onemetre_log():
+@app.route('/data/w1m/log')
+def w1m_log():
     account = get_user_account()
-    if 'onemetre' in account['permissions']:
+    if 'w1m' in account['permissions']:
         db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
         try:
             # Returns latest 250 log messages.
@@ -369,20 +369,20 @@ def infrastructure_data():
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-@app.route('/data/onemetre/')
-def onemetre_dashboard_data():
+@app.route('/data/w1m/')
+def w1m_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
     account = get_user_account()
-    if 'onemetre' in account['permissions']:
+    if 'w1m' in account['permissions']:
         data.update(json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json')))
 
     return jsonify(**data)
 
-@app.route('/data/onemetre/<path:path>')
-def onemetre_generated_data(path):
+@app.route('/data/w1m/<path:path>')
+def w1m_generated_data(path):
     account = get_user_account()
-    if 'onemetre' in account['permissions'] and path in ONEMETRE_GENERATED_DATA:
-        return send_from_directory(GENERATED_DATA_DIR, ONEMETRE_GENERATED_DATA[path])
+    if 'w1m' in account['permissions'] and path in W1M_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, W1M_GENERATED_DATA[path])
     abort(404)
 
 @app.route('/data/rasa/')
@@ -444,8 +444,8 @@ def rasa_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, RASA_GENERATED_DATA[path])
     abort(404)
 
-def extract_onemetre_environment(data, group):
-    """Extract a minimal set of data from the onemetre environment
+def extract_w1m_environment(data, group):
+    """Extract a minimal set of data from the w1m environment
        output for use on other dashboard pages"""
     if 'environment' not in data or group not in data['environment']:
         return {}
@@ -464,13 +464,13 @@ def goto_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
 
     # Extract additional data from the 1m dashboard
-    onemetre = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
+    w1m = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
     data.update({
-        'onemetre': {
-            'superwasp': extract_onemetre_environment(onemetre, 'superwasp'),
-            'goto_vaisala': extract_onemetre_environment(onemetre, 'goto_vaisala'),
-            'tng': extract_onemetre_environment(onemetre, 'tng'),
-            'ephem': extract_onemetre_environment(onemetre, 'ephem')
+        'w1m': {
+            'superwasp': extract_w1m_environment(w1m, 'superwasp'),
+            'goto_vaisala': extract_w1m_environment(w1m, 'goto_vaisala'),
+            'tng': extract_w1m_environment(w1m, 'tng'),
+            'ephem': extract_w1m_environment(w1m, 'ephem')
         }
     })
 
@@ -481,8 +481,8 @@ def goto_dashboard_data():
     return jsonify(**data)
 
 # Raw sensor data for GOTO ops
-@app.route('/data/raw/onemetre-vaisala')
-def raw_onemetre_vaisala():
+@app.route('/data/raw/w1m-vaisala')
+def raw_w1m_vaisala():
     data = json.load(open(GENERATED_DATA_DIR + '/onemetre-vaisala.json'))
     return jsonify(**data)
 

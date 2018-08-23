@@ -6,11 +6,11 @@
     (url_for('west_camera'), 'west-camera', 'West Camera', 'icon-video-camera', None),
     (url_for('skycams'), 'skycams', 'Sky Cameras', 'icon-video-camera', None)
   ]),
-  ('One Metre', [
-    (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera', 'icon-video-camera', None),
-    (url_for('onemetre_live'), 'onemetre-live', 'Live Data', 'icon-stopwatch', 'onemetre'),
-    (url_for('onemetre_resources'), 'onemetre-resources', 'Resources', 'icon-info', 'onemetre')
+  ('W1m', [
+    (url_for('w1m_dashboard'), 'w1m-dashboard', 'Dashboard', 'icon-menu', None),
+    (url_for('w1m_dome'), 'w1m-dome', 'Dome Camera', 'icon-video-camera', None),
+    (url_for('w1m_live'), 'w1m-live', 'Live Data', 'icon-stopwatch', 'w1m'),
+    (url_for('w1m_resources'), 'w1m-resources', 'Resources', 'icon-info', 'w1m')
   ]),
   ('RASA', [
     (url_for('rasa_dashboard'), 'rasa-dashboard', 'Dashboard', 'icon-menu', None),
@@ -55,8 +55,8 @@
       </div>
       <ul class="user-permissions">
       {% if user_account['permissions']|length > 0 %}
-        {% if 'onemetre' in user_account['permissions'] %}
-          <li>One-metre observer</li>
+        {% if 'w1m' in user_account['permissions'] %}
+          <li>W1m observer</li>
         {% endif %}
         {% if 'goto' in user_account['permissions'] %}
           <li>GOTO observer</li>

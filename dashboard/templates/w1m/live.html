@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'One Metre &raquo; Live Data' -%}
-{% set active_page = 'onemetre-live' -%}
+{% set title = 'W1m &raquo; Live Data' -%}
+{% set active_page = 'w1m-live' -%}
 {% block body %}
 <style>
 .overlaybutton {
@@ -21,7 +21,7 @@ a:hover .overlaybutton {
 <div class="row">
   <div class="col-md-6">
     <div class="list-group list-group-item panel" style="padding:0">
-      <img id="blue-thumb" data-url="/data/onemetre/blue/image" width="100%">
+      <img id="blue-thumb" data-url="/data/w1m/blue/image" width="100%">
     </div>
     <div class="list-group m-b">
       <h5 class="list-group-header">Blue Camera<span id="blue-updated" class="pull-right dashhead-subtitle">Loading...</span></h5>
@@ -33,7 +33,7 @@ a:hover .overlaybutton {
   </div>
   <div class="col-md-6">
     <div class="list-group list-group-item panel" style="padding:0">
-      <img id="red-thumb" data-url="/data/onemetre/red/image" width="100%">
+      <img id="red-thumb" data-url="/data/w1m/red/image" width="100%">
     </div>
     <div class="list-group m-b">
       <h5 class="list-group-header">Red Camera<span id="red-updated" class="pull-right dashhead-subtitle">Loading...</span></h5>
@@ -45,6 +45,6 @@ a:hover .overlaybutton {
   </div>
 </div>
 
-<script src="{{ url_for('static', filename='onemetre-reduction.js') }}"></script>
+<script src="{{ url_for('static', filename='w1m-reduction.js') }}"></script>
 
 {% endblock %}

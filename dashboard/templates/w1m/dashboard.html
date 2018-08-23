@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'One Metre &raquo; Dashboard' -%}
-{% set active_page = 'onemetre-dashboard' -%}
+{% set title = 'W1m &raquo; Dashboard' -%}
+{% set active_page = 'w1m-dashboard' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
@@ -76,7 +76,7 @@
     </div>
   </div>
 </div>
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
+{% if user_account != None and 'w1m' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -143,15 +143,15 @@
 </div>
 {% endif %}
 <script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
-<script src="{{ url_for('static', filename='onemetre-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='w1m-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
 <script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
 <script>
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
-    pollDashboard('/data/onemetre');
-{% if user_account != None and 'onemetre' in user_account['permissions'] %}
-    pollLog('{{ url_for('onemetre_log') }}');
+    pollDashboard('/data/w1m');
+{% if user_account != None and 'w1m' in user_account['permissions'] %}
+    pollLog('{{ url_for('w1m_log') }}');
 {% endif %}
   });
 </script>
