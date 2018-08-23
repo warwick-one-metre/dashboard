@@ -201,34 +201,24 @@ function telStatus(row, cell, data) {
   }
 }
 
-function telRA(row, cell, data) {
+function telRADec(row, cell, data) {
   if (data && 'state' in data && data['state'] < 2)
     cell.html('N/A')
-  else if (!data || !('ra' in data)) {
+  else if (!data || !('ra' in data) || !('dec' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else
-    cell.html(sexagesimal(data['ra'] * 12 / Math.PI));
+    cell.html(sexagesimal(data['ra'] * 12 / Math.PI) + '&nbsp;/&nbsp;' + sexagesimal(data['dec'] * 180 / Math.PI));
 }
 
-function telDec(row, cell, data) {
+function telAltAz(row, cell, data) {
   if (data && 'state' in data && data['state'] < 2)
     cell.html('N/A')
-  else if (!data || !('dec' in data)) {
+  else if (!data || !('alt' in data) || !('az' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else
-    cell.html(sexagesimal(data['dec'] * 180 / Math.PI));
-}
-
-function telAlt(row, cell, data) {
-  if (data && 'state' in data && data['state'] < 2)
-    cell.html('N/A')
-  else if (!data || !('alt' in data)) {
-    cell.html('ERROR');
-    cell.addClass('text-danger');
-  } else
-    cell.html((data['alt'] * 180 / Math.PI).toFixed(1) + '&deg;');
+    cell.html((data['alt'] * 180 / Math.PI).toFixed(1) + '&deg;&nbsp;/&nbsp;' + (data['az'] * 180 / Math.PI).toFixed(1) + '&deg;');
 }
 
 function telFocus(row, cell, data) {
@@ -242,6 +232,14 @@ function telFocus(row, cell, data) {
     if (focusStatus[data['status']].length > 1)
         cell.addClass(focusStatus[data['status']][1]);
   }
+}
+
+function telMoonSep(row, cell, data) {
+  if (!data || !('moon_separation' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html((data['moon_separation'] * 180 / Math.PI).toFixed(1) + '&deg;');
 }
 
 // Dome generators
