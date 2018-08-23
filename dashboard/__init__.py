@@ -214,11 +214,6 @@ def onemetre_dome():
     dashboard_mode = __parse_dashboard_mode()
     return render_template('onemetre/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
-@app.route('/onemetre/external/')
-def onemetre_external():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('onemetre/external.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
 @app.route('/onemetre/resources/')
 def onemetre_resources():
     account = get_user_account()
@@ -257,11 +252,6 @@ def goto_dome():
     dashboard_mode = __parse_dashboard_mode()
     return render_template('goto/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
-@app.route('/goto/external/')
-def goto_external():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto/external.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
 @app.route('/goto/resources/')
 def goto_resources():
     account = get_user_account()
@@ -281,6 +271,16 @@ def infrastructure():
 @app.route('/skycams/')
 def skycams():
     return render_template('skycams.html', user_account=get_user_account())
+
+@app.route('/eastcam/')
+def east_camera():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('east.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+
+@app.route('/westcam/')
+def west_camera():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('west.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 # Dynamically generated JSON
 @app.route('/data/onemetre/log')

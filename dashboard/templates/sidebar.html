@@ -2,24 +2,24 @@
   ('Observatory', [
     (url_for('environment'), 'environment', 'Environment', 'icon-cloud', None),
     (url_for('infrastructure'), 'infrastructure', 'Infrastructure', 'icon-home', None),
+    (url_for('east_camera'), 'east-camera', 'East Camera', 'icon-video-camera', None),
+    (url_for('west_camera'), 'west-camera', 'West Camera', 'icon-video-camera', None),
     (url_for('skycams'), 'skycams', 'Sky Cameras', 'icon-video-camera', None)
   ]),
   ('One Metre', [
     (url_for('onemetre_dashboard'), 'onemetre-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('onemetre_dome'), 'onemetre-dome', 'Dome Camera', 'icon-video-camera', None),
-    (url_for('onemetre_external'), 'onemetre-external', 'Ext. Camera', 'icon-video-camera', None),
     (url_for('onemetre_live'), 'onemetre-live', 'Live Data', 'icon-stopwatch', 'onemetre'),
     (url_for('onemetre_resources'), 'onemetre-resources', 'Resources', 'icon-info', 'onemetre')
-  ]),
-  ('GOTO', [
-    (url_for('goto_dome'), 'goto-dome', 'Dome Camera', 'icon-video-camera', None),
-    (url_for('goto_external'), 'goto-external', 'Ext. Camera', 'icon-video-camera', None),
-    (url_for('goto_resources'), 'goto-resources', 'Resources', 'icon-info', 'goto')
   ]),
   ('RASA', [
     (url_for('rasa_dashboard'), 'rasa-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('rasa_live'), 'rasa-live', 'Live Data', 'icon-stopwatch', 'rasa'),
     (url_for('rasa_dome'), 'rasa-dome', 'Dome Camera', 'icon-video-camera', None)
+  ]),
+  ('GOTO', [
+    (url_for('goto_dome'), 'goto-dome', 'Dome Camera', 'icon-video-camera', None),
+    (url_for('goto_resources'), 'goto-resources', 'Resources', 'icon-info', 'goto')
   ]),
   ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera', 'icon-video-camera', None)]),
 ] %}
