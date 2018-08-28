@@ -58,6 +58,9 @@ var cameraFields = {
   'medcnts': reductionFrameMedianCounts,
 }
 
+var sourceSize = [0, 0];
+var clipSize = 0;
+
 function queryPreviews() {
   $.ajax({
     type: 'GET',
@@ -71,6 +74,9 @@ function queryPreviews() {
         // Remove previews
         $('#rasa-thumb').attr('src', '');
         $('#rasa-clib').attr('src', '');
+
+        sourceSize = [0, 0];
+        clipSize = 0;
       }
     }
   }).done(function(data) {
@@ -82,7 +88,10 @@ function queryPreviews() {
       // Date is for cache-busting only.
       var date = parseUTCDate(data['date']).getTime();
       $('#rasa-thumb').attr('src', $('#rasa-thumb').data('url') + '?' + date);
-      $('#rasa-clip').attr('src', $('#rasa-clip').data('url') + '?' + date);
+      $('#rasa-clip').css('background-image', "url('" + $('#rasa-clip').data('url') + '?' + date + "')");
+
+      sourceSize = data['size'];
+      clipSize = data['clipsize'];
     }
   });
 
@@ -90,6 +99,16 @@ function queryPreviews() {
 }
 
 $(document).ready(function () {
+  var clip = $('#rasa-clip');
+  $('#rasa-thumb')
+  .mousemove(function(e) {
+    e.preventDefault();
+    a = this.getBoundingClientRect();
+    x = sourceSize[0] * (e.pageX - a.left - window.pageXOffset) / a.width + (clipSize - sourceSize[0] - clip.width()) / 2;
+    y = sourceSize[1] * (e.pageY - a.top - window.pageYOffset) / a.height + (clipSize - sourceSize[1] - clip.height()) / 2;
+    $('#rasa-clip').css('background-position', -x + 'px ' + -y + 'px');
+  });
+
   queryPreviews();
 });
 
