@@ -165,7 +165,9 @@ function camExposure(row, cell, data) {
 }
 
 function camGeometry(row, cell, data) {
-  if (!data || !data.length || data.length < 4) {
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !data.length || data.length < 4) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else {
@@ -235,7 +237,9 @@ function telFocus(row, cell, data) {
 }
 
 function telMoonSep(row, cell, data) {
-  if (!data || !('moon_separation' in data)) {
+  if (data && 'state' in data && data['state'] < 2)
+    cell.html('N/A')
+  else if (!data || !('moon_separation' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else
