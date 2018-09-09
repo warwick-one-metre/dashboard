@@ -91,38 +91,33 @@ var cameraTimerStatus = [
 
 // Camera generators
 function camStatus(row, cell, data) {
-  var camera = $('<span>');
-  cell.append(camera);
-  cell.append('&nbsp;/&nbsp;');
-
   if (!data || !('state' in data)) {
-    camera.html('ERROR');
-    camera.addClass('text-danger');
+    cell.html('ERROR');
+    cell.addClass('text-danger');
   } else if (data['state'] == 3 || data['state'] == 4 || data['state'] == 5) {
     if (!('sequence_frame_count' in data) || !('sequence_frame_limit' in data)) {
-      camera.html('ERROR');
-      camera.addClass('text-danger');
+      cell.html('ERROR');
+      cell.addClass('text-danger');
     } else {
-      camera.addClass('text-success');
+      cell.addClass('text-success');
       if (data['sequence_frame_limit'] > 0)
-        camera.html('ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')');
+        cell.html('ACQUIRING (' + (data['sequence_frame_count'] + 1) + ' / ' + data['sequence_frame_limit'] + ')');
       else
-        camera.html('ACQUIRING (until stopped)');
+        cell.html('ACQUIRING (until stopped)');
     }
   } else {
-    camera.html(cameraStatus[data['state']][0]);
-    camera.addClass(cameraStatus[data['state']][1]);
+    cell.html(cameraStatus[data['state']][0]);
+    cell.addClass(cameraStatus[data['state']][1]);
   }
+}
 
-  var timer = $('<span>');
-  cell.append(timer);
-
+function camTimer(row, cell, data) {
   if (!data || !('timer' in data) || !('fix_type' in data['timer']) || !('satellites' in data['timer'])) {
-    timer.html('ERROR');
-    timer.addClass('text-danger');
+    cell.html('ERROR');
+    cell.addClass('text-danger');
   } else {
-    timer.html(cameraTimerStatus[data['timer']['fix_type']][0] + ' (' + data['timer']['satellites'] + ' SATS)');
-    timer.addClass(cameraTimerStatus[data['timer']['fix_type']][1]);
+    cell.html(cameraTimerStatus[data['timer']['fix_type']][0] + ' (' + data['timer']['satellites'] + ' SATS)');
+    cell.addClass(cameraTimerStatus[data['timer']['fix_type']][1]);
   }
 }
 
@@ -138,29 +133,33 @@ function camTemperature(row, cell, data) {
   }
 }
 
-function camShutter(row, cell, data) {
-  if (data && 'state' in data && data['state'] < 2)
-    cell.html('N/A')
-  else if (!data || !('shutter_enabled' in data)) {
-    cell.html('ERROR');
-    cell.addClass('text-danger');
-  } else if (data['shutter_enabled']) {
-    cell.html('AUTO');
-    cell.addClass('text-success');
-  } else {
-    cell.html('DARK');
-    cell.addClass('text-danger');
-  }
-}
-
 function camExposure(row, cell, data) {
+  var exposure = $('<span>');
+  cell.append(exposure);
   if (data && 'state' in data && data['state'] < 2)
-    cell.html('N/A')
+    exposure.html('N/A')
   else if (!data || !('exposure_time' in data)) {
-    cell.html('ERROR');
-    cell.addClass('text-danger');
+    exposure.html('ERROR');
+    exposure.addClass('text-danger');
   } else {
-    cell.html(data['exposure_time'].toFixed(2) + ' s');
+    exposure.html(data['exposure_time'].toFixed(2) + ' s');
+  }
+
+  var shutter = $('<span>');
+  cell.append('&nbsp;/&nbsp;');
+  cell.append(shutter);
+
+  if (data && 'state' in data && data['state'] < 2)
+    shutter.html('N/A')
+  else if (!data || !('shutter_enabled' in data)) {
+    shutter.html('ERROR');
+    shutter.addClass('text-danger');
+  } else if (data['shutter_enabled']) {
+    shutter.html('AUTO');
+    shutter.addClass('text-success');
+  } else {
+    shutter.html('DARK');
+    shutter.addClass('text-danger');
   }
 }
 
