@@ -104,6 +104,10 @@ NETWORK = {
     'swasp_gateway': ('WHT', 'pingintwht', '#CC0000'),
 }
 
+EUMETSAT_OPACITY = {
+    'opacity': ('EUMETSAT', 'eumetsat', '#F26430'),
+}
+
 def environment_json(date=None):
     """Queries the data to be rendered on the "Environment" dashboard page
        If date is specified, returns data for the specified night (UTC times: 12 through 12)
@@ -134,6 +138,7 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
     data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY, start_str, end_str))
     db.close()
 
     return data, start_js, end_js

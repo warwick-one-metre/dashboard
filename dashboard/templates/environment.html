@@ -25,25 +25,25 @@
 <div class="row">
   <div class="col-md-6" style="padding: 0; margin: 0">
     <div id="ext-temperature-container" class="plot-container">
-      <div id="ext-temperature-plot" data-linkedplots='["int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["swtemp", "wexttemp", "gexttemp"]' data-axislabel='Ext. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
+      <div id="ext-temperature-plot" data-linkedplots='["int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "iropacity-plot"]' class="weather-plot" data-series='["swtemp", "wexttemp", "gexttemp"]' data-axislabel='Ext. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="int-temperature-container" class="plot-container">
-      <div id="int-temperature-plot" data-linkedplots='["ext-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["ninttemp", "rinttemp", "winttemp", "ginttemp"]' data-axislabel='Int. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
+      <div id="int-temperature-plot" data-linkedplots='["ext-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "iropacity-plot"]' class="weather-plot" data-series='["ninttemp", "rinttemp", "winttemp", "ginttemp"]' data-axislabel='Int. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="ext-humidity-container" class="plot-container">
-      <div id="ext-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["swhumid", "wexthumid", "gexthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Ext. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
+      <div id="ext-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "int-humidity-plot", "dew-plot", "skytemp-plot", "iropacity-plot"]' class="weather-plot" data-series='["swhumid", "wexthumid", "gexthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Ext. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="int-humidity-container" class="plot-container">
-      <div id="int-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "dew-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-series='["ninthumid", "rinthumid", "winthumid", "ginthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Int. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
+      <div id="int-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "dew-plot", "skytemp-plot", "iropacity-plot"]' class="weather-plot" data-series='["ninthumid", "rinthumid", "winthumid", "ginthumid"]' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Int. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="dew-container" class="plot-container">
-      <div id="dew-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "skytemp-plot", "pressure-plot"]' class="weather-plot" data-sidesensor="dew-container" data-series='["swdewdelta", "wdewdelta", "gdewdelta"]' data-axislabel='T. &gt; Dew Pt. (&deg;C)' data-min="0" data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
+      <div id="dew-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "skytemp-plot", "iropacity-plot"]' class="weather-plot" data-sidesensor="dew-container" data-series='["swdewdelta", "wdewdelta", "gdewdelta"]' data-axislabel='T. &gt; Dew Pt. (&deg;C)' data-min="0" data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="skytemp-container" class="plot-container">
-      <div id="skytemp-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "pressure-plot"]' class="weather-plot" data-series='["swskytemp"]' data-axislabel='Sky Temp. (&deg;C)' data-labelunits='&deg;C' data-min="-50" data-max="0" data-labelfudge="-7" data-hidetime></div>
+      <div id="skytemp-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "iropacity-plot"]' class="weather-plot" data-series='["swskytemp"]' data-axislabel='Sky Temp. (&deg;C)' data-labelunits='&deg;C' data-min="-50" data-max="0" data-labelfudge="-7" data-hidetime></div>
     </div>
-    <div id="pressure-container" class="plot-container">
-      <div id="pressure-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot"]' class="weather-plot" data-series='["wpressure", "gpressure"]' data-sidesensor="pressure-container" data-axislabel='Pressure (hPa)' data-min="745" data-max="790" data-labelfudge="-7" data-labelunits='&nbsp;hPa' data-ydecimals="0"></div>
+    <div id="iropacity-container" class="plot-container">
+      <div id="iropacity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skytemp-plot"]' class="weather-plot" data-series='["eumetsat"]' data-sidesensor="iropacity-container" data-axislabel='IR Opacity (%)' data-min="0" data-max="100" data-labelfudge="-7" data-labelunits='%' data-ydecimals="0"></div>
     </div>
   </div>
   <div class="col-md-6" style="padding: 0; margin: 0" id="right-container">
@@ -53,14 +53,16 @@
     <div id="windspeed-container" class="plot-container">
       <div id="windspeed-plot" data-linkedplots='["accumrain-plot", "rainboards-plot", "rainintensity-plot"]' class="weather-plot" data-series='["wwindspeed", "gwindspeed", "swwindspeed"]' data-sidesensor="right-container" data-axislabel="Wind (km/h)" data-labelfudge="-7" data-min="0" data-labelunits='&nbsp;km/h' data-hidetime data-ydecimals="0"></div>
     </div>
-    <div id="raindetector-container" class="plot-container">
-      <div id="rainboards-plot" data-linkedplots='["windspeed-plot", "accumrain-plot", "rainintensity-plot"]' class="weather-plot" data-series='["rdboards"]' data-sidesensor="right-container" data-axislabel="Rain Detectors" data-labelfudge="-7" data-min="0" data-max="6" data-labelunits='&nbsp;boards' data-hidetime data-ydecimals="0"></div>
+
+    <div id="pressure-container" class="plot-container">
+      <div id="pressure-plot" data-linkedplots='["windspeed-plot", "rainboards-plot", "accumrain-plot"]' class="weather-plot" data-series='["wpressure", "gpressure"]' data-sidesensor="right-container" data-axislabel='Pressure (hPa)' data-min="745" data-max="790" data-labelfudge="-7" data-labelunits='&nbsp;hPa' data-hidetime data-ydecimals="0"></div>
     </div>
-    <div id="rainintensity-container" class="plot-container">
-      <div id="rainintensity-plot" data-linkedplots='["windspeed-plot", "rainboards-plot", "accumrain-plot"]' class="weather-plot" data-series='["wrainint", "grainint"]' data-sidesensor="right-container" data-axislabel="Rain (mm/min)" data-labelunits='&nbsp;mm/min' data-labelfudge="-7" data-min="0" data-hidetime></div>
+
+    <div id="raindetector-container" class="plot-container">
+      <div id="rainboards-plot" data-linkedplots='["pressure-plot", "windspeed-plot", "accumrain-plot"]' class="weather-plot" data-series='["rdboards"]' data-sidesensor="right-container" data-axislabel="Rain Detectors" data-labelfudge="-7" data-min="0" data-max="6" data-labelunits='&nbsp;boards' data-hidetime data-ydecimals="0"></div>
     </div>
     <div id="accumrain-container" class="plot-container">
-      <div id="accumrain-plot" data-linkedplots='["windspeed-plot", "rainboards-plot", "rainintensity-plot"]' class="weather-plot" data-series='["wrain", "grain"]' data-sidesensor="right-container" data-axislabel="Total Rain (mm)" data-labelunits='&nbsp;mm' data-labelfudge="-7" data-min="0"></div>
+      <div id="accumrain-plot" data-linkedplots='["pressure-plot", "windspeed-plot", "rainboards-plot"]' class="weather-plot" data-series='["wrain", "grain"]' data-sidesensor="right-container" data-axislabel="Total Rain (mm)" data-labelunits='&nbsp;mm' data-labelfudge="-7" data-min="0"></div>
     </div>
   </div>
 </div>
