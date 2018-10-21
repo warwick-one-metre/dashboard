@@ -138,7 +138,8 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
     data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
-    data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY,
+                              start_str, end_str, 1200))
     db.close()
 
     return data, start_js, end_js
@@ -174,8 +175,10 @@ def infrastructure_json(date=None):
 
     return data, start_js, end_js
 
-def __query_table(db, query, valid_filter=None):
-    """Queries data for a plot series from the database, optionally applying a valid data filter"""
+def __query_table(db, query, valid_filter=None, data_break=360):
+    """Queries data for a plot series from the database, optionally applying a valid data filter
+       lines are broken if there is a gap more than data_break seconds between points
+    """
     with db.cursor() as cur:
         cur.execute(query)
 
@@ -190,8 +193,8 @@ def __query_table(db, query, valid_filter=None):
             c['max'] = max(c['max'], x[1])
             c['min'] = max(c['min'], x[1])
 
-            # Insert a break in the plot line if there is > 6 minutes between points
-            if next_time is not None and next_time - time > 360000:
+            # Insert a break in the plot line if there is a break between points
+            if next_time is not None and next_time - time > data_break * 1000:
                 c['data'].append(None)
 
             if valid_filter and not valid_filter(time, x[1]):
@@ -201,7 +204,7 @@ def __query_table(db, query, valid_filter=None):
             next_time = time
         return c
 
-def __sensor_json(db, table, channels, start, end):
+def __sensor_json(db, table, channels, start, end, data_break=360):
     """Queries data for an general-case sensor"""
     data = {}
 
@@ -213,7 +216,7 @@ def __sensor_json(db, table, channels, start, end):
             + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
             + db.escape(end) + ' ORDER BY `date` DESC;'
 
-        c.update(__query_table(db, query))
+        c.update(__query_table(db, query, data_break=data_break))
         data[value[1]] = c
     return data
 
