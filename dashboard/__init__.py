@@ -423,6 +423,10 @@ def rasa_dashboard_data():
     if 'ops' in private and 'telescope' in private['ops'] and 'mode' in private['ops']['dome']:
         tel_mode = private['ops']['telescope']['mode']
 
+    dehumidifier_mode = 0
+    if 'ops' in private and 'dehumidifier' in private['ops'] and 'mode' in private['ops']['dehumidifier']:
+        dehumidifier_mode = private['ops']['dehumidifier']['mode']
+
     env = {}
     if 'ops' in private and 'environment' in private['ops']:
         env = private['ops']['environment']
@@ -432,6 +436,7 @@ def rasa_dashboard_data():
         'dome': dome_status,
         'tel_mode': tel_mode,
         'dome_mode': dome_mode,
+        'dehumidifier_mode': dehumidifier_mode,
         'environment': env
     }
 

@@ -12,20 +12,20 @@
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["status", "tel"]' data-generator="telHeaderStatus">Tel. Status</span>
-      <span class="list-group-item" data-index='["status", "dome"]' data-generator="domeHeaderStatus">Dome Status</span>
+      <span class="list-group-item" data-index='["status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
+      <span class="list-group-item" data-index='["status", "dome"]' data-generator="opsHeaderDome">Dome Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["status", "tel_mode"]' data-generator="opsTelDomeControl">Tel. Control</span>
-      <span class="list-group-item" data-index='["status", "dome_mode"]' data-generator="opsTelDomeControl">Dome Control</span>
+      <span class="list-group-item" data-index='["status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
+      <span class="list-group-item" data-index='["status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["status"]' data-generator="opsStatus">Operations</span>
-      <span class="list-group-item" data-index='["status", "environment"]' data-generator="opsEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+      <span class="list-group-item" data-index='["status", "dehumidifier_mode"]' data-generator="opsHeaderMode">Dehumidifier Control</span>
+      <span class="list-group-item" data-index='["status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
