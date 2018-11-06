@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% set title = 'SuperWASP &raquo; Live Data' -%}
+{% set active_page = 'wasp-live' -%}
+{% block body %}
+<style>
+.overlaybutton {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+a:hover .overlaybutton {
+  color: #1ca8dd;
+}
+
+#wasp-clip {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 200px;
+  height: 200px;
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: -99999px -99999px;
+}
+
+</style>
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+    <h6 class="dashhead-subtitle" id="wasp-updated"">Loading...</h6>
+  </div>
+</div>
+
+<div class="row m-b">
+  <div class="col-md-12" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="wasp-thumb" data-url="/data/wasp/wasp/thumb" width="100%" style="border-radius: 3px">
+      <div id="wasp-clip" style="border-radius: 3px" data-url="/data/wasp/wasp/clip"></div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6 dashboard-stats">
+    <div class="list-group">
+      <span id="wasp-object" class="list-group-item">Object: </span>
+      <span id="wasp-exposure" class="list-group-item">Exposure number: </span>
+    </div>
+  </div>
+  <div class="col-md-6 dashboard-stats">
+    <div class="list-group">
+      <span id="wasp-date" class="list-group-item">Exposure started: </span>
+      <span id="wasp-exptime" class="list-group-item">Exposure length:</span>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='wasp-live.js') }}"></script>
+
+{% endblock %}
