@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'SuperWASP &raquo; Dome Camera' -%}
-{% set active_page = 'wasp-dome' -%}
+{% set title = 'SuperWASP &raquo; Dome Camera 1' -%}
+{% set active_page = 'wasp-dome1' -%}
 {% block body %}
 {% if not dashboard_mode %}
 <div class="dashhead m-b">
@@ -10,7 +10,7 @@
 </div>
 {% endif %}
 {% set enable_microphone = user_account != None and 'rasa' in user_account['permissions'] -%}
-{% set video = 'wasp' %}
+{% set video = 'wasp1' %}
 {% set audio = 'wasp' %}
 {% include 'camera.html' %}
 

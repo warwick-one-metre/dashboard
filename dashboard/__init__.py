@@ -249,10 +249,15 @@ def nites_dome():
     dashboard_mode = __parse_dashboard_mode()
     return render_template('nites/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
-@app.route('/wasp/dome/')
-def wasp_dome():
+@app.route('/wasp/dome1/')
+def wasp_dome1():
     dashboard_mode = __parse_dashboard_mode()
-    return render_template('wasp/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    return render_template('wasp/dome1.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+
+@app.route('/wasp/dome2/')
+def wasp_dome2():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('wasp/dome2.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/wasp/live/')
 def wasp_live():
