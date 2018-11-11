@@ -69,7 +69,7 @@ function queryPreviews() {
     statusCode: {
       404: function() {
         updateListGroup('rasa', cameraFields);
-        $('#rasa-updated').html(formatUTCDate(new Date()) + ' UTC');
+        $('#rasa-updated').html('Updated ' + formatUTCDate(new Date()) + ' UTC');
 
         // Remove previews
         $('#rasa-thumb').attr('src', '');
@@ -81,7 +81,7 @@ function queryPreviews() {
     }
   }).done(function(data) {
     updateListGroup('rasa', cameraFields, data);
-    $('#rasa-updated').html(formatUTCDate(new Date()) + ' UTC');
+    $('#rasa-updated').html('Updated ' + formatUTCDate(new Date()) + ' UTC');
 
     // Update thumbnail if required
     if (data && 'date' in data) {

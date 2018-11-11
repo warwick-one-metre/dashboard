@@ -43,7 +43,7 @@ function queryPreviews() {
     statusCode: {
       404: function() {
         updateListGroup('wasp', cameraFields);
-        $('#wasp-updated').html(formatUTCDate(new Date()) + ' UTC');
+        $('#wasp-updated').html('Updated ' + formatUTCDate(new Date()) + ' UTC');
 
         // Remove previews
         $('#wasp-thumb').attr('src', '');
