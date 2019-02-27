@@ -273,9 +273,9 @@ def wasp_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, WASP_GENERATED_DATA[path])
     abort(404)
 
-# disabled until we can display all information
-#@app.route('/goto/')
+@app.route('/goto/')
 def goto_dashboard():
+    dashboard_mode = __parse_dashboard_mode()
     return render_template('goto/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/goto/dome/')
@@ -499,6 +499,9 @@ def extract_w1m_environment(data, group):
 def goto_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
 
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/goto-private.json'))
+
     # Extract additional data from the 1m dashboard
     w1m = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
     data.update({
@@ -512,7 +515,26 @@ def goto_dashboard_data():
 
     account = get_user_account()
     if 'goto' in account['permissions']:
-        data.update(json.load(open(GENERATED_DATA_DIR + '/goto-private.json')))
+        data.update(private)
+    else:
+        data['dome'] = {
+            'mode': private['dome']['mode'],
+            'dome': private['dome']['dome'],
+            'lockdown': private['dome']['lockdown'],
+            'dehumidifier_on': private['dome']['dehumidifier_on'],
+            'hatch': private['dome']['hatch']
+        }
+
+        data['power'] = {
+            'status_UPS1': private['power']['status_UPS1'],
+            'status_UPS2': private['power']['status_UPS2'],
+            'status_PDU1': {
+                'leds1': private['power']['status_PDU1']['leds1'],
+            },
+            'status_PDU2': {
+                'leds2': private['power']['status_PDU2']['leds2'],
+            }
+        }
 
     return jsonify(**data)
 

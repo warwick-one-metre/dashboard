@@ -34,7 +34,7 @@ try:
 except Exception:
     status = {}
 
-def generate_json(output_path, data):
+def generate_json(output_path, data, force_key=False):
     """Queries a set of daemons and stores the save a json file to the specified path"""
     output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
     for daemon, key, query in data:
@@ -49,7 +49,7 @@ def generate_json(output_path, data):
                     log.error('dashboardd', 'Lost contact with ' + key + ' (empty response)')
                 status[key] = False
             else:
-                if len(data) == 1:
+                if len(data) == 1 and not force_key:
                     output = response
                 else:
                     output[key] = response
@@ -63,10 +63,10 @@ def generate_json(output_path, data):
             status[key] = False
     try:
         with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file, sort_keys=True)
+            json.dump(output or {}, output_file)
 
         with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file, sort_keys=True)
+            json.dump(status, output_file)
     except Exception as e:
         print('failed to write json with error: ' + str(e))
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
@@ -101,19 +101,19 @@ generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
 ])
 
 # GOTO dashboard pages
-#generate_json(BASE_OUTPUT_DIR + '/goto-public.json', [
-#    (daemons.goto_gtecs_conditions, 'conditions', lambda d: d.get_info_simple()),
-#    (daemons.goto_gtecs_power, 'power', lambda d: d.get_info_simple())
-#])
+generate_json(BASE_OUTPUT_DIR + '/goto-public.json', [
+    (daemons.goto_gtecs_conditions, 'conditions', lambda d: d.get_info(force_update=False)),
+], force_key=True)
 
-#generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
-#    (daemons.goto_gtecs_mnt, 'mnt', lambda d: d.get_info_simple()),
-#    (daemons.goto_gtecs_filt, 'filt', lambda d: d.get_info_simple()),
-#    (daemons.goto_gtecs_foc, 'foc', lambda d: d.get_info_simple()),
-# This currently crashes the camera daemon
-#    (daemons.goto_gtecs_cam, 'cam', lambda d: d.get_info_simple()),
-#    (daemons.goto_gtecs_exq, 'exq', lambda d: d.get_info_simple()),
-#])
+generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
+    (daemons.goto_gtecs_power, 'power', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_mnt, 'mnt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_dome, 'dome', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_filt, 'filt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_foc, 'foc', lambda d: d.get_info(force_update=False)),
+#    (daemons.goto_gtecs_cam, 'cam', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_exq, 'exq', lambda d: d.get_info(force_update=False)),
+])
 
 # Raw data for GOTO operations
 generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
