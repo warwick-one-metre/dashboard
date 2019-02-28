@@ -350,7 +350,7 @@ function queryData() {
       if (dateString)
         $('#headerdesc').text('Archived data for night of ' + dateString);
       else
-        $('#headerdesc').text('Live data (updates every 30 seconds)');
+        $('#headerdesc').html('Live data (updated ' + formatUTCDate(date) + ' UTC)');
     }
   });
 
