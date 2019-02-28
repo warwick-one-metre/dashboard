@@ -80,7 +80,6 @@ function conditionFlags(row, cell, data) {
 
     // Build the conditions tooltip
     var conditions = {
-        'dark': 'Sun',
         'dew_point': 'Dew&nbsp;Point',
         'diskspace': 'Disk&nbsp;Space',
         'hatch': 'Dome&nbsp;Hatch',
