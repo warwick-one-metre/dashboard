@@ -231,87 +231,45 @@ function telAltAz(row, cell, data) {
     cell.html((data['mount_alt']).toFixed(1) + '&deg;&nbsp;/&nbsp;' + (data['mount_az']).toFixed(1) + '&deg;');
 }
 
-function exqStatus(row, cell, data) {
-  // TODO
-  cell.html(data.toUpperCase());
-}
 
-
-function exqExposure(row, cell, data) {
+function exqCamExposure(row, cell, data) {
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'current_imgtype' in data) {
-    status = data['current_imgtype'].toUpperCase();
+  if (data && 'exq' in data && 'current_imgtype' in data['exq']) {
+    status = data['exq']['current_imgtype'].toUpperCase();
     style = ''
+
+    if (data && 'exq' in data && 'current_exptime' in data['exq'])
+        status += ' (' + data['exq']['current_exptime'] + 's)';
+
+    if (data && 'cam' in data && 'current_exposure' in data['cam'] &&
+        'set_pos' in data['cam']['current_exposure'] && 'set_total' in data['cam']['current_exposure']) {
+      status += ' &ndash; ' + data['cam']['current_exposure']['set_pos'] + ' / ' + data['cam']['current_exposure']['set_total'];
+    }
   } else {
     status = 'NONE';
   }
 
-  if (data && 'current_exptime' in data)
-      status += ' (' + data['current_exptime'] + 's)';
-
   cell.html(status);
 }
 
-function telCamStatus(row, cell, data, index) {
-  status = 'ERROR';
-  style = 'text-danger';
-  if (data && 'status'+index in data) {
-    status = data['status'+index].toUpperCase();
-    if (status == 'READY')
-      style = '';
-    else if (status == 'EXPOSING')
-      style = 'text-success';
-    else if (status == 'READING')
-      style = 'text-warning';
-  }
+function camRunNumber(row, cell, data) {
+  cell.html(data);
+}
+
+function camStatus(row, cell, data) {
+  status = data.toUpperCase();
+  if (status == 'EXPOSING')
+    style = 'text-success';
+  else if (status == 'READING')
+    style = 'text-warning';
 
   cell.html(status);
   cell.addClass(style);
 }
 
-function telCamStatus1(row, cell, data) {
-  telCamStatus(row, cell, data, 1);
-}
-
-function telCamStatus2(row, cell, data) {
-  telCamStatus(row, cell, data, 2);
-}
-
-function telCamStatus3(row, cell, data) {
-  telCamStatus(row, cell, data, 3);
-}
-
-function telCamStatus4(row, cell, data) {
-  telCamStatus(row, cell, data, 4);
-}
-
-function telCamTemp(row, cell, data, index) {
-  status = 'ERROR';
-  style = 'text-danger';
-  if (data && 'ccd_temp'+index in data) {
-    status = data['ccd_temp'+index].toFixed(0) + '&deg;C';
-    style = '';
-  }
-
-  cell.html(status);
-  cell.addClass(style);
-}
-
-function telCamTemp1(row, cell, data) {
-  telCamTemp(row, cell, data, 1);
-}
-
-function telCamTemp2(row, cell, data) {
-  telCamTemp(row, cell, data, 2);
-}
-
-function telCamTemp3(row, cell, data) {
-  telCamTemp(row, cell, data, 3);
-}
-
-function telCamTemp4(row, cell, data) {
-  telCamTemp(row, cell, data, 4);
+function camTemp(row, cell, data) {
+  cell.html(data.toFixed(0) + '&deg;C');
 }
 
 function telFilt(row, cell, data, index) {

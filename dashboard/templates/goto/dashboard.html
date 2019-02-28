@@ -77,8 +77,8 @@
       <span class="list-group-item" data-index='["mnt", "status"]' data-generator="telStatus">Mount</span>
       <span class="list-group-item" data-index='["mnt"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["mnt"]' data-generator="telAltAz">Alt / Az</span>
-      <span class="list-group-item" data-index='["exq", "status"]' data-generator="exqStatus">Status</span>
-      <span class="list-group-item" data-index='["exq"]' data-generator="exqExposure">Exposure</span>
+      <span class="list-group-item" data-index='[]' data-generator="exqCamExposure">Exposure</span>
+      <span class="list-group-item" data-index='["cam", "run_number"]' data-generator="camRunNumber">Run Number</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -98,17 +98,17 @@
         <tbody>
           <tr>
             <td>Cam. Status</td>
-            <td data-index='["cam"]' data-generator="telCamStatus1"></td>
-            <td data-index='["cam"]' data-generator="telCamStatus2"></td>
-            <td data-index='["cam"]' data-generator="telCamStatus3"></td>
-            <td data-index='["cam"]' data-generator="telCamStatus4"></td>
+            <td data-index='["cam", "1", "status"]' data-generator="camStatus"></td>
+            <td data-index='["cam", "2", "status"]' data-generator="camStatus"></td>
+            <td data-index='["cam", "3", "status"]' data-generator="camStatus"></td>
+            <td data-index='["cam", "4", "status"]' data-generator="camStatus"></td>
           </tr>
           <tr>
             <td>Cam. Temperature</td>
-            <td data-index='["cam"]' data-generator="telCamTemp1"></td>
-            <td data-index='["cam"]' data-generator="telCamTemp2"></td>
-            <td data-index='["cam"]' data-generator="telCamTemp3"></td>
-            <td data-index='["cam"]' data-generator="telCamTemp4"></td>
+            <td data-index='["cam", "1", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["cam", "2", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["cam", "3", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["cam", "4", "ccd_temp"]' data-generator="camTemp"></td>
           </tr>
           <tr>
             <td>Focus</td>
