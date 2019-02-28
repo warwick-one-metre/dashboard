@@ -108,6 +108,7 @@ EUMETSAT_OPACITY = {
     'opacity': ('EUMETSAT', 'eumetsat', '#F26430'),
 }
 
+
 def environment_json(date=None):
     """Queries the data to be rendered on the "Environment" dashboard page
        If date is specified, returns data for the specified night (UTC times: 12 through 12)
@@ -137,12 +138,14 @@ def environment_json(date=None):
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
-    data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
+    data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str,
+                                      end_str))
     data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY,
                               start_str, end_str, 1200))
     db.close()
 
     return data, start_js, end_js
+
 
 def infrastructure_json(date=None):
     """Queries the data to be rendered on the "Infrastructure" dashboard page
@@ -175,120 +178,151 @@ def infrastructure_json(date=None):
 
     return data, start_js, end_js
 
-def __query_table(db, query, valid_filter=None, data_break=360):
-    """Queries data for a plot series from the database, optionally applying a valid data filter
-       lines are broken if there is a gap more than data_break seconds between points
+
+def __query_weather_data(db, table, columns, start, end):
+    """Query columns from a weather database table.
+       Results are returned as a dictionary keyed by columns + date
+       with values as arrays of data between start and end
     """
+    query = 'SELECT `date`, `' + '`, `'.join(columns) \
+        + '` from `' + table + '` WHERE `date` > ' + db.escape(start) \
+        + ' AND `date` <= ' + db.escape(end) + ' ORDER BY `date` DESC;'
+
+    results = {
+        'date': []
+    }
+
+    for c in columns:
+        results[c] = []
+
     with db.cursor() as cur:
         cur.execute(query)
+        for r in cur:
+            results['date'].append(r[0])
+            for i, column in enumerate(columns):
+                results[column].append(r[i + 1])
 
-        # Times are enumerated in reverse order
-        next_time = None
-        c = {}
-        c['data'] = []
-        c['max'] = c['min'] = 0
-        for x in cur:
-            time = x[0].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+    return results
 
-            c['max'] = max(c['max'], x[1])
-            c['min'] = max(c['min'], x[1])
 
-            # Insert a break in the plot line if there is a break between points
-            if next_time is not None and next_time - time > data_break * 1000:
-                c['data'].append(None)
+def __generate_plot_data(label, color, date, series, data_break=360):
+    """Creates a plot data object suitable for plotting via javascript using flot.
+       date and series should be given in reverse chronological order
+       Lines are broken if there is a gap more than data_break seconds between points
+    """
+    c = {
+        'label': label,
+        'color': color,
+        'data': [],
+        'max': 0,
+        'min': 0
+    }
 
-            if valid_filter and not valid_filter(time, x[1]):
-                c['data'].append(None)
-            else:
-                c['data'].append((int(time), x[1]))
-            next_time = time
-        return c
+    next_ts = None
+    for x, y in zip(date, series):
+        ts = x.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+        c['max'] = max(c['max'], y)
+        c['min'] = max(c['min'], y)
+
+        # Insert a break in the plot line if there is a break between points
+        if next_ts is not None and next_ts - ts > data_break * 1000:
+            c['data'].append(None)
+
+        c['data'].append((int(ts), y))
+        next_ts = ts
+
+    return c
+
 
 def __sensor_json(db, table, channels, start, end, data_break=360):
     """Queries data for an general-case sensor"""
+    results = __query_weather_data(db, table, list(channels.keys()), start, end)
     data = {}
-
     for key in channels:
-        value = channels[key]
-        c = {'label': value[0], 'color': value[2]}
+        label, name, color = channels[key]
+        data[name] = __generate_plot_data(label, color, results['date'], results[key],
+                                          data_break=data_break)
 
-        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
-            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
-            + db.escape(end) + ' ORDER BY `date` DESC;'
-
-        c.update(__query_table(db, query, data_break=data_break))
-        data[value[1]] = c
     return data
+
 
 def __goto_roomalert_json(db, table, channels, start, end):
     """Hacky workaround for additional dome sensor added 2018-06-29"""
+    results = __query_weather_data(db, table, list(channels.keys()), start, end)
+    # TODO: Filter dome_ entries older than bin 262172 (what is this as a date?)
+
     data = {}
-
     for key in channels:
-        value = channels[key]
-        c = {'label': value[0], 'color': value[2]}
+        label, name, color = channels[key]
+        data[name] = __generate_plot_data(label, color, results['date'], results[key])
 
-        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
-            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
-            + db.escape(end)
-
-        if key.startswith('dome2_'):
-            query += ' AND `bin` > 262172'
-
-        query += ' ORDER BY `date` DESC;'
-        c.update(__query_table(db, query))
-        data[value[1]] = c
     return data
+
 
 def __superwasp_json(db, table, channels, start, end):
     """Hacky workaround for bogus SuperWASP wind speed measurements"""
+    results = __query_weather_data(db, table, list(channels.keys()), start, end)
+
+    # Filter bogus wind measurements
+    wind_date = []
+    wind_speed = []
+    wind_direction = []
+    for date, speed, direction in zip(results['date'],
+                                      results['wind_speed'],
+                                      results['wind_direction']):
+        if speed < 200:
+            wind_date.append(date)
+            wind_speed.append(speed)
+            wind_direction.append(direction)
+
     data = {}
-
     for key in channels:
-        value = channels[key]
-        c = {'label': value[0], 'color': value[2]}
+        label, name, color = channels[key]
+        if key == 'wind_speed':
+            data[name] = __generate_plot_data(label, color, wind_date, wind_speed)
+        elif key == 'wind_direction':
+            data[name] = __generate_plot_data(label, color, wind_date, wind_direction)
+        else:
+            data[name] = __generate_plot_data(label, color, results['date'], results[key])
 
-        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
-            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
-            + db.escape(end)
-
-        if key in ['wind_speed', 'wind_direction']:
-            query += ' AND  `wind_speed` <= 180'
-
-        query += ' ORDER BY `date` DESC;'
-
-        c.update(__query_table(db, query))
-        data[value[1]] = c
     return data
 
 
 def __ping_json(db, table, channels, start, end):
     """Queries data for the network ping graph, applying the -1 = invalid point filter"""
+    results = __query_weather_data(db, table, list(channels.keys()), start, end)
     data = {}
-
     for key in channels:
-        value = channels[key]
-        c = {'label': value[0], 'color': value[2]}
+        label, name, color = channels[key]
 
-        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE ' \
-            + '`date` > ' + db.escape(start) + ' AND `date` <= ' \
-            + db.escape(end) + ' ORDER BY `date` DESC;'
+        date = []
+        filtered = []
+        for d, value in zip(results['date'], results[key]):
+            if value > 0:
+                date.append(d)
+                filtered.append(value)
 
-        c.update(__query_table(db, query, lambda time, ping: ping >= 0))
-        data[value[1]] = c
+        data[name] = __generate_plot_data(label, color, date, filtered)
+
     return data
+
 
 def __vaisala_json(db, table, channels, start, end):
     """Queries data for the vaisala graphs, applying the _valid == 0 = invalid point filter"""
+    columns = list(channels.keys()) + [c + '_valid' for c in channels]
+    results = __query_weather_data(db, table, columns, start, end)
+
     data = {}
     for key in channels:
-        value = channels[key]
-        c = {'label': value[0], 'color': value[2]}
+        label, name, color = channels[key]
 
-        query = 'SELECT `date`, `' + key + '` from `' + table + '` WHERE `' \
-            + key + '_valid` = 1 AND `date` > ' + db.escape(start) + ' AND `date` <= ' \
-            + db.escape(end) + ' ORDER BY `date` DESC;'
+        date = []
+        filtered = []
+        for d, value, valid in zip(results['date'], results[key], results[key + '_valid']):
+            if valid:
+                date.append(d)
+                filtered.append(value)
 
-        c.update(__query_table(db, query))
-        data[value[1]] = c
+        data[name] = __generate_plot_data(label, color, date, filtered)
+
     return data
