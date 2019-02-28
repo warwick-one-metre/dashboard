@@ -214,7 +214,7 @@ function telStatus(row, cell, data) {
 }
 
 function telRADec(row, cell, data) {
-  if (data && 'state' in data && data['state'] != 'Tracking')
+  if (data && 'status' in data && data['status'] != 'Tracking')
     cell.html('N/A')
   else if (!data || !('mount_ra' in data) || !('mount_dec' in data)) {
     cell.html('ERROR');
