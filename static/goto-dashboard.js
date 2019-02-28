@@ -253,7 +253,11 @@ function exqCamExposure(row, cell, data) {
 }
 
 function camRunNumber(row, cell, data) {
-  cell.html(data);
+  run_number = data;
+  if (data == -1)
+    run_number = 'GLANCE';
+
+  cell.html(run_number);
 }
 
 function camStatus(row, cell, data) {
