@@ -50,9 +50,9 @@
 }
 
 #rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
-#ext-humidity-container, #int-humidity-container,  #ext-temperature-container, #int-temperature-container, #dew-container, #skytemp-container, #windspeed-container, #pressure-container, #raindetector-container { height: 105px; }
+#ext-humidity-container, #int-humidity-container,  #ext-temperature-container, #int-temperature-container, #dew-container, #skytemp-container, #windspeed-container, #seeing-container, #raindetector-container { height: 105px; }
 #iropacity-container, #accumrain-container { height: 139px; }
-#dew-container, #int-temperature-container, #ext-humidity-container, #int-humidity-container, #skytemp-container, #iropacity-container, #windspeed-container, #pressure-container, #raindetector-container, #accumrain-container { margin-top: -5px; }
+#dew-container, #int-temperature-container, #ext-humidity-container, #int-humidity-container, #skytemp-container, #iropacity-container, #windspeed-container, #seeing-container, #raindetector-container, #accumrain-container { margin-top: -5px; }
 #windspeed-container { margin-top: -20px; }
 #wind-container { height: 320px; }
 

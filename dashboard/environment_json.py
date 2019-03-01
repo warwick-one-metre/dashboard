@@ -113,6 +113,13 @@ EUMETSAT_OPACITY = {
     'opacity': ('EUMETSAT', 'eumetsat', '#F26430'),
 }
 
+TNG_SEEING = {
+    'seeing': ('TNG', 'tngseeing', '#F26430')
+}
+
+ROBODIMM_SEEING = {
+    'seeing': ('RoboDIMM', 'roboseeing', '#FDE74C')
+}
 
 def environment_json(date=None):
     """Queries the data to be rendered on the "Environment" dashboard page
@@ -147,6 +154,9 @@ def environment_json(date=None):
                                       end_str))
     data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY,
                               start_str, end_str, 1200))
+    data.update(__sensor_json(db, 'weather_tng_seeing', TNG_SEEING, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_robodimm_seeing', ROBODIMM_SEEING, start_str, end_str))
+
     db.close()
 
     return data, start_js, end_js
