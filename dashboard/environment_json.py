@@ -94,6 +94,11 @@ SUPERWASP_ROOFBATTERY = {
     'voltage': ('SWASP Roof Battery', 'swroofbat', '#F26430'),
 }
 
+SUPERWASP_UPS = {
+    'ups1_battery_remaining': ('SWASP&nbsp;UPS1', 'swasp-ups1bat', '#F26430'),
+    'ups2_battery_remaining': ('SWASP&nbsp;UPS2', 'swasp-ups2bat', '#F26430'),
+}
+
 NETWORK = {
     'ngtshead': ('Warwick', 'pingngts', '#FDE74C'),
     'google': ('Google', 'pinggoogle', '#009DDC'),
@@ -171,6 +176,7 @@ def infrastructure_json(date=None):
     data = __sensor_json(db, 'weather_onemetre_ups', ONEMETRE_UPS, start_str, end_str)
     data.update(__sensor_json(db, 'weather_rasa_ups', RASA_UPS, start_str, end_str))
     data.update(__sensor_json(db, 'weather_goto_ups', GOTO_UPS, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_superwasp_ups', SUPERWASP_UPS, start_str, end_str))
     data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp_roofbattery', SUPERWASP_ROOFBATTERY, start_str,
                               end_str))
