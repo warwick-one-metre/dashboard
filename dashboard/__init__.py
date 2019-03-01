@@ -27,7 +27,7 @@ from flask import request
 from flask import send_from_directory
 from flask import session
 from flask import url_for
-from flask_oauthlib.client import OAuth
+from flask_github import GitHub
 
 from dashboard import environment_json
 
@@ -73,22 +73,11 @@ with db.cursor() as cur:
 db.close()
 
 # Use github's OAuth interface for verifying user identity
-oauth = OAuth(app)
-github = oauth.remote_app(
-    'github',
-    consumer_key=app.config['GITHUB_KEY'],
-    consumer_secret=app.config['GITHUB_SECRET'],
-    request_token_params={'scope': 'read:org'},
-    base_url='https://api.github.com/',
-    request_token_url=None,
-    access_token_method='POST',
-    access_token_url='https://github.com/login/oauth/access_token',
-    authorize_url='https://github.com/login/oauth/authorize'
-)
+github = GitHub(app)
 
 def is_github_team_member(user, team_id):
     """Queries the GitHub API to check if the given user is a member of the given team."""
-    team = github.get('teams/' + str(team_id) + '/memberships/' + user.data['login']).data
+    team = github.get('teams/' + str(team_id) + '/memberships/' + user['login'])
     return 'state' in team and team['state'] == 'active'
 
 def get_user_account():
@@ -109,12 +98,6 @@ def get_user_account():
         except Exception as e:
             print('Failed to clean expired session data with error')
             print(e)
-
-        # Check whether we have received a callback argument from a login attempt
-        if 'code' in request.args:
-            resp = github.authorized_response()
-            if resp is not None and 'access_token' in resp:
-                session['github_token'] = resp['access_token']
 
         # Logged in users store an encrypted version of their github token in the session cookie
         if 'github_token' in session:
@@ -146,8 +129,8 @@ def get_user_account():
                     permissions.update(['goto', 'infrastructure_log', 'rasa'])
 
                 data = {
-                    'username': user.data['login'],
-                    'avatar': user.data['avatar_url'],
+                    'username': user['login'],
+                    'avatar': user['avatar_url'],
                     'permissions': list(permissions)
                 }
 
@@ -169,11 +152,12 @@ def get_user_account():
     finally:
         db.close()
 
-@github.tokengetter
+
+@github.access_token_getter
 def get_github_oauth_token():
     """Fetch the github oauth token.
        Used internally by the OAuth API"""
-    return (session.get('github_token'), '')
+    return session.get('github_token')
 
 def __parse_dashboard_mode():
     try:
@@ -182,10 +166,18 @@ def __parse_dashboard_mode():
         pass
     return False
 
+@app.route('/login-callback')
+@github.authorized_handler
+def authorized(oauth_token):
+    next_url = request.args.get('next') or url_for('environment')
+    if oauth_token:
+        session['github_token'] = oauth_token
+
+    return redirect(next_url)
+
 @app.route('/login')
 def login():
-    callback = request.args['next'] if 'next' in request.args else url_for('environment', _external=True)
-    return github.authorize(callback=callback)
+    return github.authorize()
 
 @app.route('/logout')
 def logout():

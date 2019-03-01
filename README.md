@@ -34,8 +34,8 @@ The `dashboard_config` table is expected to contain three rows:
 | `id` | `keyname`    | Description    |
 | ---- | ------------ | -------------- |
 | `1`  | `SECRET_KEY` | A complex random value used for encrypting cookies and other data.  This should be a string of at least 40 random characters.|
-| `2`  | `GITHUB_KEY` | Part of the GitHub authentication support.  This should be set to the "Client ID" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
-| `3`  | `GITHUB_SECRET` | Part of the GitHub authentication support.  This should be set to the "Client Secret" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
+| `2`  | `GITHUB_CLIENT_ID` | Part of the GitHub authentication support.  This should be set to the "Client ID" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
+| `3`  | `GITHUB_CLIENT_SECRET` | Part of the GitHub authentication support.  This should be set to the "Client Secret" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
 
 
 Once that is working, you can configure the dashboard and web-serving infrastructure to run at startup using:
@@ -94,6 +94,7 @@ If the machine/ip changes then this should be updated to match.
 The GitHub team IDs used to determine permissions are set in the `get_user_account` function in `dashboard/__init__.py`.
 The IDs can be queried from the GitHub API with `curl -H "Authorization: token <personal access token>" https://api.github.com/orgs/warwick-one-metre/teams`.  The `<personal access token>` can be generated from your GitHub settings, and should have at least the `repo` scope.
 
-The dashboard URL is also set in the "Authorization callback URL" in the GitHub settings.  If the dashboard is moved then this should be updated to match.
+The dashboard URL is also set in the "Authorization callback URL" in the GitHub settings.  The target endpoint is `login-callback`, so e.g. `http://lapalma-observatory.warwick.ac.uk/login-callback`.
+If the dashboard is moved then this should be updated to match.
 
 If you want to export / backup the database you must add the `--skip-tz-utc` argument to `mysqldump` to prevent it from breaking timestamps!
