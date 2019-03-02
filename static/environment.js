@@ -50,8 +50,6 @@ function redrawPlot() {
   }
 
   var options = {
-    lines: { show: true, lineWidth: 1 },
-    points: { show: false },
     series: { shadowSize: 0 },
     axisLabels: { show: true },
     xaxis: { mode: 'time', minTickSize: [1, 'minute'], timeformat:'', min: data.start, max: data.end },
@@ -62,6 +60,14 @@ function redrawPlot() {
     linkedplots: [],
     hooks: { bindEvents: bindHoverHooks, processOptions: regenerateLinkedPlots }
   };
+
+  if (plot.data('points') !== undefined) {
+    options.lines = { show: false };
+    options.points = { show: true, fill: 1, radius: 2, lineWidth: 0, fillColor: false };
+  } else {
+    options.lines = { show: true, lineWidth: 1 };
+    options.points = { show: false };
+  }
 
   if (plot.data('ydecimals') !== undefined)
     options.yaxis.tickDecimals = plot.data('ydecimals');
