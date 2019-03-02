@@ -77,8 +77,12 @@ github = GitHub(app)
 
 def is_github_team_member(user, team_id):
     """Queries the GitHub API to check if the given user is a member of the given team."""
-    team = github.get('teams/' + str(team_id) + '/memberships/' + user['login'])
-    return 'state' in team and team['state'] == 'active'
+    try:
+        team = github.get('teams/' + str(team_id) + '/memberships/' + user['login'])
+        return 'state' in team and team['state'] == 'active'
+    except:
+        # An exception is generated if the current user is not authenticated
+        return False
 
 def get_user_account():
     """Queries user account details from the local cache or GitHub API
