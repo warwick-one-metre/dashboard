@@ -50,7 +50,7 @@ $(document).ready(function () {
     } else {
       $('#audio-button-text').html('Stop');
       var gain = $('#audio-volume').data('slider').getValue();
-      startAudioStream("ws://lapalma-observatory.warwick.ac.uk/microphone/{{ audio }}", 22050, 0.2, gain);
+      startAudioStream("wss://lapalma-observatory.warwick.ac.uk/microphone/{{ audio }}", 22050, 0.2, gain);
       audioPlaying = true;
     }
   });
