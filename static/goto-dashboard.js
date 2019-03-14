@@ -135,17 +135,28 @@ function conditionFlags(row, cell, data) {
 function powerUPS(row, cell, data) {
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'status' in data) {
-    if (data['status'] == 'Normal') {
-      status = 'ONLINE';
-      style = 'text-success';
-    }
-    else if (data['status'] == 'ON BATTERY') {
-      status = 'BATTERY';
-      style = 'text-warning';
-    }
 
-    status += ' (' + data['percent'] + '%)';
+  var ups = row.data('ups');
+
+  if (data) {
+    if (ups + '_battery_healthy' in data && 'latest' in data[ups + '_battery_healthy']
+        && !data[ups + '_battery_healthy']['latest']) {
+      status = 'BATT. FAIL';
+    } else if (ups + '_status' in data && ups + '_battery_remaining' in data) {
+      if ('latest' in data[ups + '_status']) {
+        status_type = data[ups + '_status']['latest'];
+        if (status_type == 2) {
+          status = 'ONLINE';
+          style = 'text-success';
+        } else if (status_type == 3) {
+          status = 'BATTERY';
+          style = 'text-warning';
+        }
+      }
+
+      if ('latest' in data[ups + '_battery_remaining'])
+        status += ' (' + data[ups + '_battery_remaining']['latest'] + '%)';
+    }
   }
 
   cell.html(status);
@@ -164,7 +175,6 @@ function powerOnOff(row, cell, data) {
     cell.addClass('text-danger');
   }
 }
-
 
 function powerOffOn(row, cell, data) {
   if (data == 'on' || data === true) {
@@ -229,7 +239,6 @@ function telAltAz(row, cell, data) {
   } else
     cell.html((data['mount_alt']).toFixed(1) + '&deg;&nbsp;/&nbsp;' + (data['mount_az']).toFixed(1) + '&deg;');
 }
-
 
 function exqCamExposure(row, cell, data) {
   status = 'ERROR';
@@ -313,47 +322,49 @@ function telFoc(row, cell, data, index) {
   cell.addClass(style);
 }
 
-function onemetreParameter(row, cell, data) {
-  status = 'ERROR';
-  style = 'text-danger';
+// Environment generators
+function fieldLimitsColor(field, value) {
+  if (!('limits' in field))
+    return null;
 
-  var units = row.data('units');
-  if (data && 'current' in data) {
-    if ('latest' in data && data['current']) {
-      style = '';
-      status = data['latest'];
-      if (units)
-        status += units;
-    } else
-      status = 'NO DATA';
-  }
+  if (field['disabled'])
+    return 'text-info';
 
-  cell.html(status);
-  cell.addClass(style);
+  if (value < field['limits'][0] || value > field['limits'][1])
+    return 'text-danger';
+
+  if ('warn_limits' in field && (value < field['warn_limits'][0] || value > field['warn_limits'][1]))
+    return 'text-warning';
+
+  return 'text-success';
 }
 
-function onemetreMoon(row, cell, data) {
-  if ('latest' in data && 'current' in data && data['current']) {
-    display = 'BRIGHT';
-    if (data['latest'] < 25)
-      display = 'DARK';
-    else if (data['latest'] < 65)
-      display = 'GRAY';
-
-    display += ' (' + data['latest'].toFixed(1) + '%)';
-
+function envLatestMinMax(row, cell, data) {
+  if ('latest' in data) {
+    var display = data['latest'].toFixed(1);
+    var units = row.data('units');
+    if (units)
+      display += units;
     cell.html(display);
+    cell.addClass(fieldLimitsColor(data, data['latest']));
   } else {
     cell.html('NO DATA');
     cell.addClass('text-danger');
   }
-}
 
-function conditionSimple(row, cell, data) {
-  status = data;
-  var units = row.data('units');
-  if (units)
-    status += units;
+  if ('max' in data && 'min' in data) {
+    var maxValue = $('<span>');
+    maxValue.html(data['max'].toFixed(1));
+    maxValue.addClass(fieldLimitsColor(data, data['max']));
 
-  cell.html(status);
+    var minValue = $('<span>');
+    minValue.html(data['min'].toFixed(1));
+    minValue.addClass(fieldLimitsColor(data, data['min']));
+
+    var maxMinValue = $('<span class="pull-right data-minmax">');
+    maxMinValue.append(maxValue);
+    maxMinValue.append('<br>');
+    maxMinValue.append(minValue);
+    cell.append(maxMinValue);
+  }
 }

@@ -498,21 +498,12 @@ def goto_dashboard_data():
     # Some private data is needed for the public info
     private = json.load(open(GENERATED_DATA_DIR + '/goto-private.json'))
 
-    # Extract additional data from the 1m dashboard
-    w1m = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
-    data.update({
-        'w1m': {
-            'superwasp': extract_w1m_environment(w1m, 'superwasp'),
-            'goto_vaisala': extract_w1m_environment(w1m, 'goto_vaisala'),
-            'tng': extract_w1m_environment(w1m, 'tng'),
-            'ephem': extract_w1m_environment(w1m, 'ephem')
-        }
-    })
-
     account = get_user_account()
     if 'goto' in account['permissions']:
         data.update(private)
     else:
+        data['conditions'] = private['conditions']
+
         data['dome'] = {
             'mode': private['dome']['mode'],
             'dome': private['dome']['dome'],
