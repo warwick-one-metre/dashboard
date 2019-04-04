@@ -157,8 +157,7 @@ def generate_goto_json(output_path):
 
 
 def generate_rasa_json(output_path):
-    """Queries daemons to generate the public data for the RASA dashboard page
-    """
+    """Queries daemons to generate the public data for the RASA dashboard page"""
     output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
 
     environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
@@ -176,7 +175,7 @@ def generate_rasa_json(output_path):
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
-    output['rasa_power'] = query_daemon(daemons.rasa_power, 'power',
+    output['rasa_power'] = query_daemon(daemons.rasa_power, 'rasa_power',
                                         lambda d: d.last_measurement())
 
     try:
@@ -190,12 +189,46 @@ def generate_rasa_json(output_path):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
+def generate_onemetre_json(output_path):
+    """Queries daemons to generate the public data for the W1m dashboard page"""
+    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
+
+    environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
+                               lambda d: d.status())
+    if environment:
+        output.update(extract_environment_data(environment, {
+            'w1m_vaisala': [
+                'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure', 'accumulated_rain', 'median_wind_speed'
+            ],
+            'w1m_roomalert': [
+                'internal_humidity', 'internal_temp', 'truss_temp',
+                'security_system_safe', 'trap_closed', 'hatch_closed'
+            ],
+            'w1m_diskspace': ['data_fs_available_bytes'],
+            'tng': ['dust', 'seeing', 'solarimeter'],
+            'superwasp': ['sky_temp'],
+            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
+        }))
+
+    output['w1m_power'] = query_daemon(daemons.onemetre_power, 'w1m_power',
+                                       lambda d: d.last_measurement())
+
+    output['w1m_ops'] = query_daemon(daemons.onemetre_operations, 'w1m_ops',
+                                     lambda d: d.status())
+    try:
+        with open(output_path, 'w') as output_file:
+            json.dump(output or {}, output_file)
+
+        with open(STATUS_FILE, 'w') as output_file:
+            json.dump(status, output_file)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+
 # One metre dashboard pages
-generate_json(BASE_OUTPUT_DIR + '/onemetre-public.json', [
-    (daemons.onemetre_environment, 'environment', lambda d: d.status()),
-    (daemons.onemetre_operations, 'ops', lambda d: d.status()),
-    (daemons.onemetre_power, 'power', lambda d: d.last_measurement()),
-])
+generate_onemetre_json(BASE_OUTPUT_DIR + '/onemetre-public.json')
 
 generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
     (daemons.onemetre_pipeline, 'pipeline', lambda d: d.report_status()),
