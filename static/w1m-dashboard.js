@@ -1,3 +1,105 @@
+// Header generators
+function opsHeaderTel(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+  rowstyle = 'list-group-item-danger';
+
+  if (data == 1) {
+    status = 'OFFLINE';
+  } else if (data == 2) {
+    status = 'ONLINE';
+    style = 'text-success';
+    rowstyle = 'list-group-item-success';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+  row.addClass(rowstyle);
+}
+
+function opsHeaderDome(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+  rowstyle = 'list-group-item-danger';
+
+  if (data == 1) {
+    status = 'CLOSED';
+  } else if (data == 2) {
+    status = 'OPEN';
+    style = 'text-success';
+    rowstyle = 'list-group-item-success';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+  row.addClass(rowstyle);
+}
+
+function opsHeaderMode(row, cell, data) {
+  var modes = [
+    ['ERROR', 'list-group-item-danger'],
+    ['AUTO', 'list-group-item-success'],
+    ['MANUAL', 'list-group-item-warning'],
+  ];
+
+  var mode = data in modes ? modes[data] : mode[0];
+  cell.html(mode[0]);
+  row.addClass(mode[1]);
+}
+
+
+function opsHeaderEnvironment(row, cell, data) {
+  if (('safe' in data) && ('conditions' in data)) {
+    cell.html(data['safe'] ? 'SAFE' : 'NOT SAFE');
+    row.addClass(data['safe'] ? 'list-group-item-success' : 'list-group-item-danger');
+
+    // Build the conditions tooltip
+    var conditions = {
+        'wind': 'Wind',
+        'median_wind': 'Median&nbsp;Wind',
+        'temperature': 'Temperature',
+        'humidity': 'Humidity',
+        'internal_humidity': 'Int.&nbsp;Humidity',
+        'dewpt': 'Dew&nbsp;Point',
+        'rain': 'Rain',
+        'secsys': 'Sec.&nbsp;System',
+        'netping': 'Network',
+        'main_ups': 'Main&nbsp;UPS',
+        'dome_ups': 'Dome&nbsp;UPS',
+        'diskspace': 'Disk&nbsp;Space',
+        'sun': 'Sun'
+    }
+
+    var status_classes = ['', 'text-success', 'text-warning', 'text-danger']
+
+    var tooltip = '<table style="margin: 5px">';
+    for (var c in conditions) {
+        if (!(c in data['conditions']))
+          continue;
+        tooltip += '<tr><td style="text-align: right;">' + conditions[c] + ':</td>';
+        var params = data['conditions'][c];
+        for (var p in params) {
+          tooltip += '<td style="padding: 0 5px" class="' + status_classes[params[p][1]] + '">' + params[p][0] + '</td>';
+        }
+        tooltip += '</tr>';
+    }
+    tooltip += '</table>';
+
+    var tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
+    if (tooltip_active)
+      row.tooltip('hide');
+
+    row.data('bs.tooltip', false);
+    row.tooltip({ html: true, title: tooltip });
+
+    if (tooltip_active)
+      row.tooltip('show');
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
 // Power generators
 function powerUPS(row, cell, data, status_field, remaining_field) {
   status = 'ERROR';
@@ -191,93 +293,6 @@ function telInstrumentFocus(row, cell, data) {
 function opsTelescopeControl(row, cell, data) {
   cell.html('MANUAL');
   row.addClass('list-group-item-warning');
-}
-
-// Ops generators
-function opsDomeControl(row, cell, data) {
-  var modes = [
-    ['ERROR', 'list-group-item-danger'],
-    ['AUTO', 'list-group-item-success'],
-    ['MANUAL', 'list-group-item-warning'],
-  ];
-
-  var mode = data in modes ? modes[data] : mode[0];
-  cell.html(mode[0]);
-  row.addClass(mode[1]);
-}
-
-function opsDomeStatus(row, cell, data) {
-  var status = [
-    ['CLOSED', 'list-group-item-danger'],
-    ['OPEN', 'list-group-item-success'],
-    ['MOVING', 'list-group-item-warning'],
-  ];
-
-  if (!data in status) {
-    cell.html('ERROR');
-    row.addClass('list-group-item-danger');
-  } else {
-    cell.html(status[data][0]);
-    row.addClass(status[data][1]);
-  }
-}
-
-function opsStatus(row, cell, data) {
-  cell.html(data ? 'ONLINE' : 'OFFLINE');
-  row.addClass(data ? 'list-group-item-success' : 'list-group-item-danger');
-}
-
-function opsEnvironment(row, cell, data) {
-  if (('safe' in data) && ('conditions' in data)) {
-    cell.html(data['safe'] ? 'SAFE' : 'NOT SAFE');
-    row.addClass(data['safe'] ? 'list-group-item-success' : 'list-group-item-danger');
-
-    // Build the conditions tooltip
-    var conditions = data['conditions']
-    var conditions = {
-        'wind': 'Wind',
-        'median_wind': 'Median&nbsp;Wind',
-        'temperature': 'Temperature',
-        'humidity': 'Humidity',
-        'internal_humidity': 'Int.&nbsp;Humidity',
-        'dewpt': 'Dew&nbsp;Point',
-        'rain': 'Rain',
-        'secsys': 'Sec.&nbsp;System',
-        'netping': 'Network',
-        'main_ups': 'Main&nbsp;UPS',
-        'dome_ups': 'Dome&nbsp;UPS',
-        'diskspace': 'Disk&nbsp;Space',
-        'sun': 'Sun'
-    }
-
-    var status_classes = ['', 'text-success', 'text-warning', 'text-danger']
-
-    var tooltip = '<table style="margin: 5px">';
-    for (var c in conditions) {
-        if (!(c in data['conditions']))
-          continue;
-        tooltip += '<tr><td style="text-align: right;">' + conditions[c] + ':</td>';
-        var params = data['conditions'][c];
-        for (var p in params) {
-          tooltip += '<td style="padding: 0 5px" class="' + status_classes[params[p][1]] + '">' + params[p][0] + '</td>';
-        }
-        tooltip += '</tr>';
-    }
-    tooltip += '</table>';
-
-    var tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
-    if (tooltip_active)
-      row.tooltip('hide');
-
-    row.data('bs.tooltip', false);
-    row.tooltip({ html: true, title: tooltip });
-
-    if (tooltip_active)
-      row.tooltip('show');
-  } else {
-    cell.html('NO DATA');
-    cell.addClass('text-danger');
-  }
 }
 
 // Pipeline generators

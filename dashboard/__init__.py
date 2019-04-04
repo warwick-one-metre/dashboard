@@ -402,11 +402,60 @@ def infrastructure_data():
 @app.route('/data/w1m/')
 def w1m_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
+
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json'))
+
     account = get_user_account()
     if 'w1m' in account['permissions']:
-        data.update(json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json')))
+        data.update(private)
+
+    # Extract safe public info from private daemons
+
+    # Tel status:
+    #   0: error
+    #   1: offline
+    #   2: online
+    tel_status = 0
+    if 'telescope' in private and 'state' in private['telescope']:
+        tel_status = 2 if private['telescope']['state'] != 0 else 1
+
+    # Dome status:
+    #   0: error
+    #   1: closed
+    #   2: open
+    dome_status = 0
+    if 'dome' in private and 'closed' in private['dome'] and 'heartbeat_status' in private['dome']:
+        if private['dome']['heartbeat_status'] != 2 and private['dome']['heartbeat_status'] != 3:
+            dome_status = 2 if not private['dome']['closed'] else 1
+
+    dome_mode = 0
+    if 'ops' in private and 'dome' in private['ops'] and 'mode' in private['ops']['dome']:
+        dome_mode = private['ops']['dome']['mode']
+
+    tel_mode = 0
+    if 'ops' in private and 'telescope' in private['ops'] and 'mode' in private['ops']['dome']:
+        tel_mode = private['ops']['telescope']['mode']
+
+    dehumidifier_mode = 0
+    if 'ops' in private and 'dehumidifier' in private['ops'] and 'mode' in private['ops']['dehumidifier']:
+        dehumidifier_mode = private['ops']['dehumidifier']['mode']
+
+    env = {}
+    if 'ops' in private and 'environment' in private['ops']:
+        env = private['ops']['environment']
+
+    data['status'] = {
+        'tel': tel_status,
+        'dome': dome_status,
+        'tel_mode': tel_mode,
+        'dome_mode': dome_mode,
+        'dehumidifier_mode': dehumidifier_mode,
+        'environment': env
+    }
 
     return jsonify(**data)
+
 
 @app.route('/data/w1m/<path:path>')
 def w1m_generated_data(path):
