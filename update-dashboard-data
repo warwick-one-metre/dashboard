@@ -166,7 +166,7 @@ def generate_rasa_json(output_path):
         output.update(extract_environment_data(environment, {
             'goto_vaisala': [
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                'pressure', 'accumulated_rain'
+                'pressure', 'accumulated_rain', 'median_wind_speed'
             ],
             'goto_roomalert': ['dome2_internal_temp', 'dome2_internal_humidity'],
             'rasa_diskspace': ['data_fs_available_bytes'],
