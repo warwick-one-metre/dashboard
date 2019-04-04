@@ -35,33 +35,42 @@ except Exception:
     status = {}
 
 
+def query_daemon(daemon, key, query):
+    """Query status data from a daemon setting / clearing error flags on failure"""
+    try:
+        with daemon.connect() as d:
+            response = query(d)
+
+        # Some daemons will return None on error
+        if response is None:
+            if not key in status or status[key]:
+                print('received empty response from ' + key + '')
+                log.error('dashboardd', 'Lost contact with ' + key + ' (empty response)')
+            status[key] = False
+        else:
+            if key in status and not status[key]:
+                log.info('dashboardd', 'Restored contact with ' + key)
+            status[key] = True
+            return response
+    except Exception as e:
+        print('failed to query ' + key + ' with error: ' + str(e))
+        if not key in status or status[key]:
+            log.error('dashboardd', 'Lost contact with ' + key + ' (' + str(e) + ')')
+        status[key] = False
+
+    return None
+
+
 def generate_json(output_path, data, force_key=False):
     """Queries a set of daemons and stores the save a json file to the specified path"""
     output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
     for daemon, key, query in data:
-        try:
-            with daemon.connect() as d:
-                response = query(d)
-
-            # Some daemons will return None on error
-            if response is None:
-                if not key in status or status[key]:
-                    print('recieved empty response from ' + key + '')
-                    log.error('dashboardd', 'Lost contact with ' + key + ' (empty response)')
-                status[key] = False
+        response = query_daemon(daemon, key, query)
+        if response:
+            if len(data) == 1 and not force_key:
+                output = response
             else:
-                if len(data) == 1 and not force_key:
-                    output = response
-                else:
-                    output[key] = response
-                if key in status and not status[key]:
-                    log.info('dashboardd', 'Restored contact with ' + key)
-                status[key] = True
-        except Exception as e:
-            print('failed to query ' + key + ' with error: ' + str(e))
-            if not key in status or status[key]:
-                log.error('dashboardd', 'Lost contact with ' + key + ' (' + str(e) + ')')
-            status[key] = False
+                output[key] = response
     try:
         with open(output_path, 'w') as output_file:
             json.dump(output or {}, output_file)
@@ -94,7 +103,6 @@ def extract_environment_data(data, data_map):
         return ret
     except:
         return {}
-
 
 def generate_goto_json(output_path):
     """Queries the observatory environment daemon and saves as json
@@ -148,6 +156,40 @@ def generate_goto_json(output_path):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
+def generate_rasa_json(output_path):
+    """Queries daemons to generate the public data for the RASA dashboard page
+    """
+    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
+
+    environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
+                               lambda d: d.status())
+    if environment:
+        output.update(extract_environment_data(environment, {
+            'goto_vaisala': [
+                'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure', 'accumulated_rain'
+            ],
+            'goto_roomalert': ['dome2_internal_temp', 'dome2_internal_humidity'],
+            'rasa_diskspace': ['data_fs_available_bytes'],
+            'tng': ['dust', 'seeing', 'solarimeter'],
+            'superwasp': ['sky_temp'],
+            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
+        }))
+
+    output['rasa_power'] = query_daemon(daemons.rasa_power, 'power',
+                                        lambda d: d.last_measurement())
+
+    try:
+        with open(output_path, 'w') as output_file:
+            json.dump(output or {}, output_file)
+
+        with open(STATUS_FILE, 'w') as output_file:
+            json.dump(status, output_file)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+
 # One metre dashboard pages
 generate_json(BASE_OUTPUT_DIR + '/onemetre-public.json', [
     (daemons.onemetre_environment, 'environment', lambda d: d.status()),
@@ -163,10 +205,7 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
 ])
 
 # RASA dashboard pages
-generate_json(BASE_OUTPUT_DIR + '/rasa-public.json', [
-    (daemons.rasa_environment, 'environment', lambda d: d.status()),
-    (daemons.rasa_power, 'power', lambda d: d.last_measurement()),
-])
+generate_rasa_json(BASE_OUTPUT_DIR + '/rasa-public.json')
 
 generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
     (daemons.rasa_operations, 'ops', lambda d: d.status()),
