@@ -320,7 +320,7 @@ def w1m_log():
             # If 'from' argument is present, returns latest 100 log messages with a greater id
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('environmentd', 'powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
+                query += " WHERE source IN ('powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 
@@ -343,7 +343,7 @@ def rasa_log():
             # If 'from' argument is present, returns latest 100 log messages with a greater id
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('rasa_environmentd', 'rasa_powerd', 'rasa_domed', 'rasa_opsd', 'rasa_camd', 'rasa_diskspaced', 'rasa_pipelined', 'rasa_teld', 'rasa_focusd')"
+                query += " WHERE source IN ('rasa_powerd', 'rasa_domed', 'rasa_opsd', 'rasa_camd', 'rasa_diskspaced', 'rasa_pipelined', 'rasa_teld', 'rasa_focusd')"
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 
@@ -366,7 +366,10 @@ def infrastructure_log():
             # If 'from' argument is present, returns latest 100 log messages with a greater id
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', 'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd')"
+                query += " WHERE source IN ('environmentd', 'dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', " \
+                    "'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd', " \
+                    "'iropacityd', 'gotoupsd', 'waspupsd', 'robodimmd', 'wasp_roofbatteryd')"
+
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 
