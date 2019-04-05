@@ -12,8 +12,8 @@
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["dome", "mode"]' data-generator="domeMode">Dome Control</span>
-      <span class="list-group-item" data-index='["dome", "dome"]' data-generator="domeStatus">Dome Status</span>
+      <span class="list-group-item" data-index='["goto_dome", "mode"]' data-generator="domeMode">Dome Control</span>
+      <span class="list-group-item" data-index='["goto_dome", "dome"]' data-generator="domeStatus">Dome Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
@@ -24,8 +24,8 @@
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["dome", "lockdown"]' data-generator="conditionsLockdown">Lockdown</span>
-      <span class="list-group-item" data-index='["conditions", "flags"]' data-generator="conditionFlags" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+      <span class="list-group-item" data-index='["goto_dome", "lockdown"]' data-generator="conditionsLockdown">Lockdown</span>
+      <span class="list-group-item" data-index='["goto_conditions", "flags"]' data-generator="conditionFlags" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
@@ -35,9 +35,9 @@
     <div class="list-group">
       <span class="list-group-item" data-index='["goto_ups"]' data-ups="main_ups" data-generator="powerUPS">East UPS</span>
       <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome_ups" data-generator="powerUPS">West UPS</span>
-      <span class="list-group-item" data-index='["power"]' data-generator="ledsOnOff">Dome Lights</span>
-      <span class="list-group-item" data-index='["dome", "dehumidifier_on"]' data-generator="powerOffOn">Dehumidifier</span>
-      <span class="list-group-item" data-index='["dome", "hatch"]' data-generator="hatchOpenClosed">Hatch</span>
+      <span class="list-group-item" data-index='["goto_power"]' data-generator="ledsOnOff">Dome Lights</span>
+      <span class="list-group-item" data-index='["goto_dome", "dehumidifier_on"]' data-generator="powerOffOn">Dehumidifier</span>
+      <span class="list-group-item" data-index='["goto_dome", "hatch"]' data-generator="hatchOpenClosed">Hatch</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -73,21 +73,21 @@
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Telescope</h5>
-      <span class="list-group-item" data-index='["mnt", "status"]' data-generator="telStatus">Mount</span>
-      <span class="list-group-item" data-index='["mnt"]' data-generator="telRADec">RA / Dec</span>
-      <span class="list-group-item" data-index='["mnt"]' data-generator="telAltAz">Alt / Az</span>
+      <span class="list-group-item" data-index='["goto_mnt", "status"]' data-generator="telStatus">Mount</span>
+      <span class="list-group-item" data-index='["goto_mnt"]' data-generator="telRADec">RA / Dec</span>
+      <span class="list-group-item" data-index='["goto_mnt"]' data-generator="telAltAz">Alt / Az</span>
       <span class="list-group-item" data-index='[]' data-generator="exqCamExposure">Exposure</span>
-      <span class="list-group-item" data-index='["cam", "run_number"]' data-generator="camRunNumber">Run Number</span>
+      <span class="list-group-item" data-index='["goto_cam", "run_number"]' data-generator="camRunNumber">Run Number</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Dome</h5>
-      <span class="list-group-item" data-index='["dome", "north"]' data-generator="domeShutter">N. Shutter</span>
-      <span class="list-group-item" data-index='["dome", "south"]' data-generator="domeShutter">S. Shutter</span>
-      <span class="list-group-item" data-index='["dome", "heartbeat_enabled"]' data-generator="domeEnabledSafe">Heartbeat</span>
-      <span class="list-group-item" data-index='["dome", "alarm_enabled"]' data-generator="domeEnabledSafe">Siren</span>
-      <span class="list-group-item" data-index='["dome", "autoclose_enabled"]' data-generator="domeEnabledSafe">Auto-close</span>
+      <span class="list-group-item" data-index='["goto_dome", "north"]' data-generator="domeShutter">N. Shutter</span>
+      <span class="list-group-item" data-index='["goto_dome", "south"]' data-generator="domeShutter">S. Shutter</span>
+      <span class="list-group-item" data-index='["goto_dome", "heartbeat_enabled"]' data-generator="domeEnabledSafe">Heartbeat</span>
+      <span class="list-group-item" data-index='["goto_dome", "alarm_enabled"]' data-generator="domeEnabledSafe">Siren</span>
+      <span class="list-group-item" data-index='["goto_dome", "autoclose_enabled"]' data-generator="domeEnabledSafe">Auto-close</span>
     </div>
   </div>
   <div class="col-md-6 col-sm-12 col-xs-12">
@@ -97,31 +97,31 @@
         <tbody>
           <tr>
             <td>Cam. Status</td>
-            <td data-index='["cam", "1", "status"]' data-generator="camStatus"></td>
-            <td data-index='["cam", "2", "status"]' data-generator="camStatus"></td>
-            <td data-index='["cam", "3", "status"]' data-generator="camStatus"></td>
-            <td data-index='["cam", "4", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "1", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "2", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "3", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "4", "status"]' data-generator="camStatus"></td>
           </tr>
           <tr>
             <td>Cam. Temperature</td>
-            <td data-index='["cam", "1", "ccd_temp"]' data-generator="camTemp"></td>
-            <td data-index='["cam", "2", "ccd_temp"]' data-generator="camTemp"></td>
-            <td data-index='["cam", "3", "ccd_temp"]' data-generator="camTemp"></td>
-            <td data-index='["cam", "4", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "1", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "2", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "3", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "4", "ccd_temp"]' data-generator="camTemp"></td>
           </tr>
           <tr>
             <td>Focus</td>
-            <td data-index='["foc", "1"]' data-generator="telFoc"></td>
-            <td data-index='["foc", "2"]' data-generator="telFoc"></td>
-            <td data-index='["foc", "3"]' data-generator="telFoc"></td>
-            <td data-index='["foc", "4"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "1"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "2"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "3"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "4"]' data-generator="telFoc"></td>
           </tr>
           <tr>
             <td>Filter</td>
-            <td data-index='["filt", "1"]' data-generator="telFilt"></td>
-            <td data-index='["filt", "2"]' data-generator="telFilt"></td>
-            <td data-index='["filt", "3"]' data-generator="telFilt"></td>
-            <td data-index='["filt", "4"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "1"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "2"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "3"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "4"]' data-generator="telFilt"></td>
           </tr>
         </tbody>
       </table>

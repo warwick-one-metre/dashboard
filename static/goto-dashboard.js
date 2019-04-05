@@ -243,16 +243,16 @@ function telAltAz(row, cell, data) {
 function exqCamExposure(row, cell, data) {
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'exq' in data && 'current_imgtype' in data['exq']) {
-    status = data['exq']['current_imgtype'].toUpperCase();
+  if (data && 'goto_exq' in data && 'current_imgtype' in data['goto_exq']) {
+    status = data['goto_exq']['current_imgtype'].toUpperCase();
     style = ''
 
-    if (data && 'exq' in data && 'current_exptime' in data['exq'])
-        status += ' (' + data['exq']['current_exptime'] + 's)';
+    if (data && 'goto_exq' in data && 'current_exptime' in data['goto_exq'])
+        status += ' (' + data['goto_exq']['current_exptime'] + 's)';
 
-    if (data && 'cam' in data && 'current_exposure' in data['cam'] &&
-        'set_pos' in data['cam']['current_exposure'] && 'set_total' in data['cam']['current_exposure']) {
-      status += ' &ndash; ' + data['cam']['current_exposure']['set_pos'] + ' / ' + data['cam']['current_exposure']['set_total'];
+    if (data && 'goto_cam' in data && 'current_exposure' in data['goto_cam'] &&
+        'set_pos' in data['goto_cam']['current_exposure'] && 'set_total' in data['goto_cam']['current_exposure']) {
+      status += ' &ndash; ' + data['goto_cam']['current_exposure']['set_pos'] + ' / ' + data['goto_cam']['current_exposure']['set_total'];
     }
   } else {
     status = 'NONE';

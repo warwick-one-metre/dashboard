@@ -411,41 +411,44 @@ def w1m_dashboard_data():
         data.update(private)
 
     # Extract safe public info from private daemons
+    private_ops = private.get('w1m_ops', {})
+    private_dome = private.get('w1m_dome', {})
+    private_telescope = private.get('w1m_telescope', {})
 
     # Tel status:
     #   0: error
     #   1: offline
     #   2: online
     tel_status = 0
-    if 'telescope' in private and 'state' in private['telescope']:
-        tel_status = 2 if private['telescope']['state'] != 0 else 1
+    if 'state' in private_telescope:
+        tel_status = 1 if private_telescope['state'] == 0 else 2
 
     # Dome status:
     #   0: error
     #   1: closed
     #   2: open
     dome_status = 0
-    if 'dome' in private and 'closed' in private['dome'] and 'heartbeat_status' in private['dome']:
-        if private['dome']['heartbeat_status'] != 2 and private['dome']['heartbeat_status'] != 3:
-            dome_status = 2 if not private['dome']['closed'] else 1
+    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
+        if private_dome['heartbeat_status'] not in [2, 3]:
+            dome_status = 1 if private_dome['closed'] else 2
 
     dome_mode = 0
-    if 'ops' in private and 'dome' in private['ops'] and 'mode' in private['ops']['dome']:
-        dome_mode = private['ops']['dome']['mode']
+    if 'mode' in private_dome:
+        dome_mode = private_dome['mode']
 
     tel_mode = 0
-    if 'ops' in private and 'telescope' in private['ops'] and 'mode' in private['ops']['dome']:
-        tel_mode = private['ops']['telescope']['mode']
+    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
+        tel_mode = private_ops['telescope']['mode']
 
     dehumidifier_mode = 0
-    if 'ops' in private and 'dehumidifier' in private['ops'] and 'mode' in private['ops']['dehumidifier']:
-        dehumidifier_mode = private['ops']['dehumidifier']['mode']
+    if 'dehumidifier' in private_ops and 'mode' in private_ops['dehumidifier']:
+        dehumidifier_mode = private_ops['dehumidifier']['mode']
 
     env = {}
-    if 'ops' in private and 'environment' in private['ops']:
-        env = private['ops']['environment']
+    if 'environment' in private_ops:
+        env = private_ops['environment']
 
-    data['status'] = {
+    data['w1m_status'] = {
         'tel': tel_status,
         'dome': dome_status,
         'tel_mode': tel_mode,
@@ -464,6 +467,7 @@ def w1m_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, W1M_GENERATED_DATA[path])
     abort(404)
 
+
 @app.route('/data/rasa/')
 def rasa_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/rasa-public.json'))
@@ -476,41 +480,44 @@ def rasa_dashboard_data():
         data.update(private)
 
     # Extract safe public info from private daemons
+    private_ops = private.get('rasa_ops', {})
+    private_dome = private.get('rasa_dome', {})
+    private_telescope = private.get('rasa_telescope', {})
 
     # Tel status:
     #   0: error
     #   1: offline
     #   2: online
     tel_status = 0
-    if 'telescope' in private and 'state' in private['telescope']:
-        tel_status = 2 if private['telescope']['state'] != 0 else 1
+    if 'state' in private_telescope:
+        tel_status = 1 if private_telescope['state'] == 0 else 2
 
     # Dome status:
     #   0: error
     #   1: closed
     #   2: open
     dome_status = 0
-    if 'dome' in private and 'closed' in private['dome'] and 'heartbeat_status' in private['dome']:
-        if private['dome']['heartbeat_status'] != 2 and private['dome']['heartbeat_status'] != 3:
-            dome_status = 2 if not private['dome']['closed'] else 1
+    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
+        if private_dome['heartbeat_status'] not in [2, 3]:
+            dome_status = 1 if private_dome['closed'] else 2
 
     dome_mode = 0
-    if 'ops' in private and 'dome' in private['ops'] and 'mode' in private['ops']['dome']:
-        dome_mode = private['ops']['dome']['mode']
+    if 'dome' in private_ops and 'mode' in private_ops['dome']:
+        dome_mode = private_ops['dome']['mode']
 
     tel_mode = 0
-    if 'ops' in private and 'telescope' in private['ops'] and 'mode' in private['ops']['dome']:
-        tel_mode = private['ops']['telescope']['mode']
+    if 'telescope' in private_ops and 'mode' in private_ops['dome']:
+        tel_mode = private_ops['telescope']['mode']
 
     dehumidifier_mode = 0
-    if 'ops' in private and 'dehumidifier' in private['ops'] and 'mode' in private['ops']['dehumidifier']:
-        dehumidifier_mode = private['ops']['dehumidifier']['mode']
+    if 'dehumidifier' in private_ops and 'mode' in private_ops['dehumidifier']:
+        dehumidifier_mode = private_ops['dehumidifier']['mode']
 
     env = {}
-    if 'ops' in private and 'environment' in private['ops']:
-        env = private['ops']['environment']
+    if 'environment' in private_ops:
+        env = private_ops['environment']
 
-    data['status'] = {
+    data['rasa_status'] = {
         'tel': tel_status,
         'dome': dome_status,
         'tel_mode': tel_mode,
@@ -521,6 +528,7 @@ def rasa_dashboard_data():
 
     return jsonify(**data)
 
+
 @app.route('/data/rasa/<path:path>')
 def rasa_generated_data(path):
     account = get_user_account()
@@ -528,20 +536,6 @@ def rasa_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, RASA_GENERATED_DATA[path])
     abort(404)
 
-def extract_w1m_environment(data, group):
-    """Extract a minimal set of data from the w1m environment
-       output for use on other dashboard pages"""
-    if 'environment' not in data or group not in data['environment']:
-        return {}
-
-    ret = {}
-    for k in data['environment'][group]:
-        v = data['environment'][group][k]
-        ret[k] = {'current': v['current']}
-        if v['current']:
-            ret[k]['latest'] = round(v['latest'], 2)
-
-    return ret
 
 @app.route('/data/goto/')
 def goto_dashboard_data():
@@ -554,9 +548,9 @@ def goto_dashboard_data():
     if 'goto' in account['permissions']:
         data.update(private)
     else:
-        data['conditions'] = private['conditions']
+        data['goto_conditions'] = private['conditions']
 
-        data['dome'] = {
+        data['goto_dome'] = {
             'mode': private['dome']['mode'],
             'dome': private['dome']['dome'],
             'lockdown': private['dome']['lockdown'],
@@ -564,7 +558,7 @@ def goto_dashboard_data():
             'hatch': private['dome']['hatch']
         }
 
-        data['power'] = {
+        data['goto_power'] = {
             'status_UPS1': private['power']['status_UPS1'],
             'status_UPS2': private['power']['status_UPS2'],
             'status_PDU1': {
@@ -577,21 +571,25 @@ def goto_dashboard_data():
 
     return jsonify(**data)
 
+
 # Raw sensor data for GOTO ops
 @app.route('/data/raw/w1m-vaisala')
 def raw_w1m_vaisala():
     data = json.load(open(GENERATED_DATA_DIR + '/onemetre-vaisala.json'))
     return jsonify(**data)
 
+
 @app.route('/data/raw/goto-vaisala')
 def raw_goto_vaisala():
     data = json.load(open(GENERATED_DATA_DIR + '/goto-vaisala.json'))
     return jsonify(**data)
 
+
 @app.route('/data/raw/superwasp-log')
 def raw_superwasp_log():
     data = json.load(open(GENERATED_DATA_DIR + '/superwasp-log.json'))
     return jsonify(**data)
+
 
 @app.route('/data/raw/netping')
 def raw_netping():

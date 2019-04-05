@@ -229,38 +229,38 @@ def generate_onemetre_json(output_path):
 generate_onemetre_json(BASE_OUTPUT_DIR + '/onemetre-public.json')
 
 generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
-    (daemons.onemetre_operations, 'ops', lambda d: d.status()),
-    (daemons.onemetre_telescope, 'telescope', lambda d: d.report_status()),
-    (daemons.onemetre_dome, 'dome', lambda d: d.status()),
-    (daemons.onemetre_pipeline, 'pipeline', lambda d: d.report_status()),
-    (daemons.onemetre_blue_camera, 'blue', lambda d: d.report_status()),
-    (daemons.onemetre_red_camera, 'red', lambda d: d.report_status())
+    (daemons.onemetre_operations, 'w1m_ops', lambda d: d.status()),
+    (daemons.onemetre_telescope, 'w1m_telescope', lambda d: d.report_status()),
+    (daemons.onemetre_dome, 'w1m_dome', lambda d: d.status()),
+    (daemons.onemetre_pipeline, 'w1m_pipeline', lambda d: d.report_status()),
+    (daemons.onemetre_blue_camera, 'w1m_blue', lambda d: d.report_status()),
+    (daemons.onemetre_red_camera, 'w1m_red', lambda d: d.report_status())
 ])
 
 # RASA dashboard pages
 generate_rasa_json(BASE_OUTPUT_DIR + '/rasa-public.json')
 
 generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
-    (daemons.rasa_operations, 'ops', lambda d: d.status()),
-    (daemons.rasa_telescope, 'telescope', lambda d: d.report_status()),
-    (daemons.rasa_dome, 'dome', lambda d: d.status()),
-    (daemons.rasa_camera, 'cam', lambda d: d.report_status()),
-    (daemons.rasa_focus, 'focus', lambda d: d.report_status()),
-    (daemons.rasa_pipeline, 'pipeline', lambda d: d.report_status()),
+    (daemons.rasa_operations, 'rasa_ops', lambda d: d.status()),
+    (daemons.rasa_telescope, 'rasa_telescope', lambda d: d.report_status()),
+    (daemons.rasa_dome, 'rasa_dome', lambda d: d.status()),
+    (daemons.rasa_pipeline, 'rasa_pipeline', lambda d: d.report_status()),
+    (daemons.rasa_camera, 'rasa_cam', lambda d: d.report_status()),
+    (daemons.rasa_focus, 'rasa_focus', lambda d: d.report_status()),
 ])
 
 # GOTO dashboard pages
 generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json')
 
 generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
-    (daemons.goto_gtecs_power, 'power', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_mnt, 'mnt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_dome, 'dome', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_filt, 'filt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_foc, 'foc', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_cam, 'cam', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_exq, 'exq', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_conditions, 'conditions', lambda d: d.get_info(force_update=False))
+    (daemons.goto_gtecs_power, 'goto_power', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_mnt, 'goto_mnt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_dome, 'goto_dome', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_filt, 'goto_filt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_foc, 'goto_foc', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_cam, 'goto_cam', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_exq, 'goto_exq', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_conditions, 'goto_conditions', lambda d: d.get_info(force_update=False))
 ])
 
 # Raw data for GOTO operations

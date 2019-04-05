@@ -12,20 +12,20 @@
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
-      <span class="list-group-item" data-index='["status", "dome"]' data-generator="opsHeaderDome">Dome Status</span>
+      <span class="list-group-item" data-index='["w1m_status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
+      <span class="list-group-item" data-index='["w1m_status", "dome"]' data-generator="opsHeaderDome">Dome Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
-      <span class="list-group-item" data-index='["status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
+      <span class="list-group-item" data-index='["w1m_status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
+      <span class="list-group-item" data-index='["w1m_status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["status", "dehumidifier_mode"]' data-generator="opsHeaderMode">Dehumidifier Control</span>
-      <span class="list-group-item" data-index='["status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+      <span class="list-group-item" data-index='["w1m_status", "dehumidifier_mode"]' data-generator="opsHeaderMode">Dehumidifier Control</span>
+      <span class="list-group-item" data-index='["w1m_status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
@@ -81,31 +81,31 @@
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Telescope</h5>
-      <span class="list-group-item" data-index='["telescope", "ra"]' data-generator="telRA">RA</span>
-      <span class="list-group-item" data-index='["telescope", "dec"]' data-generator="telDec">Dec</span>
-      <span class="list-group-item" data-index='["telescope", "alt"]' data-generator="telAlt">Altitude</span>
-      <span class="list-group-item" data-index='["telescope", "telescope_focus_um"]' data-generator="telFocus">Tel. Focus</span>
-      <span class="list-group-item" data-index='["telescope", "instrument_focus"]' data-generator="telInstrumentFocus">Red Focus</span>
+      <span class="list-group-item" data-index='["w1m_telescope", "ra"]' data-generator="telRA">RA</span>
+      <span class="list-group-item" data-index='["w1m_telescope", "dec"]' data-generator="telDec">Dec</span>
+      <span class="list-group-item" data-index='["w1m_telescope", "alt"]' data-generator="telAlt">Altitude</span>
+      <span class="list-group-item" data-index='["w1m_telescope", "telescope_focus_um"]' data-generator="telFocus">Tel. Focus</span>
+      <span class="list-group-item" data-index='["w1m_telescope", "instrument_focus"]' data-generator="telInstrumentFocus">Red Focus</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Blue Camera</h5>
-      <span class="list-group-item" data-index='["blue"]' data-generator="camStatus">Status</span>
-      <span class="list-group-item" data-index='["blue"]' data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-index='["blue", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
-      <span class="list-group-item" data-index='["blue", "exposure_time"]' data-generator="camExposure">Exposure</span>
-      <span class="list-group-item" data-index='["blue"]' data-generator="camGeometry">Geometry</span>
+      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camStatus">Status</span>
+      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camTemperature">Temperature</span>
+      <span class="list-group-item" data-index='["w1m_blue", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-index='["w1m_blue", "exposure_time"]' data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camGeometry">Geometry</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header text-center">Red Camera</h5>
-      <span class="list-group-item" data-index='["red"]' data-generator="camStatus">Status</span>
-      <span class="list-group-item" data-index='["red"]' data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-index='["red", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
-      <span class="list-group-item" data-index='["red", "exposure_time"]' data-generator="camExposure">Exposure</span>
-      <span class="list-group-item" data-index='["red"]' data-generator="camGeometry">Geometry</span>
+      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camStatus">Status</span>
+      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camTemperature">Temperature</span>
+      <span class="list-group-item" data-index='["w1m_red", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-index='["w1m_red", "exposure_time"]' data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camGeometry">Geometry</span>
     </div>
   </div>
 </div>
@@ -113,12 +113,12 @@
   <div class="col-md-5 col-sm-12 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Pipeline</h5>
-      <span class="list-group-item" data-index='["pipeline", "guide_camera_id"]' data-generator="pipelineGuiding">Guide Camera</span>
-      <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineFrameType">Frame Type</span>
-      <span class="list-group-item" data-index='["pipeline", "archive_directory"]' data-generator="pipelineSaveDir">Archive Dir</span>
-      <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineNextBlue">Next Blue Frame</span>
-      <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineNextRed">Next Red Frame</span>
-      <span class="list-group-item" data-index='["pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
+      <span class="list-group-item" data-index='["w1m_pipeline", "guide_camera_id"]' data-generator="pipelineGuiding">Guide Camera</span>
+      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineFrameType">Frame Type</span>
+      <span class="list-group-item" data-index='["w1m_pipeline", "archive_directory"]' data-generator="pipelineSaveDir">Archive Dir</span>
+      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineNextBlue">Next Blue Frame</span>
+      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineNextRed">Next Red Frame</span>
+      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
     </div>
   </div>
   <div class="clearfix visible-sm-block visible-xs-block"></div>
