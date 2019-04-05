@@ -295,6 +295,66 @@ function opsTelescopeControl(row, cell, data) {
   row.addClass('list-group-item-warning');
 }
 
+// Dome generators
+function domeTime(row, cell, data) {
+  if (data == null)
+    cell.html('N/A');
+  else {
+    cell.html(data);
+    cell.addClass('text-warning');
+  }
+}
+
+var domeShutterStatus = [
+  ['CLOSED', 'text-danger'],
+  ['OPEN', 'text-success'],
+  ['PARTIALLY OPEN', 'text-info'],
+  ['OPENING', 'text-warning'],
+  ['CLOSING', 'text-warning'],
+  ['FORCE CLOSING', 'text-danger']
+];
+
+function domeShutter(row, cell, data) {
+  if (data >= 0 && data < domeShutterStatus.length) {
+    cell.html(domeShutterStatus[data][0]);
+    cell.addClass(domeShutterStatus[data][1]);
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  }
+}
+
+var domeHeartbeatStatus = [
+  ['DISABLED', 'text-warning'],
+  ['ACTIVE', 'text-success'],
+  ['CLOSING DOME', 'text-danger'],
+  ['TRIPPED', 'text-danger'],
+  ['UNAVAILABLE', 'text-warning']
+];
+
+function domeHeartbeat(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if ('heartbeat_status' in data && 'heartbeat_remaining' in data) {
+    if (data['heartbeat_status'] == 1) {
+      status = data['heartbeat_remaining'] + 's remaining';
+      if (data['heartbeat_remaining'] < 30)
+        style = 'text-danger'
+      else if (data['heartbeat_remaining'] < 60)
+        style = 'text-warning';
+      else
+        style = 'text-success';
+    } else {
+      status = domeHeartbeatStatus[data['heartbeat_status']][0];
+      style = domeHeartbeatStatus[data['heartbeat_status']][1];
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
 // Pipeline generators
 function pipelineGuiding(row, cell, data) {
   if (data) {
