@@ -104,46 +104,27 @@ def extract_environment_data(data, data_map):
     except:
         return {}
 
-def generate_goto_json(output_path):
+
+def generate_goto_json(output_path, date, environment):
     """Queries the observatory environment daemon and saves as json
        the data useful for the GOTO dashboard page
     """
-    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
-
-    try:
-        with daemons.observatory_environment.connect() as d:
-            response = d.status()
-
-        # Some daemons will return None on error
-        if response is None:
-            if 'observatory_environment' not in status or status['observatory_environment']:
-                print('received empty response from observatory_environment')
-                log.error('dashboardd', 'Lost contact with observatory_environment (empty response)')
-            status['observatory_environment'] = False
-        else:
-            output.update(extract_environment_data(response, {
-                'goto_vaisala': [
-                    'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                    'pressure', 'accumulated_rain'
-                ],
-                'goto_roomalert': ['internal_temp', 'internal_humidity'],
-                'goto_ups': [
-                    'main_ups_status', 'main_ups_battery_remaining', 'main_ups_battery_healthy',
-                    'dome_ups_status', 'dome_ups_battery_remaining', 'dome_ups_battery_healthy'
-                ],
-                'tng': ['dust', 'seeing', 'solarimeter'],
-                'superwasp': ['sky_temp'],
-                'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
-            }))
-
-            if 'observatory_environment' in status and not status['observatory_environment']:
-                log.info('dashboardd', 'Restored contact with observatory_environment')
-            status['observatory_environment'] = True
-    except Exception as e:
-        print('failed to query observatory_environment with error: ' + str(e))
-        if 'observatory_environment' not in status or status['observatory_environment']:
-            log.error('dashboardd', 'Lost contact with observatory_environment (' + str(e) + ')')
-        status['observatory_environment'] = False
+    output = {'date': date}
+    if environment:
+        output.update(extract_environment_data(environment, {
+            'goto_vaisala': [
+                'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure', 'accumulated_rain'
+            ],
+            'goto_roomalert': ['internal_temp', 'internal_humidity'],
+            'goto_ups': [
+                'main_ups_status', 'main_ups_battery_remaining', 'main_ups_battery_healthy',
+                'dome_ups_status', 'dome_ups_battery_remaining', 'dome_ups_battery_healthy'
+            ],
+            'tng': ['dust', 'seeing', 'solarimeter'],
+            'superwasp': ['sky_temp'],
+            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
+        }))
 
     try:
         with open(output_path, 'w') as output_file:
@@ -156,12 +137,9 @@ def generate_goto_json(output_path):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
-def generate_rasa_json(output_path):
+def generate_rasa_json(output_path, date, environment):
     """Queries daemons to generate the public data for the RASA dashboard page"""
-    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
-
-    environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
-                               lambda d: d.status())
+    output = {'date': date}
     if environment:
         output.update(extract_environment_data(environment, {
             'goto_vaisala': [
@@ -189,12 +167,9 @@ def generate_rasa_json(output_path):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
-def generate_onemetre_json(output_path):
+def generate_onemetre_json(output_path, date, environment):
     """Queries daemons to generate the public data for the W1m dashboard page"""
-    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
-
-    environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
-                               lambda d: d.status())
+    output = {'date': date}
     if environment:
         output.update(extract_environment_data(environment, {
             'w1m_vaisala': [
@@ -225,8 +200,12 @@ def generate_onemetre_json(output_path):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
+date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
+environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
+                           lambda d: d.status())
+
 # One metre dashboard pages
-generate_onemetre_json(BASE_OUTPUT_DIR + '/onemetre-public.json')
+generate_onemetre_json(BASE_OUTPUT_DIR + '/onemetre-public.json', date, environment)
 
 generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
     (daemons.onemetre_operations, 'w1m_ops', lambda d: d.status()),
@@ -238,7 +217,7 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
 ])
 
 # RASA dashboard pages
-generate_rasa_json(BASE_OUTPUT_DIR + '/rasa-public.json')
+generate_rasa_json(BASE_OUTPUT_DIR + '/rasa-public.json', date, environment)
 
 generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
     (daemons.rasa_operations, 'rasa_ops', lambda d: d.status()),
@@ -250,7 +229,7 @@ generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
 ])
 
 # GOTO dashboard pages
-generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json')
+generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json', date, environment)
 
 generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
     (daemons.goto_gtecs_power, 'goto_power', lambda d: d.get_info(force_update=False)),
