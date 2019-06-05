@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   2.14.3
+Version:   2.14.4
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.

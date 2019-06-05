@@ -548,24 +548,24 @@ def goto_dashboard_data():
     if 'goto' in account['permissions']:
         data.update(private)
     else:
-        data['goto_conditions'] = private['conditions']
+        data['goto_conditions'] = private['goto_conditions']
 
         data['goto_dome'] = {
-            'mode': private['dome']['mode'],
-            'dome': private['dome']['dome'],
-            'lockdown': private['dome']['lockdown'],
-            'dehumidifier_on': private['dome']['dehumidifier_on'],
-            'hatch': private['dome']['hatch']
+            'mode': private['goto_dome']['mode'],
+            'dome': private['goto_dome']['dome'],
+            'lockdown': private['goto_dome']['lockdown'],
+            'dehumidifier_on': private['goto_dome']['dehumidifier_on'],
+            'hatch': private['goto_dome']['hatch']
         }
 
         data['goto_power'] = {
-            'status_UPS1': private['power']['status_UPS1'],
-            'status_UPS2': private['power']['status_UPS2'],
+            'status_UPS1': private['goto_power']['status_UPS1'],
+            'status_UPS2': private['goto_power']['status_UPS2'],
             'status_PDU1': {
-                'leds1': private['power']['status_PDU1']['leds1'],
+                'leds1': private['goto_power']['status_PDU1']['leds1'],
             },
             'status_PDU2': {
-                'leds2': private['power']['status_PDU2']['leds2'],
+                'leds2': private['goto_power']['status_PDU2']['leds2'],
             }
         }
 
