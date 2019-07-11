@@ -58,6 +58,11 @@ WASP_GENERATED_DATA = {
     'wasp/clip': 'dashboard-wasp-clip.jpg',
 }
 
+EUMETSAT_GENERATED_DATA = {
+    'ir': 'eumetsat-ir.jpg',
+    'dust': 'eumetsat-dust.jpg',
+}
+
 app = Flask(__name__)
 
 # Stop Flask from telling the browser to cache dynamic files
@@ -298,6 +303,10 @@ def infrastructure():
 @app.route('/skycams/')
 def skycams():
     return render_template('skycams.html', user_account=get_user_account())
+
+@app.route('/data/eumetsat/<path:path>')
+def eumetsat_generated_data(path):
+    return send_from_directory(GENERATED_DATA_DIR, EUMETSAT_GENERATED_DATA[path])
 
 @app.route('/eastcam/')
 def east_camera():
