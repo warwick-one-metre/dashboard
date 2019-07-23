@@ -249,8 +249,10 @@ var telescopeStatus = [
 ];
 
 var focusStatus = [
+  ['OFFLINE', 'text-danger'],
   ['DISCONNECTED', 'text-danger'],
   ['ERROR', 'text-danger'],
+  ['INITIALIZING', 'text-warning'],
   ['IDLE'],
   ['MOVING', 'text-warning']
 ];
@@ -291,7 +293,7 @@ function telFocus(row, cell, data) {
   if (!('status' in data) || !('current_steps' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-  } else if (data['status'] == 2) {
+  } else if (data['status'] == 4) {
     cell.html(data['current_steps'] + ' steps');
   } else {
     cell.html(focusStatus[data['status']][0]);
