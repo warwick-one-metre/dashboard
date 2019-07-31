@@ -9,9 +9,9 @@
   </div>
 </div>
 {% endif %}
-{% set enable_microphone = user_account != None and 'onemetre' in user_account['permissions'] -%}
+{% set enable_microphone = user_account != None and 'nites' in user_account['permissions'] -%}
 {% set video = 'nites' %}
-{% set audio = 'onemetre' %}
+{% set audio = 'nites' %}
 {% include 'camera.html' %}
 
 {% endblock %}
