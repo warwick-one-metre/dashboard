@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   2.15.2
+Version:   2.16.0
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
@@ -29,20 +29,26 @@ mkdir -p %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/update-dashboard-data.service %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/update-dashboard-data.timer %{buildroot}%{_unitdir}
 
+%{__install} %{_sourcedir}/fetch-nites-webcam.service %{buildroot}%{_unitdir}
+%{__install} %{_sourcedir}/fetch-nites-webcam.timer %{buildroot}%{_unitdir}
+
 mkdir -p %{buildroot}/etc/nginx/conf.d/
 %{__install} %{_sourcedir}/dashboard.conf %{buildroot}/etc/nginx/conf.d/dashboard.conf
 
 %post
 %systemd_post dashboard.service
 %systemd_post update-dashboard-data.service
+%systemd_post fetch-nites-webcam.service
 
 %preun
 %systemd_preun dashboard.service
 %systemd_preun update-dashboard-data.service
+%systemd_preun fetch-nites-webcam.service
 
 %postun
 %systemd_postun_with_restart dashboard.service
 %systemd_postun_with_restart update-dashboard-data.service
+%systemd_postun_with_restart fetch-nites-webcam.service
 
 %files
 %defattr(0744,nginx,nginx,0755)
@@ -55,6 +61,8 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 %{_unitdir}/dashboard.service
 %{_unitdir}/update-dashboard-data.service
 %{_unitdir}/update-dashboard-data.timer
+%{_unitdir}/fetch-nites-webcam.service
+%{_unitdir}/fetch-nites-webcam.timer
 /etc/nginx/conf.d/dashboard.conf
 
 %{_bindir}/update-dashboard-data

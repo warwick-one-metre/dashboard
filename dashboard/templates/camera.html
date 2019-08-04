@@ -4,9 +4,11 @@
     <div class="list-group list-group-item" style="padding: 0">
       <img id="video" src="/webcam/{{ video }}/static" width="100%" style="border-radius: 3px; min-height: 105px;">
 {% if not dashboard_mode %}
+{% if enable_video %}
       <div style="position: absolute; left: 10px; top: 10px; text-align: center;">
         <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
       </div>
+{% endif %}
 {% if enable_microphone %}
       <div style="position: absolute; right: 10px; top: 10px; text-align: center;">
         <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='speaker.svg') }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
@@ -20,7 +22,9 @@
 {% if not dashboard_mode %}
 <div class="row">
   <div class="col-md-12">
+{% if enable_video %}
     <p class="description">Video sync may drift over time. You may need to stop and restart playback periodically.</p>
+{% endif %}
 {% if enable_microphone %}
     <p class="description">Audio playback requires browser support for WebSockets and WebAudio.</p>
 {% endif %}
@@ -57,6 +61,7 @@ $(document).ready(function () {
 {% endif %}
 
   var videoPlaying = false;
+{% if enable_video and not dashboard_mode %}
   $('#video-button').click(function() {
     if (videoPlaying) {
       $('#video-button-text').html('Play');
@@ -69,6 +74,7 @@ $(document).ready(function () {
       videoPlaying = true;
     }
   });
+{% endif %}
 
   // Refresh the view every 30 seconds if not live
   window.setInterval(function() {

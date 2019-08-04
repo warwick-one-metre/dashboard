@@ -10,6 +10,7 @@
 </div>
 {% endif %}
 {% set enable_microphone = user_account != None and 'w1m' in user_account['permissions'] -%}
+{% set enable_video = True %}
 {% set video = 'w1m' %}
 {% set audio = 'w1m' %}
 {% include 'camera.html' %}

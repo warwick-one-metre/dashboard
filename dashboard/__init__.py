@@ -63,6 +63,10 @@ EUMETSAT_GENERATED_DATA = {
     'dust': 'eumetsat-dust.jpg',
 }
 
+WEBCAM_GENERATED_DATA = {
+    'nites/static': 'webcam-nites.jpg'
+}
+
 app = Flask(__name__)
 
 # Stop Flask from telling the browser to cache dynamic files
@@ -306,7 +310,15 @@ def skycams():
 
 @app.route('/data/eumetsat/<path:path>')
 def eumetsat_generated_data(path):
-    return send_from_directory(GENERATED_DATA_DIR, EUMETSAT_GENERATED_DATA[path])
+    if path in EUMETSAT_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, EUMETSAT_GENERATED_DATA[path])
+    abort(404)
+
+@app.route('/webcam/<path:path>')
+def webcam_generated_data(path):
+    if path in WEBCAM_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, WEBCAM_GENERATED_DATA[path])
+    abort(404)
 
 @app.route('/eastcam/')
 def east_camera():
