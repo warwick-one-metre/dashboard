@@ -242,6 +242,13 @@ generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
     (daemons.goto_gtecs_conditions, 'goto_conditions', lambda d: d.get_info(force_update=False))
 ])
 
+# SuperWASP dashboard pages
+generate_rasa_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
+
+generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
+    (daemons.superwasp_leo_observer, 'wasp_leoobs', lambda d: {'leoobs': d.status()})
+])
+
 # Raw data for GOTO operations
 generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
     (daemons.onemetre_vaisala, 'vaisala', lambda d: d.last_measurement())

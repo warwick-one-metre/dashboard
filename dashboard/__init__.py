@@ -99,7 +99,7 @@ def get_user_account():
           'username': GitHub username (or None if not logged in)
           'avatar': GitHub profile picture (or None if not logged in)
           'permissions': list of permission types, a subset of
-                         ['w1m', 'nites', 'goto', 'rasa', 'infrastructure_log']
+                         ['w1m', 'nites', 'goto', 'rasa', 'wasp', 'infrastructure_log']
     """
     # Expire cached sessions after 12 hours
     # This forces the permissions to be queried again from github
@@ -131,15 +131,15 @@ def get_user_account():
 
                 # https://github.com/orgs/warwick-one-metre/teams/observers
                 if is_github_team_member(user, 2128810):
-                    permissions.update(['w1m', 'infrastructure_log', 'rasa'])
+                    permissions.update(['w1m', 'infrastructure_log', 'rasa', 'wasp'])
 
                 # https://github.com/orgs/NITES-40cm/teams/observers
                 if is_github_team_member(user, 2576073):
-                    permissions.update(['nites', 'infrastructure_log'])
+                    permissions.update(['nites', 'wasp', 'infrastructure_log'])
 
                 # https://github.com/orgs/GOTO-OBS/teams/ops-team/
                 if is_github_team_member(user, 2308649):
-                    permissions.update(['goto', 'infrastructure_log', 'rasa'])
+                    permissions.update(['goto', 'infrastructure_log', 'rasa', 'wasp'])
 
                 data = {
                     'username': user['login'],
@@ -377,6 +377,31 @@ def rasa_log():
             db.close()
     abort(404)
 
+
+@app.route('/data/wasp/log')
+def wasp_log():
+    account = get_user_account()
+    if 'wasp' in account['permissions']:
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('wasp_leoobs')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
+
+                query += ' ORDER BY id DESC LIMIT 250;'
+                print(query)
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                return jsonify(messages=messages)
+        finally:
+            db.close()
+    abort(404)
+
+
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
     account = get_user_account()
@@ -589,6 +614,33 @@ def goto_dashboard_data():
                 'leds2': private['goto_power']['status_PDU2']['leds2'],
             }
         }
+
+    return jsonify(**data)
+
+
+@app.route('/data/wasp/')
+def wasp_dashboard_data():
+    data = json.load(open(GENERATED_DATA_DIR + '/wasp-public.json'))
+
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/wasp-private.json'))
+
+    account = get_user_account()
+    if 'wasp' in account['permissions']:
+        data.update(private)
+
+    # Extract safe public info from private daemons
+    private_leoobs = private.get('leoobs', {})
+    roof_status = private_leoobs.get('roof_status', 0)
+
+    env = {}
+    if 'environment' in private_leoobs:
+        env = private_leoobs['environment']
+
+    data['wasp_status'] = {
+        'roof': roof_status,
+        'environment': env
+    }
 
     return jsonify(**data)
 
