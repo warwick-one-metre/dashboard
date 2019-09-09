@@ -264,17 +264,21 @@ def wasp_dome2():
     dashboard_mode = __parse_dashboard_mode()
     return render_template('wasp/dome2.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
+@app.route('/wasp/')
+def wasp_dashboard():
+    return render_template('wasp/dashboard.html', user_account=get_user_account())
+
 @app.route('/wasp/live/')
 def wasp_live():
     account = get_user_account()
-    if 'rasa' in account['permissions']:
+    if 'wasp' in account['permissions']:
         return render_template('wasp/live.html', user_account=account)
     abort(404)
 
 @app.route('/data/wasp/<path:path>')
 def wasp_generated_data(path):
     account = get_user_account()
-    if 'rasa' in account['permissions'] and path in WASP_GENERATED_DATA:
+    if 'wasp' in account['permissions'] and path in WASP_GENERATED_DATA:
         return send_from_directory(GENERATED_DATA_DIR, WASP_GENERATED_DATA[path])
     abort(404)
 

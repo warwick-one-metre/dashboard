@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% set title = 'SuperWASP &raquo; Dashboard' -%}
+{% set active_page = 'wasp-dashboard' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["wasp_status", "roof"]' data-generator="opsHeaderRoof">Roof Status</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+  </div>
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["wasp_status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+    </div>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["goto_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
+      <span class="list-group-item" data-index='["goto_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
+      <span class="list-group-item" data-index='["goto_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
+      <span class="list-group-item" data-index='["tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["goto_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
+      <span class="list-group-item" data-index='["goto_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
+      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["goto_vaisala", "accumulated_rain"]' data-generator="envLatestMinMax" data-units=" mm">Total Rain</span>
+      <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
+      <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
+      <span class="list-group-item" data-index='["ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
+    </div>
+  </div>
+</div>
+{% if user_account != None and 'wasp' in user_account['permissions'] %}
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["leoobs", "status"]' data-generator="opsStatus">Status</span>
+      <span class="list-group-item" data-index='["leoobs"]' data-generator="opsTarget">Target</span>
+      <span class="list-group-item" data-index='["leoobs"]' data-generator="opsPointing">Pointing</span>
+      <span class="list-group-item" data-index='["leoobs", "tel_status"]' data-generator="opsTelStatus">Mount</span>
+      <span class="list-group-item" data-index='["leoobs", "cam_status"]' data-generator="opsCamStatus">Camera</span>
+    </div>
+  </div>
+  <div class="clearfix visible-sm-block visible-xs-block"></div>
+  <div class="col-md-8">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">System Log</h5>
+      <div class="list-group-item" style="overflow-y: scroll; height: 140px;">
+        <table id="log-table">
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row dashboard-stats">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='wasp-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
+<script>
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+    pollDashboard('/data/wasp');
+{% if user_account != None and 'wasp' in user_account['permissions'] %}
+    pollLog('{{ url_for('wasp_log') }}');
+{% endif %}
+  });
+</script>
+{% endblock %}
