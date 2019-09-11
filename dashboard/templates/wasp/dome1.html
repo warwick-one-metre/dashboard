@@ -10,6 +10,7 @@
 </div>
 {% endif %}
 {% set enable_microphone = user_account != None and 'rasa' in user_account['permissions'] -%}
+{% set enable_video = True %}
 {% set video = 'wasp1' %}
 {% set audio = 'wasp' %}
 {% include 'camera.html' %}
