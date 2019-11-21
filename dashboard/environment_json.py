@@ -148,13 +148,15 @@ def environment_json(date=None):
     end_js = int(end.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000)
 
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
-    data = __vaisala_json(db, 'weather_onemetre_vaisala', ONEMETRE_VAISALA, 'wwindrange', start_str, end_str)
+    data = __vaisala_json(db, 'weather_onemetre_vaisala', ONEMETRE_VAISALA, 'wwindrange', start_str, end_str,
+                          wind_range_offset=-30000)
     data.update(__sensor_json(db, 'weather_onemetre_roomalert', ROOMALERT, start_str, end_str))
     data.update(__superwasp_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', ONEMETRE_RAINDETECTOR, start_str,
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
-    data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, 'gwindrange', start_str, end_str))
+    data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, 'gwindrange', start_str, end_str,
+                               wind_range_offset=30000))
     data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str,
                                       end_str))
     data.update(__vaisala_json(db, 'weather_goto_dome2_internal', GOTO_DOME2_INTERNAL, None, start_str, end_str))
@@ -329,7 +331,7 @@ def __ping_json(db, table, channels, start, end):
     return data
 
 
-def __vaisala_json(db, table, channels, wind_range_key, start, end):
+def __vaisala_json(db, table, channels, wind_range_key, start, end, wind_range_offset=0):
     """Queries data for the vaisala graphs, applying the _valid == 0 = invalid point filter"""
     columns = list(channels.keys()) + [c + '_valid' for c in channels]
     if wind_range_key and 'wind_speed' in columns:
@@ -374,7 +376,7 @@ def __vaisala_json(db, table, channels, wind_range_key, start, end):
             else:
                 max_gust = max(max_gust, results['wind_gust'][i])
 
-            minmax_data.append((int(ts), mid, delta))
+            minmax_data.append((int(ts) + wind_range_offset, mid, delta))
 
         data[wind_range_key] = {
             'label': '',
