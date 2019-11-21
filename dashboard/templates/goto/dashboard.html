@@ -17,10 +17,6 @@
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["TODO", "TODO"]' data-generator="telMode">Tel. Control</span>
-      <span class="list-group-item" data-index='TODO' data-generator="telStatus">Tel. Status</span>
-    </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -70,6 +66,61 @@
 </div>
 {% if user_account != None and 'goto' in user_account['permissions'] %}
 <div class="row dashboard-stats">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Unit Telescopes</h5>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td>Cam. Status</td>
+            <td data-index='["goto_cam", "1", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "2", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "3", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "4", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "5", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "6", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "7", "status"]' data-generator="camStatus"></td>
+            <td data-index='["goto_cam", "8", "status"]' data-generator="camStatus"></td>
+          </tr>
+          <tr>
+            <td>Cam. Temperature</td>
+            <td data-index='["goto_cam", "1", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "2", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "3", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "4", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "5", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "6", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "7", "ccd_temp"]' data-generator="camTemp"></td>
+            <td data-index='["goto_cam", "8", "ccd_temp"]' data-generator="camTemp"></td>
+          </tr>
+          <tr>
+            <td>Focus</td>
+            <td data-index='["goto_foc", "1"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "2"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "3"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "4"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "5"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "6"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "7"]' data-generator="telFoc"></td>
+            <td data-index='["goto_foc", "8"]' data-generator="telFoc"></td>
+          </tr>
+          <tr>
+            <td>Filter</td>
+            <td data-index='["goto_filt", "1"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "2"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "3"]' data-generator="telFilt"></td>
+            <td data-index='["goto_filt", "4"]' data-generator="telFilt"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Telescope</h5>
@@ -88,43 +139,6 @@
       <span class="list-group-item" data-index='["goto_dome", "heartbeat_enabled"]' data-generator="domeEnabledSafe">Heartbeat</span>
       <span class="list-group-item" data-index='["goto_dome", "alarm_enabled"]' data-generator="domeEnabledSafe">Siren</span>
       <span class="list-group-item" data-index='["goto_dome", "autoclose_enabled"]' data-generator="domeEnabledSafe">Auto-close</span>
-    </div>
-  </div>
-  <div class="col-md-6 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Unit Telescopes</h5>
-      <table class="table table-bordered">
-        <tbody>
-          <tr>
-            <td>Cam. Status</td>
-            <td data-index='["goto_cam", "1", "status"]' data-generator="camStatus"></td>
-            <td data-index='["goto_cam", "2", "status"]' data-generator="camStatus"></td>
-            <td data-index='["goto_cam", "3", "status"]' data-generator="camStatus"></td>
-            <td data-index='["goto_cam", "4", "status"]' data-generator="camStatus"></td>
-          </tr>
-          <tr>
-            <td>Cam. Temperature</td>
-            <td data-index='["goto_cam", "1", "ccd_temp"]' data-generator="camTemp"></td>
-            <td data-index='["goto_cam", "2", "ccd_temp"]' data-generator="camTemp"></td>
-            <td data-index='["goto_cam", "3", "ccd_temp"]' data-generator="camTemp"></td>
-            <td data-index='["goto_cam", "4", "ccd_temp"]' data-generator="camTemp"></td>
-          </tr>
-          <tr>
-            <td>Focus</td>
-            <td data-index='["goto_foc", "1"]' data-generator="telFoc"></td>
-            <td data-index='["goto_foc", "2"]' data-generator="telFoc"></td>
-            <td data-index='["goto_foc", "3"]' data-generator="telFoc"></td>
-            <td data-index='["goto_foc", "4"]' data-generator="telFoc"></td>
-          </tr>
-          <tr>
-            <td>Filter</td>
-            <td data-index='["goto_filt", "1"]' data-generator="telFilt"></td>
-            <td data-index='["goto_filt", "2"]' data-generator="telFilt"></td>
-            <td data-index='["goto_filt", "3"]' data-generator="telFilt"></td>
-            <td data-index='["goto_filt", "4"]' data-generator="telFilt"></td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </div>
