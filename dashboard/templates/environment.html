@@ -51,7 +51,7 @@
       <div id="wind-plot" class="weather-plot wind-plot" data-sidesensor="right-container" data-series='["wwindspeed", "gwindspeed", "swwindspeed"]' data-series='["wwinddir", "gwinddir", "swwinddir"]' data-axislabel='Wind (km/h)' data-labelunits='&nbsp;km/h' data-hidetime></div>
     </div>
     <div id="windspeed-container" class="plot-container">
-      <div id="windspeed-plot" data-linkedplots='["seeing-plot", "accumrain-plot", "rainboards-plot"]' class="weather-plot" data-series='["wwindspeed", "gwindspeed", "swwindspeed"]' data-sidesensor="right-container" data-axislabel="Wind (km/h)" data-labelfudge="-7" data-min="0" data-labelunits='&nbsp;km/h' data-hidetime data-ydecimals="0" data-points></div>
+      <div id="windspeed-plot" data-linkedplots='["seeing-plot", "accumrain-plot", "rainboards-plot"]' class="weather-plot" data-series='["wwindrange", "gwindrange", "wwindspeed", "gwindspeed"]' data-sidesensor="right-container" data-axislabel="Wind (km/h)" data-labelfudge="-7" data-min="0" data-labelunits='&nbsp;km/h' data-hidetime data-ydecimals="0" data-points></div>
     </div>
 
     <div id="seeing-container" class="plot-container">
@@ -70,6 +70,7 @@
 <script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.axislabels.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.errorbars.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.crosshair.min.js') }}"></script>
 <script src="{{ url_for('static', filename='environment.js') }}"></script>
 <script>

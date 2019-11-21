@@ -148,16 +148,16 @@ def environment_json(date=None):
     end_js = int(end.replace(tzinfo=datetime.timezone.utc).timestamp() * 1000)
 
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER)
-    data = __vaisala_json(db, 'weather_onemetre_vaisala', ONEMETRE_VAISALA, start_str, end_str)
+    data = __vaisala_json(db, 'weather_onemetre_vaisala', ONEMETRE_VAISALA, 'wwindrange', start_str, end_str)
     data.update(__sensor_json(db, 'weather_onemetre_roomalert', ROOMALERT, start_str, end_str))
     data.update(__superwasp_json(db, 'weather_superwasp', SUPERWASP, start_str, end_str))
     data.update(__sensor_json(db, 'weather_onemetre_raindetector', ONEMETRE_RAINDETECTOR, start_str,
                               end_str))
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
-    data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, start_str, end_str))
+    data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, 'gwindrange', start_str, end_str))
     data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str,
                                       end_str))
-    data.update(__vaisala_json(db, 'weather_goto_dome2_internal', GOTO_DOME2_INTERNAL, start_str, end_str))
+    data.update(__vaisala_json(db, 'weather_goto_dome2_internal', GOTO_DOME2_INTERNAL, None, start_str, end_str))
     data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY,
                               start_str, end_str, 1200))
     data.update(__sensor_json(db, 'weather_tng_seeing', TNG_SEEING, start_str, end_str))
@@ -329,9 +329,12 @@ def __ping_json(db, table, channels, start, end):
     return data
 
 
-def __vaisala_json(db, table, channels, start, end):
+def __vaisala_json(db, table, channels, wind_range_key, start, end):
     """Queries data for the vaisala graphs, applying the _valid == 0 = invalid point filter"""
     columns = list(channels.keys()) + [c + '_valid' for c in channels]
+    if wind_range_key and 'wind_speed' in columns:
+        columns += ['wind_gust', 'wind_gust_valid', 'wind_lull', 'wind_lull_valid']
+
     results = __query_weather_data(db, table, columns, start, end)
 
     data = {}
@@ -346,5 +349,44 @@ def __vaisala_json(db, table, channels, start, end):
                 filtered.append(value)
 
         data[name] = __generate_plot_data(label, color, date, filtered)
+
+    if wind_range_key and 'wind_gust' in columns:
+        minmax_data = []
+        min_lull = None
+        max_gust = 0
+
+        for i in range(len(results['wind_gust'])):
+            if not results['wind_gust_valid'][i] or not results['wind_lull_valid'][i]:
+                continue
+
+            ts = results['date'][i].replace(tzinfo=datetime.timezone.utc).timestamp() * 1000
+
+            mid = (results['wind_gust'][i] + results['wind_lull'][i]) / 2
+            delta = (results['wind_gust'][i] - results['wind_lull'][i]) / 2
+
+            if min_lull is None:
+                min_lull = results['wind_lull'][i]
+            else:
+                min_lull = min(min_lull, results['wind_lull'][i])
+
+            if max_gust is None:
+                max_gust = results['wind_gust'][i]
+            else:
+                max_gust = max(max_gust, results['wind_gust'][i])
+
+            minmax_data.append((int(ts), mid, delta))
+
+        data[wind_range_key] = {
+            'label': '',
+            'color': channels['wind_speed'][2],
+            'points': {
+                'radius': 0,
+                'errorbars': 'y',
+                'yerr': {'show': True},
+            },
+            'data': minmax_data,
+            'max': max_gust,
+            'min': min_lull
+        }
 
     return data
