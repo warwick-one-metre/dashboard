@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   2.21.0
+Version:   2.21.1
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Data pipeline server for the Warwick one-metre telescope.
@@ -8,7 +8,7 @@ Group:     Unspecified
 BuildArch: noarch
 Requires: nginx, nfs-utils, uwsgi, uwsgi-plugin-python36, uwsgi-logger-file, mariadb-server, %{?systemd_requires}
 Requires: observatory-log-server, observatory-weather-database-updater
-Requires: python36, python36-Flask, python36-GitHub-Flask, python36-PyMySQL, python36-warwick-observatory-common
+Requires: python3, python3-flask, python3-github-flask, python3-pymysql, python3-warwick-observatory-common
 
 %description
 Part of the observatory software for the Warwick La Palma telescopes.
