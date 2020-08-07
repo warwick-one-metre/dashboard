@@ -221,7 +221,7 @@ generate_rasa_json(BASE_OUTPUT_DIR + '/rasa-public.json', date, environment)
 
 generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
     (daemons.rasa_operations, 'rasa_ops', lambda d: d.status()),
-    (daemons.rasa_telescope, 'rasa_telescope', lambda d: d.report_status()),
+    #(daemons.rasa_telescope, 'rasa_telescope', lambda d: d.report_status()),
     (daemons.rasa_dome, 'rasa_dome', lambda d: d.status()),
     (daemons.rasa_pipeline, 'rasa_pipeline', lambda d: d.report_status()),
     (daemons.rasa_camera, 'rasa_cam', lambda d: d.report_status()),
