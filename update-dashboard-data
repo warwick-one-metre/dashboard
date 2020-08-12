@@ -146,7 +146,7 @@ def generate_rasa_json(output_path, date, environment):
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
                 'pressure', 'accumulated_rain', 'median_wind_speed'
             ],
-            'goto_roomalert': ['dome2_internal_temp', 'dome2_internal_humidity'],
+            'rasa_internal': ['temperature', 'relative_humidity'],
             'rasa_diskspace': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp': ['sky_temp'],
