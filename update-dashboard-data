@@ -200,6 +200,35 @@ def generate_onemetre_json(output_path, date, environment):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
+def generate_superwasp_json(output_path, date, environment):
+    """Queries daemons to generate the public data for the SuperWASP dashboard page"""
+    output = {'date': date}
+    if environment:
+        output.update(extract_environment_data(environment, {
+            'goto_vaisala': [
+                'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure', 'accumulated_rain', 'median_wind_speed'
+            ],
+            'superwasp_roomalert': ['comp_room_temp', 'comp_room_humidity', 'cam_rack_temp'],
+            'tng': ['dust', 'seeing', 'solarimeter'],
+            'superwasp': ['sky_temp'],
+            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
+        }))
+
+    output['superwasp_power'] = query_daemon(daemons.superwasp_power, 'superwasp_power',
+                                        lambda d: d.last_measurement())
+
+    try:
+        with open(output_path, 'w') as output_file:
+            json.dump(output or {}, output_file)
+
+        with open(STATUS_FILE, 'w') as output_file:
+            json.dump(status, output_file)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+
 date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
 environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
                            lambda d: d.status())
@@ -243,7 +272,7 @@ generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
 ])
 
 # SuperWASP dashboard pages
-generate_rasa_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
+generate_superwasp_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
 
 generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
     (daemons.superwasp_leo_observer, 'wasp_leoobs', lambda d: {'leoobs': d.status()})

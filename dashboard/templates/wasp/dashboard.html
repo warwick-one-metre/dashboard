@@ -25,24 +25,40 @@
 </div>
 
 <div class="row dashboard-stats">
-  <div class="col-md-4 col-sm-6 col-xs-12">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerUPS1">UPS 1</span>
+      <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerUPS2">UPS 2</span>
+      <span class="list-group-item" data-index='["superwasp_power", "roofbattery"]' data-generator="roofBattery" data-units=" V">Roof Battery</span>
+      <span class="list-group-item" data-index='["superwasp_power", "roof_interface"]' data-generator="powerOnOff">Roof Interface</span>
+      <span class="list-group-item" data-index='["superwasp_power", "mount"]' data-generator="powerOnOff">Mount</span>
+      <span class="list-group-item" data-index='["superwasp_power", "lensheaters"]' data-generator="powerOnOff">Lens Heaters</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerDAS">DAS Power</span>
+      <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerCoolers">Cooler Power</span>
+      <span class="list-group-item" data-index='["superwasp_power", "ilight"]' data-generator="powerOnOff">Dome Light</span>
+      <span class="list-group-item" data-index='["superwasp_roomalert", "comp_room_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Comp. Rm. Temp.</span>
+      <span class="list-group-item" data-index='["superwasp_roomalert", "comp_room_humidity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Comp. Rm. Humidity</span>
+      <span class="list-group-item" data-index='["superwasp_roomalert", "cam_rack_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Cam. Rack Temp.</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["goto_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
       <span class="list-group-item" data-index='["goto_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
       <span class="list-group-item" data-index='["goto_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
-      <span class="list-group-item" data-index='["tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
-    </div>
-  </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
       <span class="list-group-item" data-index='["goto_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
       <span class="list-group-item" data-index='["goto_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
-      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
-      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
+      <span class="list-group-item" data-index='["superwasp", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
+  <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
+      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
       <span class="list-group-item" data-index='["goto_vaisala", "accumulated_rain"]' data-generator="envLatestMinMax" data-units=" mm">Total Rain</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
       <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>

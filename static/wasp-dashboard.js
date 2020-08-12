@@ -126,3 +126,105 @@ function opsCamStatus(row, cell, data) {
   cell.html(s[0]);
   cell.addClass(s[1]);
 }
+
+// Power generators
+function powerDAS(row, cell, data) {
+  var enabled = 0
+  var total = 0
+  for (var i = 1; i <= 8; i++) {
+    if (!('das' + i in data))
+      continue;
+
+    total += 1;
+    if (data['ccd' + i])
+      enabled += 1
+  }
+
+  var status = enabled + ' / ' + total
+  var style = 'text-warning'
+  if (enabled == 6)
+    style = 'text-success'
+  else if (enabled == 0)
+    style = 'text-danger';
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerCoolers(row, cell, data) {
+  var enabled = 0
+  var total = 0
+  for (var i = 1; i <= 8; i++) {
+    if (!('das' + i in data))
+      continue;
+
+    total += 1;
+    if (data['ccd' + i])
+      enabled += 1
+  }
+
+  var status = enabled + ' / ' + total
+  var style = 'text-warning'
+  if (enabled == 6)
+    style = 'text-success'
+  else if (enabled == 0)
+    style = 'text-danger';
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerUPS(row, cell, data, status_field, remaining_field) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if (data && status_field in data && remaining_field in data) {
+    if (data[status_field] == 2) {
+      status = 'ONLINE';
+      style = 'text-success';
+    }
+    else if (data[status_field] == 3) {
+      status = 'BATTERY';
+      style = 'text-warning';
+    }
+
+    status += ' (' + data[remaining_field] + '%)';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerUPS1(row, cell, data) {
+  powerUPS(row, cell, data, 'ups1_status', 'ups1_battery_remaining');
+}
+
+function powerUPS2(row, cell, data) {
+  powerUPS(row, cell, data, 'ups2_status', 'ups2_battery_remaining');
+}
+
+function roofBattery(row, cell, data) {
+  if (data != null) {
+    var display = data.toFixed(2);
+    var units = row.data('units');
+    if (units)
+      display += units;
+    cell.html(display);
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
+function powerOnOff(row, cell, data) {
+  if (data == 2) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data == 1) {
+    cell.html('POWER ON');
+    cell.addClass('text-success');
+  } else {
+    cell.html('POWER OFF');
+    cell.addClass('text-danger');
+  }
+}
