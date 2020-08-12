@@ -190,7 +190,7 @@ def authorized(oauth_token):
 
 @app.route('/login')
 def login():
-    return github.authorize()
+    return github.authorize(scope='read:org')
 
 @app.route('/logout')
 def logout():
