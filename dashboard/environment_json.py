@@ -95,13 +95,10 @@ GOTO_UPS = {
     'dome_ups_battery_remaining': ('GOTO&nbsp;Dome', 'goto-dupsbat', '#22CC44'),
 }
 
-SUPERWASP_ROOFBATTERY = {
-    'voltage': ('SWASP Roof Battery', 'swroofbat', '#F26430'),
-}
-
 SUPERWASP_UPS = {
     'ups1_battery_remaining': ('SWASP&nbsp;UPS1', 'swasp-ups1bat', '#F26430'),
     'ups2_battery_remaining': ('SWASP&nbsp;UPS2', 'swasp-ups2bat', '#F26430'),
+    'roofbattery': ('SWASP Roof Battery', 'swroofbat', '#F26430'),
 }
 
 NETWORK = {
@@ -196,8 +193,6 @@ def infrastructure_json(date=None):
     data.update(__sensor_json(db, 'weather_goto_ups', GOTO_UPS, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp_ups', SUPERWASP_UPS, start_str, end_str))
     data.update(__ping_json(db, 'weather_network', NETWORK, start_str, end_str))
-    data.update(__sensor_json(db, 'weather_superwasp_roofbattery', SUPERWASP_ROOFBATTERY, start_str,
-                              end_str))
     db.close()
 
     return data, start_js, end_js
