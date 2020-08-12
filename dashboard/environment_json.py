@@ -59,13 +59,11 @@ GOTO_VAISALA = {
 GOTO_ROOMALERT = {
     'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
     'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
-    'dome2_internal_temp': ('RASA', 'rinttemp', '#FDE74C'),
-    'dome2_internal_humidity': ('RASA', 'rinthumid', '#FDE74C'),
 }
 
 GOTO_DOME2_INTERNAL = {
-    'temperature': ('RASA (new)', 'rinttemp2', '#ff6699'),
-    'relative_humidity': ('RASA (new)', 'rinthumid2', '#ff6699')
+    'temperature': ('RASA', 'rinttemp', '#FDE74C'),
+    'relative_humidity': ('RASA', 'rinthumid', '#FDE74C')
 }
 
 SUPERWASP = {
@@ -99,6 +97,11 @@ SUPERWASP_UPS = {
     'ups1_battery_remaining': ('SWASP&nbsp;UPS1', 'swasp-ups1bat', '#F26430'),
     'ups2_battery_remaining': ('SWASP&nbsp;UPS2', 'swasp-ups2bat', '#F26430'),
     'roofbattery': ('SWASP Roof Battery', 'swroofbat', '#F26430'),
+}
+
+SUPERWASP_ROOMALERT = {
+    'comp_room_temp': ('SWComp', 'swcomptemp', '#F26430'),
+    'comp_room_humidity': ('SWComp', 'swcomphumid', '#F26430'),
 }
 
 NETWORK = {
@@ -154,9 +157,9 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_nites_roomalert', NITES_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, 'gwindrange', start_str, end_str,
                                wind_range_offset=30000))
-    data.update(__goto_roomalert_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str,
-                                      end_str))
+    data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_dome2_internal', GOTO_DOME2_INTERNAL, None, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_superwasp_roomalert', SUPERWASP_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY,
                               start_str, end_str, 1200))
     data.update(__sensor_json(db, 'weather_tng_seeing', TNG_SEEING, start_str, end_str))
@@ -261,19 +264,6 @@ def __sensor_json(db, table, channels, start, end, data_break=360):
         label, name, color = channels[key]
         data[name] = __generate_plot_data(label, color, results['date'], results[key],
                                           data_break=data_break)
-
-    return data
-
-
-def __goto_roomalert_json(db, table, channels, start, end):
-    """Hacky workaround for additional dome sensor added 2018-06-29"""
-    results = __query_weather_data(db, table, list(channels.keys()), start, end)
-    # TODO: Filter dome_ entries older than bin 262172 (what is this as a date?)
-
-    data = {}
-    for key in channels:
-        label, name, color = channels[key]
-        data[name] = __generate_plot_data(label, color, results['date'], results[key])
 
     return data
 
