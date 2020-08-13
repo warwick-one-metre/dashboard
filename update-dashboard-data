@@ -268,6 +268,7 @@ generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
     (daemons.goto_gtecs_foc, 'goto_foc', lambda d: d.get_info(force_update=False)),
     (daemons.goto_gtecs_cam, 'goto_cam', lambda d: d.get_info(force_update=False)),
     (daemons.goto_gtecs_exq, 'goto_exq', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_ota, 'goto_ota', lambda d: d.get_info(force_update=False)),
     (daemons.goto_gtecs_conditions, 'goto_conditions', lambda d: d.get_info(force_update=False))
 ])
 

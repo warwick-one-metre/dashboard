@@ -288,7 +288,7 @@ function telFilt(row, cell, data, index) {
   status = 'ERROR';
   style = 'text-danger';
   filters = ['L', 'R', 'G', 'B'];
-  if (data && 'current_filter_num' in data && data['current_filter_num'] < 4 ) {
+  if (data && 'current_filter_num' in data && data['current_filter_num'] < 4) {
     if (data['homed']) {
       status = filters[data['current_filter_num']];
       style = '';
@@ -315,6 +315,25 @@ function telFoc(row, cell, data, index) {
     } else {
       status = data['current_pos'];
       style = '';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function telCovers(row, cell, data, index) {
+  status = 'ERROR';
+  style = 'text-danger';
+  if (data && 'position' in data) {
+    if (data['position'] == 'full_open') {
+      status = 'OPEN';
+      style = 'text-success';
+    } else if (data['position'] == 'part_open') {
+      status = 'MOVING';
+      style = 'text-warning';
+    } else if (data['position'] == 'closed') {
+      status = 'CLOSED';
     }
   }
 
