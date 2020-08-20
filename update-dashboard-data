@@ -210,8 +210,9 @@ def generate_superwasp_json(output_path, date, environment):
         output.update(extract_environment_data(environment, {
             'goto_vaisala': [
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                'pressure', 'accumulated_rain', 'median_wind_speed'
+                'pressure', 'median_wind_speed'
             ],
+            'rain': ['unsafe_boards'],
             'superwasp_roomalert': ['comp_room_temp', 'comp_room_humidity', 'cam_rack_temp'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp': ['sky_temp'],
@@ -219,6 +220,8 @@ def generate_superwasp_json(output_path, date, environment):
         }))
 
     output['superwasp_power'] = query_daemon(daemons.superwasp_power, 'superwasp_power',
+                                        lambda d: d.last_measurement())
+    output['superwasp_aircon'] = query_daemon(daemons.superwasp_aircon, 'superwasp_aircon',
                                         lambda d: d.last_measurement())
 
     try:

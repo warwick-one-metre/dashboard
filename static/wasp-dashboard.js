@@ -228,3 +228,41 @@ function powerOnOff(row, cell, data) {
     cell.addClass('text-danger');
   }
 }
+
+function powerInstrAircon(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if (data && 'enabled' in data) {
+    if (data['enabled']) {
+      status = 'AUTO';
+      style = 'text-success';
+    }
+    else {
+      status = 'DISABLED';
+      style = 'text-warning';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerCompAircon(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+
+  if (data && 'active' in data) {
+    if (data['active'] == 1) {
+      status = 'ACTIVE';
+      style = 'text-success';
+    }
+    else {
+      status = 'INACTIVE';
+      style = 'text-warning';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}

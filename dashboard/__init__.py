@@ -411,7 +411,7 @@ def infrastructure_log():
                 query = 'SELECT id, date, type, source, message from obslog'
                 query += " WHERE source IN ('environmentd', 'dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', " \
                     "'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd', " \
-                    "'iropacityd', 'gotoupsd', 'waspupsd', 'robodimmd', 'wasp_roofbatteryd')"
+                    "'iropacityd', 'gotoupsd', 'waspupsd', 'robodimmd', 'wasp_roofbatteryd', 'aircond')"
 
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
