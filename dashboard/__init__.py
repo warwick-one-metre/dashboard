@@ -237,13 +237,6 @@ def w1m_resources():
 def rasa_dashboard():
     return render_template('rasa/dashboard.html', user_account=get_user_account())
 
-@app.route('/rasa/live/')
-def rasa_live():
-    account = get_user_account()
-    if 'rasa' in account['permissions']:
-        return render_template('rasa/live.html', user_account=account)
-    abort(404)
-
 @app.route('/rasa/dome/')
 def rasa_dome():
     dashboard_mode = __parse_dashboard_mode()

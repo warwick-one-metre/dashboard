@@ -19,7 +19,6 @@
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["rasa_status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
-      <span class="list-group-item" data-index='["rasa_status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
     </div>
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
@@ -72,44 +71,12 @@
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Telescope</h5>
-      <span class="list-group-item" data-index='["rasa_telescope"]' data-generator="telStatus">Status</span>
-      <span class="list-group-item" data-index='["rasa_telescope"]' data-generator="telRADec">RA&nbsp;/&nbsp;Dec</span>
-      <span class="list-group-item" data-index='["rasa_telescope"]' data-generator="telAltAz">Alt&nbsp;/&nbsp;Az</span>
-      <span class="list-group-item" data-index='["rasa_telescope"]' data-generator="telMoonSep">Moon Sep.</span>
-      <span class="list-group-item" data-index='["rasa_focus", "channels", "1"]' data-generator="telFocus">Focus</span>
-    </div>
-  </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Camera</h5>
-      <span class="list-group-item" data-index='["rasa_cam"]' data-generator="camStatus">Status</span>
-      <span class="list-group-item" data-index='["rasa_cam"]' data-generator="camTimer">GPS</span>
-      <span class="list-group-item" data-index='["rasa_cam"]' data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-index='["rasa_cam"]' data-generator="camExposure">Exposure</span>
-      <span class="list-group-item" data-index='["rasa_cam", "window"]' data-generator="camGeometry">Geometry</span>
-    </div>
-  </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Dome</h5>
       <span class="list-group-item" data-index='["rasa_ops", "dome", "requested_open_date"]' data-generator="domeTime">Sched. Open</span>
       <span class="list-group-item" data-index='["rasa_ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
       <span class="list-group-item" data-index='["rasa_dome", "shutter_b"]' data-generator="domeShutter">N. Shutter</span>
       <span class="list-group-item" data-index='["rasa_dome", "shutter_a"]' data-generator="domeShutter">S. Shutter</span>
       <span class="list-group-item" data-index='["rasa_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
-    </div>
-  </div>
-</div>
-<div class="row dashboard-stats">
-  <div class="col-md-4 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
-      <span class="list-group-item" data-index='["rasa_ops", "telescope"]' data-generator="opsActionName">Action</span>
-      <span class="list-group-item" data-index='["rasa_ops", "telescope"]' data-generator="opsActionTask">Status</span>
-      <span class="list-group-item" data-index='["rasa_pipeline"]' data-generator="pipelineObject">Object</span>
-      <span class="list-group-item" data-index='["rasa_pipeline", "archive_directory"]' data-generator="pipelineSaveDir">Archive Dir</span>
-      <span class="list-group-item" data-index='["rasa_pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
     </div>
   </div>
   <div class="clearfix visible-sm-block visible-xs-block"></div>
