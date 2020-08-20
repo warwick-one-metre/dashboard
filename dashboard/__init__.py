@@ -483,8 +483,8 @@ def w1m_dashboard_data():
             dome_status = 1 if private_dome['closed'] else 2
 
     dome_mode = 0
-    if 'mode' in private_dome:
-        dome_mode = private_dome['mode']
+    if 'dome' in private_ops and 'mode' in private_ops['dome']:
+        dome_mode = private_ops['dome']['mode']
 
     tel_mode = 0
     if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
