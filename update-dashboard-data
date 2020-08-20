@@ -114,8 +114,9 @@ def generate_goto_json(output_path, date, environment):
         output.update(extract_environment_data(environment, {
             'goto_vaisala': [
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                'pressure', 'accumulated_rain'
+                'pressure'
             ],
+            'rain': ['unsafe_boards'],
             'goto_roomalert': ['internal_temp', 'internal_humidity'],
             'goto_ups': [
                 'main_ups_status', 'main_ups_battery_remaining', 'main_ups_battery_healthy',
@@ -144,8 +145,9 @@ def generate_rasa_json(output_path, date, environment):
         output.update(extract_environment_data(environment, {
             'goto_vaisala': [
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                'pressure', 'accumulated_rain', 'median_wind_speed'
+                'pressure', 'median_wind_speed'
             ],
+            'rain': ['unsafe_boards'],
             'rasa_internal': ['temperature', 'relative_humidity'],
             'rasa_diskspace': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
@@ -174,8 +176,9 @@ def generate_onemetre_json(output_path, date, environment):
         output.update(extract_environment_data(environment, {
             'w1m_vaisala': [
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                'pressure', 'accumulated_rain', 'median_wind_speed'
+                'pressure', 'median_wind_speed'
             ],
+            'rain': ['unsafe_boards'],
             'w1m_roomalert': [
                 'internal_humidity', 'internal_temp', 'truss_temp',
                 'security_system_safe', 'trap_closed', 'hatch_closed'

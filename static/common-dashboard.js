@@ -67,7 +67,11 @@ function fieldLimitsColor(field, value) {
 
 function envLatestMinMax(row, cell, data) {
   if ('latest' in data) {
-    var display = data['latest'].toFixed(1);
+    var precision = row.data('precision');
+    if (precision === undefined)
+      precision = 1;
+
+    var display = data['latest'].toFixed(precision);
     var units = row.data('units');
     if (units)
       display += units;
