@@ -213,7 +213,10 @@ def generate_superwasp_json(output_path, date, environment):
                 'pressure', 'median_wind_speed'
             ],
             'rain': ['unsafe_boards'],
-            'superwasp_roomalert': ['comp_room_temp', 'comp_room_humidity', 'cam_rack_temp'],
+            'superwasp_roomalert': [
+                'comp_room_temp', 'comp_room_humidity',
+                'cam_room_temp', 'cam_room_humidity',
+                'cam_rack_temp'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']

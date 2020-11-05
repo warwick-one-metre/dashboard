@@ -203,6 +203,10 @@ function powerUPS2(row, cell, data) {
   powerUPS(row, cell, data, 'ups2_status', 'ups2_battery_remaining');
 }
 
+function powerUPS3(row, cell, data) {
+  powerUPS(row, cell, data, 'ups3_status', 'ups3_battery_remaining');
+}
+
 function roofBattery(row, cell, data) {
   if (data != null) {
     var display = data.toFixed(2);
