@@ -71,7 +71,6 @@ SUPERWASP = {
     'ext_humidity': ('SWASP', 'swhumid', '#F26430'),
     'wind_speed': ('SWASP', 'swwindspeed', '#F26430'),
     'wind_direction': ('SWASP', 'swwinddir', '#F26430'),
-    'sky_temp': ('SWASP', 'swskytemp', '#F26430'),
     'dew_point_delta': ('SWASP', 'swdewdelta', '#F26430'),
 }
 
@@ -102,6 +101,12 @@ SUPERWASP_UPS = {
 SUPERWASP_ROOMALERT = {
     'comp_room_temp': ('SWComp', 'swcomptemp', '#F26430'),
     'comp_room_humidity': ('SWComp', 'swcomphumid', '#F26430'),
+}
+
+SUPERWASP_AURORA = {
+    'clarity': ('SWASP', 'swskyclarity', '#F26430'),
+    'light_intensity': ('SWASP', 'swlightintensity', '#F26430'),
+    'rain_intensity': ('SWASP', 'swrainintensity', '#F26430'),
 }
 
 NETWORK = {
@@ -160,6 +165,7 @@ def environment_json(date=None):
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
     data.update(__vaisala_json(db, 'weather_goto_dome2_internal', GOTO_DOME2_INTERNAL, None, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp_roomalert', SUPERWASP_ROOMALERT, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_superwasp_aurora', SUPERWASP_AURORA, start_str, end_str))
     data.update(__sensor_json(db, 'weather_eumetsat_opacity', EUMETSAT_OPACITY,
                               start_str, end_str, 1200))
     data.update(__sensor_json(db, 'weather_tng_seeing', TNG_SEEING, start_str, end_str))

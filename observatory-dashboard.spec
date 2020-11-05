@@ -1,8 +1,8 @@
 Name:      observatory-dashboard
-Version:   2.24.9
+Version:   2.25.1
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
-Summary:   Data pipeline server for the Warwick one-metre telescope.
+Summary:   Web dashboard for the Warwick La Palma telescopes.
 License:   GPL-3.0
 Group:     Unspecified
 BuildArch: noarch

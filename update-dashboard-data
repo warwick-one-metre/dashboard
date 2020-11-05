@@ -123,7 +123,7 @@ def generate_goto_json(output_path, date, environment):
                 'dome_ups_status', 'dome_ups_battery_remaining', 'dome_ups_battery_healthy'
             ],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp': ['sky_temp'],
+            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
@@ -151,7 +151,7 @@ def generate_rasa_json(output_path, date, environment):
             'rasa_internal': ['temperature', 'relative_humidity'],
             'rasa_diskspace': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp': ['sky_temp'],
+            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
@@ -185,7 +185,7 @@ def generate_onemetre_json(output_path, date, environment):
             ],
             'w1m_diskspace': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp': ['sky_temp'],
+            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
@@ -215,7 +215,7 @@ def generate_superwasp_json(output_path, date, environment):
             'rain': ['unsafe_boards'],
             'superwasp_roomalert': ['comp_room_temp', 'comp_room_humidity', 'cam_rack_temp'],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp': ['sky_temp'],
+            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
