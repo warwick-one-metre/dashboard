@@ -101,11 +101,18 @@ function opsHeaderEnvironment(row, cell, data) {
 }
 
 // Power generators
-function powerUPS(row, cell, data, status_field, remaining_field) {
+function powerUPS(row, cell, data, prefix) {
   status = 'ERROR';
   style = 'text-danger';
 
-  if (data && status_field in data && remaining_field in data) {
+  var status_field = prefix + '_status';
+  var remaining_field = prefix + '_battery_remaining';
+  var load_field = prefix + '_load';
+  var battery_healthy = prefix + '_battery_healthy';
+  if (battery_healthy in data && !data[battery_healthy])
+      row.addClass('list-group-item-danger');
+
+  if (data && status_field in data && remaining_field in data && load_field in data) {
     if (data[status_field] == 2) {
       status = 'ONLINE';
       style = 'text-success';
@@ -115,7 +122,7 @@ function powerUPS(row, cell, data, status_field, remaining_field) {
       style = 'text-warning';
     }
 
-    status += ' (' + data[remaining_field] + '%)';
+    status += ' (' + data[remaining_field] + '%&nbsp;/&nbsp;' + Math.round(data[load_field]) + '%)';
   }
 
   cell.html(status);
@@ -123,11 +130,11 @@ function powerUPS(row, cell, data, status_field, remaining_field) {
 }
 
 function powerMainUPS(row, cell, data) {
-  powerUPS(row, cell, data, 'main_ups_status', 'main_ups_battery_remaining');
+  powerUPS(row, cell, data, 'main_ups');
 }
 
 function powerDomeUPS(row, cell, data) {
-  powerUPS(row, cell, data, 'dome_ups_status', 'dome_ups_battery_remaining');
+  powerUPS(row, cell, data, 'dome_ups');
 }
 
 function powerInstrument(row, cell, data) {

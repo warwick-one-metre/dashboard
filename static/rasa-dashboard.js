@@ -105,17 +105,24 @@ function powerUPS(row, cell, data) {
   status = 'ERROR';
   style = 'text-danger';
 
-  if (data && 'ups_status' in data && 'ups_battery_remaining' in data) {
-    if (data['ups_status'] == 2) {
+  var status_field = 'ups_status';
+  var remaining_field = 'ups_battery_remaining';
+  var load_field = 'ups_load';
+  var battery_healthy = 'ups_battery_healthy';
+  if (battery_healthy in data && !data[battery_healthy])
+      row.addClass('list-group-item-danger');
+
+  if (data && status_field in data && remaining_field in data && load_field in data) {
+    if (data[status_field] == 2) {
       status = 'ONLINE';
       style = 'text-success';
     }
-    else if (data['ups_status'] == 3) {
+    else if (data[status_field] == 3) {
       status = 'BATTERY';
       style = 'text-warning';
     }
 
-    status += ' (' + data['ups_battery_remaining'] + '%)';
+    status += ' (' + data[remaining_field] + '%&nbsp;/&nbsp;' + Math.round(data[load_field]) + '%)';
   }
 
   cell.html(status);

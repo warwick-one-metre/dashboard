@@ -174,11 +174,18 @@ function powerCoolers(row, cell, data) {
   cell.addClass(style);
 }
 
-function powerUPS(row, cell, data, status_field, remaining_field) {
+function powerUPS(row, cell, data, prefix) {
   status = 'ERROR';
   style = 'text-danger';
 
-  if (data && status_field in data && remaining_field in data) {
+  var status_field = prefix + '_status';
+  var remaining_field = prefix + '_battery_remaining';
+  var load_field = prefix + '_load';
+  var battery_healthy = prefix + '_battery_healthy';
+  if (battery_healthy in data && !data[battery_healthy])
+      row.addClass('list-group-item-danger');
+
+  if (data && status_field in data && remaining_field in data && load_field in data) {
     if (data[status_field] == 2) {
       status = 'ONLINE';
       style = 'text-success';
@@ -188,7 +195,7 @@ function powerUPS(row, cell, data, status_field, remaining_field) {
       style = 'text-warning';
     }
 
-    status += ' (' + data[remaining_field] + '%)';
+    status += ' (' + data[remaining_field] + '%&nbsp;/&nbsp;' + Math.round(data[load_field]) + '%)';
   }
 
   cell.html(status);
@@ -196,15 +203,15 @@ function powerUPS(row, cell, data, status_field, remaining_field) {
 }
 
 function powerUPS1(row, cell, data) {
-  powerUPS(row, cell, data, 'ups1_status', 'ups1_battery_remaining');
+  powerUPS(row, cell, data, 'ups1');
 }
 
 function powerUPS2(row, cell, data) {
-  powerUPS(row, cell, data, 'ups2_status', 'ups2_battery_remaining');
+  powerUPS(row, cell, data, 'ups2');
 }
 
 function powerUPS3(row, cell, data) {
-  powerUPS(row, cell, data, 'ups3_status', 'ups3_battery_remaining');
+  powerUPS(row, cell, data, 'ups3');
 }
 
 function roofBattery(row, cell, data) {
