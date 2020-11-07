@@ -95,12 +95,15 @@ GOTO_UPS = {
 SUPERWASP_UPS = {
     'ups1_battery_remaining': ('SWASP&nbsp;UPS1', 'swasp-ups1bat', '#F26430'),
     'ups2_battery_remaining': ('SWASP&nbsp;UPS2', 'swasp-ups2bat', '#F26430'),
+    'ups3_battery_remaining': ('SWASP&nbsp;UPS3', 'swasp-ups3bat', '#F26430'),
     'roofbattery': ('SWASP Roof Battery', 'swroofbat', '#F26430'),
 }
 
 SUPERWASP_ROOMALERT = {
-    'comp_room_temp': ('SWComp', 'swcomptemp', '#F26430'),
-    'comp_room_humidity': ('SWComp', 'swcomphumid', '#F26430'),
+    'comp_room_temp': ('SWComp', 'swcomptemp', '#FF6699'),
+    'comp_room_humidity': ('SWComp', 'swcomphumid', '#FF6699'),
+    'cam_room_temp': ('SWCam', 'swcamtemp', '#F26430'),
+    'cam_room_humidity': ('SWCam', 'swcamhumid', '#F26430'),
 }
 
 SUPERWASP_AURORA = {
@@ -130,6 +133,14 @@ TNG_SEEING = {
 ROBODIMM_SEEING = {
     'seeing': ('RoboDIMM', 'roboseeing', '#FDE74C')
 }
+
+# Bodge for sources that were added to an already existing table
+CHANNEL_START_DATES = {
+  'swasp-ups3bat': datetime.datetime(2020, 11, 7, 3, 10),
+  'swcamtemp': datetime.datetime(2020, 11, 6, 17, 50),
+  'swcamhumid': datetime.datetime(2020, 11, 6, 17, 50)
+}
+
 
 def environment_json(date=None):
     """Queries the data to be rendered on the "Environment" dashboard page
@@ -268,7 +279,20 @@ def __sensor_json(db, table, channels, start, end, data_break=360):
     data = {}
     for key in channels:
         label, name, color = channels[key]
-        data[name] = __generate_plot_data(label, color, results['date'], results[key],
+
+        if name in CHANNEL_START_DATES:
+            filtered_date = []
+            filtered = []
+            channel_start = CHANNEL_START_DATES[name]
+            for d, value in zip(results['date'], results[key]):
+                if d > channel_start:
+                    filtered_date.append(d)
+                    filtered.append(value)
+        else:
+            filtered_date = results['date']
+            filtered = results[key]
+
+        data[name] = __generate_plot_data(label, color, filtered_date, filtered,
                                           data_break=data_break)
 
     return data
