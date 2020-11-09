@@ -665,3 +665,9 @@ def raw_superwasp_log():
 def raw_netping():
     data = json.load(open(GENERATED_DATA_DIR + '/netping.json'))
     return jsonify(**data)
+
+
+@app.route('/data/raw/goto-roomalert')
+def raw_goto_roomalert():
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-roomalert.json'))
+    return jsonify(**data)
