@@ -109,7 +109,7 @@ function powerUPS(row, cell, data) {
   var remaining_field = 'ups_battery_remaining';
   var load_field = 'ups_load';
   var battery_healthy = 'ups_battery_healthy';
-  if (battery_healthy in data && !data[battery_healthy])
+  if (data && battery_healthy in data && !data[battery_healthy])
       row.addClass('list-group-item-danger');
 
   if (data && status_field in data && remaining_field in data && load_field in data) {

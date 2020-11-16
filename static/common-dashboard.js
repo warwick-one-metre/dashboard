@@ -12,7 +12,7 @@ function updateGroups(data) {
 
     var fieldData = data;
     for (var i in index) {
-      fieldData = index[i] in fieldData ? fieldData[index[i]] : undefined;
+      fieldData = fieldData && index[i] in fieldData ? fieldData[index[i]] : undefined;
       if (fieldData === undefined)
         break;
     }
