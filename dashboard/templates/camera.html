@@ -15,6 +15,29 @@
         <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="5" data-slider-selection="after" data-slider-tooltip="hide">
       </div>
 {% endif %}
+{% if enable_light %}
+      <div style="position: absolute; left: 10px; bottom: 10px; text-align: center;">
+        <a id="light-button" href="#lightmodal" data-toggle="modal" data-target="#lightmodal" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='light.svg') }}" width="50"/><br /><span id="light-button-text">Light</span></a><br />
+      </div>
+      <div class="modal fade" id="lightmodal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Control Light</h4>
+            </div>
+            <div class="modal-body">
+              Be careful if the dome is open!
+            </div>
+            <div class="modal-footer">
+              <button id="enable-light-button" type="button" class="btn btn-danger" data-dismiss="modal">Light on</button>
+              <button id="disable-light-button" type="button" class="btn btn-success" data-dismiss="modal">Light off</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endif %}
 {% endif %}
     </div>
   </div>
@@ -73,6 +96,22 @@ $(document).ready(function () {
 
       videoPlaying = true;
     }
+  });
+{% endif %}
+
+{% if enable_light and not dashboard_mode %}
+  $('#enable-light-button').click(function() {
+   $.ajax({
+      type: 'GET',
+      url: '/light/{{ light }}/on',
+    });
+  });
+
+  $('#disable-light-button').click(function() {
+   $.ajax({
+      type: 'GET',
+      url: '/light/{{ light }}/off',
+    });
   });
 {% endif %}
 

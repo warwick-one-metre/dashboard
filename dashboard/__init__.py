@@ -14,7 +14,6 @@
 
 # pylint: disable=invalid-name
 
-import datetime
 import json
 import pymysql
 
@@ -28,6 +27,8 @@ from flask import send_from_directory
 from flask import session
 from flask import url_for
 from flask_github import GitHub
+
+from warwick.observatory.common import daemons
 
 from dashboard import environment_json
 
@@ -326,6 +327,27 @@ def east_camera():
 def west_camera():
     dashboard_mode = __parse_dashboard_mode()
     return render_template('west.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+
+@app.route('/light/<light>/<state>')
+def toggle_light(light, state):
+    account = get_user_account()
+    if state in ['on', 'off']:
+        if light == 'w1m' and 'w1m' in account['permissions']:
+            with daemons.onemetre_power.connect() as power:
+                power.dashboard_switch('light', state == 'on', account['username'])
+            return jsonify({})
+
+        if light == 'rasa' and 'rasa' in account['permissions']:
+            with daemons.rasa_power.connect() as power:
+                power.dashboard_switch('light', state == 'on', account['username'])
+            return jsonify({})
+
+        if (light == 'wasp1' or light == 'wasp2') and 'wasp' in account['permissions']:
+            with daemons.superwasp_power.connect() as power:
+                power.dashboard_switch('ilight' if light == 'wasp1' else 'clight', state == 'on', account['username'])
+            return jsonify({})
+
+    abort(404)
 
 # Dynamically generated JSON
 @app.route('/data/w1m/log')

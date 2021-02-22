@@ -11,7 +11,9 @@
 {% endif %}
 {% set enable_microphone = False -%}
 {% set enable_video = True %}
+{% set enable_light = user_account != None and 'wasp' in user_account['permissions'] -%}
 {% set video = 'wasp2' %}
+{% set light = 'wasp2' %}
 {% include 'camera.html' %}
 
 {% endblock %}

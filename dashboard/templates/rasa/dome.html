@@ -11,8 +11,10 @@
 {% endif %}
 {% set enable_microphone = user_account != None and 'rasa' in user_account['permissions'] -%}
 {% set enable_video = True %}
+{% set enable_light = user_account != None and 'rasa' in user_account['permissions'] -%}
 {% set video = 'rasa' %}
 {% set audio = 'rasa' %}
+{% set light = 'rasa' %}
 {% include 'camera.html' %}
 
 {% endblock %}
