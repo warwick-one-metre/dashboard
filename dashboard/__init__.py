@@ -365,7 +365,6 @@ def w1m_log():
                     query += ' AND id > ' + db.escape(request.args['from'])
 
                 query += ' ORDER BY id DESC LIMIT 250;'
-                print(query)
                 cur.execute(query)
                 messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
                 return jsonify(messages=messages)
@@ -388,7 +387,6 @@ def rasa_log():
                     query += ' AND id > ' + db.escape(request.args['from'])
 
                 query += ' ORDER BY id DESC LIMIT 250;'
-                print(query)
                 cur.execute(query)
                 messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
                 return jsonify(messages=messages)
@@ -412,7 +410,6 @@ def wasp_log():
                     query += ' AND id > ' + db.escape(request.args['from'])
 
                 query += ' ORDER BY id DESC LIMIT 250;'
-                print(query)
                 cur.execute(query)
                 messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
                 return jsonify(messages=messages)
