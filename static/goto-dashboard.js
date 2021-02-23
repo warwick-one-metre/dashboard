@@ -80,37 +80,56 @@ function conditionFlags(row, cell, data) {
 
     // Build the conditions tooltip
     var conditions = {
-        'dew_point': 'Dew&nbsp;Point',
-        'diskspace': 'Disk&nbsp;Space',
-        'hatch': 'Dome&nbsp;Hatch',
-        'humidity': 'Humidity',
-        'ice': 'Ice',
-        'internal': 'Internal',
-        'link': 'Network',
-        'rain': 'Rain',
-        'temperature': 'Temperature',
-        'ups': 'UPS&nbsp;Status',
-        'windspeed': 'Wind',
+      'windspeed': 'Wind&nbsp;Speed',
+      'windgust': 'Wind&nbsp;Gust',
+      'humidity': 'Humidity',
+      'internal': 'Internal',
+      'temperature': 'Temperature',
+      'ice': 'Ice',
+      'dew_point': 'Dew&nbsp;Point',
+      'rain': 'Rain',
+      'ups': 'UPS&nbsp;Status',
+      'diskspace': 'Disk&nbsp;Space',
+      'link': 'Network',
+      'hatch': 'Dome&nbsp;Hatch',
+      'override': 'Manual&nbsp;Override',
+      'clouds': 'Clouds',
+      'dark': 'Dark',
+      'dust': 'Dust'
     }
 
     var status_classes = ['text-success', 'text-danger']
+    var info_status_classes = ['text-success', 'text-warning']
 
     var safe = true;
-    var tooltip = '<table style="margin: 5px">';
+    var tooltip = '<table style="margin: 15px">';
+    var i = 0;
     for (var c in conditions) {
         if (!(c in data)) {
           safe = false;
           continue;
         }
 
-        if (data[c] == 1)
-          safe = false;
+        if (i++ == 0)
+          tooltip += '<tr>';
 
-        tooltip += '<tr><td style="text-align: right;">' + conditions[c] + ':</td>';
-        tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'UNSAFE') + '</td>';
-        tooltip += '</tr>';
+        tooltip += '<td style="text-align: right;">' + conditions[c] + ':</td>';
 
+        if (c == 'clouds' || c == 'dark' || c == 'dust') {
+          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'WARNING') + '</td>';
+        } else {
+          if (data[c] == 1)
+            safe = false;
+
+          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'UNSAFE') + '</td>';
+        }
+
+        if (i == 2) {
+          tooltip += '</tr>';
+          i = 0;
+        }
     }
+
     tooltip += '</table>';
 
     cell.html(safe ? 'SAFE' : 'NOT SAFE');
