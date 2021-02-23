@@ -405,7 +405,7 @@ def wasp_log():
             # If 'from' argument is present, returns latest 100 log messages with a greater id
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('wasp_leoobs')"
+                query += " WHERE source IN ('wasp_leoobs', 'wasp_powerd')"
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 
