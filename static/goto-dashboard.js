@@ -92,7 +92,7 @@ function conditionFlags(row, cell, data) {
       'diskspace': 'Disk&nbsp;Space',
       'link': 'Network',
       'hatch': 'Dome&nbsp;Hatch',
-      'override': 'Manual&nbsp;Override',
+      'override': 'Override',
       'clouds': 'Clouds',
       'dark': 'Dark',
       'dust': 'Dust'
@@ -116,7 +116,7 @@ function conditionFlags(row, cell, data) {
         tooltip += '<td style="text-align: right;">' + conditions[c] + ':</td>';
 
         if (c == 'clouds' || c == 'dark' || c == 'dust') {
-          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'WARNING') + '</td>';
+          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'WARN') + '</td>';
         } else {
           if (data[c] == 1)
             safe = false;
