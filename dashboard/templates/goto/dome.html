@@ -11,8 +11,10 @@
 {% endif %}
 {% set enable_microphone = user_account != None and 'goto' in user_account['permissions'] -%}
 {% set enable_video = True %}
+{% set enable_light = user_account != None and 'goto' in user_account['permissions'] -%}
 {% set video = 'goto' %}
 {% set audio = 'goto' %}
+{% set light = 'goto' %}
 {% include 'camera.html' %}
 
 {% endblock %}

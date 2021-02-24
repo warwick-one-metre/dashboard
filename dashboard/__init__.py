@@ -337,6 +337,10 @@ def toggle_light(light, state):
                 power.dashboard_switch('light', state == 'on', account['username'])
             return jsonify({})
 
+        if light == 'goto' and 'goto' in account['permissions']:
+            print('TODO: Toggle GOTO dome light ' + state)
+            return jsonify({})
+
         if light == 'rasa' and 'rasa' in account['permissions']:
             with daemons.rasa_power.connect() as power:
                 power.dashboard_switch('light', state == 'on', account['username'])
@@ -345,6 +349,16 @@ def toggle_light(light, state):
         if (light == 'wasp1' or light == 'wasp2') and 'wasp' in account['permissions']:
             with daemons.superwasp_power.connect() as power:
                 power.dashboard_switch('ilight' if light == 'wasp1' else 'clight', state == 'on', account['username'])
+            return jsonify({})
+
+    abort(404)
+
+@app.route('/override/<telescope>/<state>')
+def toggle_light(telescope, state):
+    account = get_user_account()
+    if state in ['on', 'off']:
+        if telescope == 'goto' and 'goto' in account['permissions']:
+            print('TODO: Toggle GOTO override flag ' + state)
             return jsonify({})
 
     abort(404)

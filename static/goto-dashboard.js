@@ -63,6 +63,18 @@ function domeEnabledSafe(row, cell, data) {
   }
 }
 
+function conditionsOverride(row, cell, data) {
+  if (data === true) {
+    cell.html('ENABLED');
+    cell.addClass('text-danger');
+    row.addClass('list-group-item-danger');
+  } else {
+    cell.html('DISABLED');
+    cell.addClass('text-success');
+    row.addClass('list-group-item-success');
+  }
+}
+
 function conditionsLockdown(row, cell, data) {
   if (data === true) {
     cell.html('ENABLED');
