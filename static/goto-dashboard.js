@@ -63,8 +63,20 @@ function domeEnabledSafe(row, cell, data) {
   }
 }
 
+function conditionsOverride(row, cell, data) {
+  if (data) {
+    cell.html('ENABLED');
+    cell.addClass('text-danger');
+    row.addClass('list-group-item-danger');
+  } else {
+    cell.html('DISABLED');
+    cell.addClass('text-success');
+    row.addClass('list-group-item-success');
+  }
+}
+
 function conditionsLockdown(row, cell, data) {
-  if (data === true) {
+  if (data) {
     cell.html('ENABLED');
     cell.addClass('text-danger');
     row.addClass('list-group-item-danger');
@@ -77,7 +89,6 @@ function conditionsLockdown(row, cell, data) {
 
 function conditionFlags(row, cell, data) {
   if (data) {
-
     // Build the conditions tooltip
     var conditions = {
       'windspeed': 'Wind&nbsp;Speed',

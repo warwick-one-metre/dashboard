@@ -329,12 +329,17 @@ def west_camera():
     return render_template('west.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 @app.route('/light/<light>/<state>')
-def toggle_light(light, state):
+def switch_light(light, state):
     account = get_user_account()
     if state in ['on', 'off']:
         if light == 'w1m' and 'w1m' in account['permissions']:
             with daemons.onemetre_power.connect() as power:
                 power.dashboard_switch('light', state == 'on', account['username'])
+            return jsonify({})
+
+        if light == 'goto' and 'goto' in account['permissions']:
+            with daemons.goto_gtecs_power.connect() as power:
+                power.dashboard_switch('leds', state == 'on', account['username'])
             return jsonify({})
 
         if light == 'rasa' and 'rasa' in account['permissions']:
@@ -345,6 +350,17 @@ def toggle_light(light, state):
         if (light == 'wasp1' or light == 'wasp2') and 'wasp' in account['permissions']:
             with daemons.superwasp_power.connect() as power:
                 power.dashboard_switch('ilight' if light == 'wasp1' else 'clight', state == 'on', account['username'])
+            return jsonify({})
+
+    abort(404)
+
+@app.route('/override/<telescope>/<state>')
+def set_override(telescope, state):
+    account = get_user_account()
+    if state in ['on', 'off']:
+        if telescope == 'goto' and 'goto' in account['permissions']:
+            with daemons.goto_gtecs_conditions.connect() as conditions:
+                conditions.dashboard_override(state == 'on', account['username'])
             return jsonify({})
 
     abort(404)

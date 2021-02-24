@@ -9,6 +9,30 @@
   </div>
 </div>
 
+{% if user_account != None and 'goto' in user_account['permissions'] %}
+<div class="modal fade" id="conditionsmodal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Set Conditions Override</h4>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to change the conditions override flag?<br />
+        This may cause the dome to immediately open or close.<br />
+        <br />
+        It may take up to 30 seconds for the status on the dashboard to update.
+      </div>
+      <div class="modal-footer">
+        <button id="disable-override-button" type="button" class="btn btn-success" data-dismiss="modal">Allow Observing</button>
+        <button id="enable-override-button" type="button" class="btn btn-warning" data-dismiss="modal">Prevent Observing</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
@@ -17,6 +41,11 @@
     </div>
   </div>
   <div class="col-md-4 col-sm-6 col-xs-12">
+{% if user_account != None and 'goto' in user_account['permissions'] %}
+    <div class="list-group">
+      <a id="conditions-override" class="list-group-item" data-index='["goto_conditions", "flags", "override"]' data-generator="conditionsOverride" href="#conditionsmodal" data-toggle="modal" data-target="#conditionsmodal">Override</a>
+    </div>
+{% endif %}
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -169,6 +198,23 @@
 <script>
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
+
+{% if user_account != None and 'goto' in user_account['permissions'] %}
+    $('#disable-override-button').click(function() {
+     $.ajax({
+        type: 'GET',
+        url: '/override/goto/off',
+      });
+    });
+
+    $('#enable-override-button').click(function() {
+     $.ajax({
+        type: 'GET',
+        url: '/override/goto/on',
+      });
+    });
+{% endif %}
+
     pollDashboard('/data/goto/');
   });
 </script>
