@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   2.32.0
+Version:   20210619
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Web dashboard for the Warwick La Palma telescopes.
@@ -29,8 +29,8 @@ mkdir -p %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/update-dashboard-data.service %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/update-dashboard-data.timer %{buildroot}%{_unitdir}
 
-%{__install} %{_sourcedir}/fetch-nites-webcam.service %{buildroot}%{_unitdir}
-%{__install} %{_sourcedir}/fetch-nites-webcam.timer %{buildroot}%{_unitdir}
+%{__install} %{_sourcedir}/fetch-clasp-webcam.service %{buildroot}%{_unitdir}
+%{__install} %{_sourcedir}/fetch-clasp-webcam.timer %{buildroot}%{_unitdir}
 
 mkdir -p %{buildroot}/etc/nginx/conf.d/
 %{__install} %{_sourcedir}/dashboard.conf %{buildroot}/etc/nginx/conf.d/dashboard.conf
@@ -38,17 +38,17 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 %post
 %systemd_post dashboard.service
 %systemd_post update-dashboard-data.service
-%systemd_post fetch-nites-webcam.service
+%systemd_post fetch-clasp-webcam.service
 
 %preun
 %systemd_preun dashboard.service
 %systemd_preun update-dashboard-data.service
-%systemd_preun fetch-nites-webcam.service
+%systemd_preun fetch-clasp-webcam.service
 
 %postun
 %systemd_postun_with_restart dashboard.service
 %systemd_postun_with_restart update-dashboard-data.service
-%systemd_postun_with_restart fetch-nites-webcam.service
+%systemd_postun_with_restart fetch-clasp-webcam.service
 
 %files
 %defattr(0744,nginx,nginx,0755)
@@ -61,8 +61,8 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 %{_unitdir}/dashboard.service
 %{_unitdir}/update-dashboard-data.service
 %{_unitdir}/update-dashboard-data.timer
-%{_unitdir}/fetch-nites-webcam.service
-%{_unitdir}/fetch-nites-webcam.timer
+%{_unitdir}/fetch-clasp-webcam.service
+%{_unitdir}/fetch-clasp-webcam.timer
 /etc/nginx/conf.d/dashboard.conf
 
 %{_bindir}/update-dashboard-data

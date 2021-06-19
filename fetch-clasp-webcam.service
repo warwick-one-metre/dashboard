@@ -1,0 +1,9 @@
+[Unit]
+Description=Polls CLASP webcam to update image for the observatory dashboard
+Wants=fetch-clasp-webcam.timer
+
+[Service]
+User=nfsnobody
+Group=nfsnobody
+ExecStart=/usr/bin/curl --digest -u dashboard:dashboard1234 http://10.2.6.183/cgi-bin/snapshot.cgi -o /srv/dashboard/generated/webcam-clasp.jpg
+

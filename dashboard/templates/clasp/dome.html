@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'NITES &raquo; Dome Camera' -%}
-{% set active_page = 'nites-dome' -%}
+{% set title = 'CLASP &raquo; Dome Camera' -%}
+{% set active_page = 'clasp-dome' -%}
 {% block body %}
 {% if not dashboard_mode %}
 <div class="dashhead m-b">
@@ -9,10 +9,10 @@
   </div>
 </div>
 {% endif %}
-{% set enable_microphone = user_account != None and 'nites' in user_account['permissions'] -%}
+{% set enable_microphone = user_account != None and 'satellites' in user_account['permissions'] -%}
 {% set enable_video = False %}
-{% set video = 'nites' %}
-{% set audio = 'nites' %}
+{% set video = 'clasp' %}
+{% set audio = 'clasp' %}
 {% include 'camera.html' %}
 
 {% endblock %}

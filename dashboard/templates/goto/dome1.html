@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% set title = 'GOTO &raquo; Dome 1 Camera' -%}
+{% set active_page = 'goto-dome-1' -%}
+{% block body %}
+{% if not dashboard_mode %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+{% endif %}
+{% set enable_microphone = user_account != None and 'goto' in user_account['permissions'] -%}
+{% set enable_video = True %}
+{% set enable_light = user_account != None and 'goto' in user_account['permissions'] -%}
+{% set video = 'goto1' %}
+{% set audio = 'goto1' %}
+{% set light = 'goto1' %}
+{% include 'camera.html' %}
+
+{% endblock %}

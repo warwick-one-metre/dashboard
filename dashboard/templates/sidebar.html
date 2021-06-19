@@ -12,10 +12,6 @@
     (url_for('w1m_live'), 'w1m-live', 'Live Data', 'icon-stopwatch', 'w1m'),
     (url_for('w1m_resources'), 'w1m-resources', 'Resources', 'icon-info', 'w1m')
   ]),
-  ('RASA', [
-    (url_for('rasa_dashboard'), 'rasa-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('rasa_dome'), 'rasa-dome', 'Dome Camera', 'icon-video-camera', None)
-  ]),
   ('SuperWASP', [
     (url_for('wasp_dashboard'), 'wasp-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('wasp_live'), 'wasp-live', 'Live Data', 'icon-stopwatch', 'wasp'),
@@ -24,10 +20,11 @@
   ]),
   ('GOTO', [
     (url_for('goto_dashboard'), 'goto-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('goto_dome'), 'goto-dome', 'Dome Camera', 'icon-video-camera', None),
+    (url_for('goto_dome_1'), 'goto-dome-1', 'Dome 1 Camera', 'icon-video-camera', None),
+    (url_for('goto_dome_2'), 'goto-dome-2', 'Dome 2 Camera', 'icon-video-camera', None),
     (url_for('goto_resources'), 'goto-resources', 'Resources', 'icon-info', 'goto')
   ]),
-  ('NITES', [(url_for('nites_dome'), 'nites-dome', 'Dome Camera', 'icon-video-camera', None)]),
+  ('CLASP', [(url_for('clasp_dome'), 'clasp-dome', 'Dome Camera', 'icon-video-camera', None)]),
 ] %}
 
 <nav class="sidebar-nav">
@@ -67,11 +64,8 @@
         {% if 'goto' in user_account['permissions'] %}
           <li>GOTO observer</li>
         {% endif %}
-        {% if 'nites' in user_account['permissions'] %}
-          <li>NITES observer</li>
-        {% endif %}
-        {% if 'rasa' in user_account['permissions'] %}
-          <li>RASA observer</li>
+        {% if 'satellites' in user_account['permissions'] %}
+          <li>Satellites observer</li>
         {% endif %}
       {% else %}
         <li>No Permissions</li>

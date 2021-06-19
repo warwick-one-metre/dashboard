@@ -70,7 +70,7 @@
     </div>
   </div>
 </div>
-{% if user_account != None and 'wasp' in user_account['permissions'] %}
+{% if user_account != None and 'satellites' in user_account['permissions'] %}
 <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
@@ -110,7 +110,7 @@
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
     pollDashboard('/data/wasp');
-{% if user_account != None and 'wasp' in user_account['permissions'] %}
+{% if user_account != None and 'satellites' in user_account['permissions'] %}
     pollLog('{{ url_for('wasp_log') }}');
 {% endif %}
   });
