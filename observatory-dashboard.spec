@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   20210619
+Version:   20210712
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Web dashboard for the Warwick La Palma telescopes.

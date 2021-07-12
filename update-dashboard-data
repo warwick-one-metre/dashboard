@@ -138,37 +138,6 @@ def generate_goto_json(output_path, date, environment):
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
 
 
-def generate_rasa_json(output_path, date, environment):
-    """Queries daemons to generate the public data for the RASA dashboard page"""
-    output = {'date': date}
-    if environment:
-        output.update(extract_environment_data(environment, {
-            'goto_vaisala': [
-                'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
-                'pressure', 'median_wind_speed'
-            ],
-            'rain': ['unsafe_boards'],
-            'rasa_internal': ['temperature', 'relative_humidity'],
-            'rasa_diskspace': ['data_fs_available_bytes'],
-            'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp_aurora': ['clarity'],
-            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
-        }))
-
-    output['rasa_power'] = query_daemon(daemons.rasa_power, 'rasa_power',
-                                        lambda d: d.last_measurement())
-
-    try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
-
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
-
-
 def generate_onemetre_json(output_path, date, environment):
     """Queries daemons to generate the public data for the W1m dashboard page"""
     output = {'date': date}
@@ -254,14 +223,6 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
     (daemons.onemetre_red_camera, 'w1m_red', lambda d: d.report_status())
 ])
 
-# RASA dashboard pages
-generate_rasa_json(BASE_OUTPUT_DIR + '/rasa-public.json', date, environment)
-
-generate_json(BASE_OUTPUT_DIR + '/rasa-private.json', [
-    (daemons.rasa_operations, 'rasa_ops', lambda d: d.status()),
-    (daemons.rasa_dome, 'rasa_dome', lambda d: d.status()),
-])
-
 # GOTO dashboard pages
 generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json', date, environment)
 
@@ -280,10 +241,6 @@ generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
 # SuperWASP dashboard pages
 generate_superwasp_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
 
-generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
-    (daemons.superwasp_leo_observer, 'wasp_leoobs', lambda d: {'leoobs': d.status()})
-])
-
 # Raw data for GOTO operations
 generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
     (daemons.onemetre_vaisala, 'vaisala', lambda d: d.last_measurement())
@@ -293,14 +250,18 @@ generate_json(BASE_OUTPUT_DIR + '/goto-vaisala.json', [
     (daemons.goto_vaisala, 'goto-vaisala', lambda d: d.last_measurement())
 ])
 
-generate_json(BASE_OUTPUT_DIR + '/superwasp-log.json', [
-    (daemons.superwasp_log, 'superwasp', lambda d: d.last_measurement())
-])
-
 generate_json(BASE_OUTPUT_DIR + '/netping.json', [
     (daemons.observatory_network_ping, 'netping', lambda d: d.last_measurement())
 ])
 
-generate_json(BASE_OUTPUT_DIR + '/goto-roomalert.json', [
-    (daemons.goto_roomalert, 'goto-roomalert', lambda d: d.last_measurement())
+generate_json(BASE_OUTPUT_DIR + '/goto-dome1-roomalert.json', [
+    (daemons.goto_dome1_roomalert, 'goto-dome1-roomalert', lambda d: d.last_measurement())
+])
+
+generate_json(BASE_OUTPUT_DIR + '/goto-dome2-roomalert.json', [
+    (daemons.goto_dome2_roomalert, 'goto-dome2-roomalert', lambda d: d.last_measurement())
+])
+
+generate_json(BASE_OUTPUT_DIR + '/goto-dome2-sht35.json', [
+    (daemons.goto_dome2_sht35, 'goto-dome2-sht35', lambda d: d.last_measurement())
 ])

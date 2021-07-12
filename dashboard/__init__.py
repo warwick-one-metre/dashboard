@@ -619,7 +619,19 @@ def raw_netping():
     return jsonify(**data)
 
 
-@app.route('/data/raw/goto-roomalert')
-def raw_goto_roomalert():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-roomalert.json'))
+@app.route('/data/raw/goto-dome1-roomalert')
+def raw_goto_dome1_roomalert():
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-dome1-roomalert.json'))
+    return jsonify(**data)
+
+
+@app.route('/data/raw/goto-dome2-roomalert')
+def raw_goto_dome2_roomalert():
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-dome2-roomalert.json'))
+    return jsonify(**data)
+
+
+@app.route('/data/raw/goto-dome2-sht35')
+def raw_goto_dome2_sht35():
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-dome2-sht35.json'))
     return jsonify(**data)
