@@ -41,9 +41,9 @@ DATABASE_USER = 'ops'
 GENERATED_DATA_DIR = '/srv/dashboard/generated'
 W1M_GENERATED_DATA = {
     'blue': 'dashboard-BLUE.json',
-    'blue/image': 'dashboard-BLUE-thumb.png',
+    'blue/image': 'dashboard-BLUE-thumb.jpg',
     'red': 'dashboard-RED.json',
-    'red/image': 'dashboard-RED-thumb.png',
+    'red/image': 'dashboard-RED-thumb.jpg',
 }
 
 WASP_GENERATED_DATA = {

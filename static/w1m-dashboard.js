@@ -278,15 +278,15 @@ function telStatus(row, cell, data) {
 }
 
 function telRA(row, cell, data) {
-  cell.html(sexagesimal(data * 12 / Math.PI));
+  cell.html(sexagesimal(data / 15));
 }
 
 function telDec(row, cell, data) {
-  cell.html(sexagesimal(data * 180 / Math.PI));
+  cell.html(sexagesimal(data));
 }
 
 function telAlt(row, cell, data) {
-  cell.html((data * 180 / Math.PI).toFixed(1) + '&deg;');
+  cell.html(data.toFixed(1) + '&deg;');
 }
 
 function telFocus(row, cell, data) {

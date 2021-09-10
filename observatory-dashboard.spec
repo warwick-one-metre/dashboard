@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   20210712
+Version:   20210911
 Release:   0
 Url:       https://github.com/warwick-one-metre/pipelined
 Summary:   Web dashboard for the Warwick La Palma telescopes.
@@ -11,7 +11,6 @@ Requires: observatory-log-server, observatory-weather-database-updater
 Requires: python3, python3-flask, python3-github-flask, python3-pymysql, python3-warwick-observatory-common
 
 %description
-Part of the observatory software for the Warwick La Palma telescopes.
 
 %build
 
