@@ -117,10 +117,13 @@ def generate_goto_json(output_path, date, environment):
                 'pressure'
             ],
             'rain': ['unsafe_boards'],
-            'goto_roomalert': ['internal_temp', 'internal_humidity'],
+            'goto_dome1_roomalert': ['internal_temp', 'internal_humidity'],
+            'goto_dome2_roomalert': ['internal_temp', 'internal_humidity', 'hatch_closed'],
             'goto_ups': [
-                'main_ups_status', 'main_ups_battery_remaining', 'main_ups_battery_healthy',
-                'dome_ups_status', 'dome_ups_battery_remaining', 'dome_ups_battery_healthy'
+                'dome1_upper_ups_status', 'dome1_upper_ups_battery_remaining', 'dome1_upper_ups_battery_healthy',
+                'dome1_lower_ups_status', 'dome1_lower_ups_battery_remaining', 'dome1_lower_ups_battery_healthy',
+                'dome2_upper_ups_status', 'dome2_upper_ups_battery_remaining', 'dome2_upper_ups_battery_healthy',
+                'dome2_lower_ups_status', 'dome2_lower_ups_battery_remaining', 'dome2_lower_ups_battery_healthy',
             ],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp_aurora': ['clarity'],
@@ -227,15 +230,15 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
 generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json', date, environment)
 
 generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
-    (daemons.goto_gtecs_power, 'goto_power', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_mnt, 'goto_mnt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_dome, 'goto_dome', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_filt, 'goto_filt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_foc, 'goto_foc', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_cam, 'goto_cam', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_exq, 'goto_exq', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_ota, 'goto_ota', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_conditions, 'goto_conditions', lambda d: d.get_info(force_update=False))
+    (daemons.goto_gtecs_power, 'goto_dome1_power', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_mnt, 'goto_dome1_mnt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_dome, 'goto_dome1_dome', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_filt, 'goto_dome1_filt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_foc, 'goto_dome1_foc', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_cam, 'goto_dome1_cam', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_exq, 'goto_dome1_exq', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_ota, 'goto_dome1_ota', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_gtecs_conditions, 'goto_dome1_conditions', lambda d: d.get_info(force_update=False))
 ])
 
 # SuperWASP dashboard pages

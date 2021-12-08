@@ -233,8 +233,8 @@ function hatchOpenClosed(row, cell, data) {
 }
 
 function ledsOnOff(row, cell, data) {
-  if (data && 'status_PDU1' in data && 'leds1' in data['status_PDU1'] && 'status_PDU2' in data && 'leds2' in data['status_PDU2']) {
-    if (data['status_PDU1']['leds1'] == 'On' || data['status_PDU2']['leds2'] == 'On') {
+  if (data && 'status_PDU1' in data && 'leds2' in data['status_PDU1'] && 'status_PDU2' in data && 'leds1' in data['status_PDU2']) {
+    if (data['status_PDU1']['leds2'] == 'On' || data['status_PDU2']['leds1'] == 'On') {
       cell.html('POWER ON');
       cell.addClass('text-danger');
     } else {
@@ -299,35 +299,89 @@ function camRunNumber(row, cell, data) {
   cell.html(run_number);
 }
 
+function getData(data, index) {
+  for (var i in index) {
+    data = data && index[i] in data ? data[index[i]] : undefined;
+    if (data === undefined)
+      break;
+  }
+
+  return data;
+}
+
 function camStatus(row, cell, data) {
-  status = data.toUpperCase();
-  if (status == 'EXPOSING')
-    style = 'text-success';
-  else if (status == 'READING')
-    style = 'text-warning';
+  var dome_number = row.data('dome');
+  var power_side = row.data('power');
+  var cam_number = row.data('cam');
+
+  power_status = getData(data, ["goto_dome" + dome_number + "_power", "status_" + power_side, "cam" + cam_number]);
+  cam_status = getData(data, ["goto_dome" + dome_number + "_cam", cam_number.toString(), "status"]);
+
+  if (power_status === undefined || (power_status != "off" && cam_status === undefined)) {
+    status = 'ERROR';
+    style = 'text-danger';
+  } else if (power_status == "off") {
+    status = 'OFFLINE';
+    style = 'text-danger';
+  } else {
+    status = cam_status.toUpperCase();
+    style = '';
+    if (status == 'EXPOSING')
+      style = 'text-success';
+    else if (status == 'READING')
+      style = 'text-warning';
+  }
 
   cell.html(status);
   cell.addClass(style);
 }
 
 function camTemp(row, cell, data) {
-  cell.html(data.toFixed(0) + '&deg;C');
+  var dome_number = row.data('dome');
+  var power_side = row.data('power');
+  var cam_number = row.data('cam');
+  power_status = getData(data, ["goto_dome" + dome_number + "_power", "status_" + power_side, "cam" + cam_number]);
+  cam_temp = getData(data, ["goto_dome" + dome_number + "_cam", cam_number.toString(), "ccd_temp"]);
+
+  style = '';
+  if (power_status === undefined || (power_status != "off" && cam_status === undefined)) {
+    temp = 'ERROR';
+    style = 'text-danger';
+  } else if (power_status == "off") {
+    temp = 'N/A';
+  } else {
+    temp = cam_temp.toFixed(0) + '&deg;C';
+  }
+
+  cell.html(temp);
+  cell.addClass(style);
 }
 
-function telFilt(row, cell, data, index) {
-  status = 'ERROR';
-  style = 'text-danger';
-  filters = ['L', 'R', 'G', 'B'];
-  if (data && 'current_filter_num' in data && data['current_filter_num'] < 4) {
-    if (data['homed']) {
-      status = filters[data['current_filter_num']];
-      style = '';
-    } else if (data['status'] == 'Moving') {
-      status = 'MOVING';
-      style = 'text-warning';
-    } else {
-      status = 'NOT HOMED';
-      style = 'text-warning';
+function telFilt(row, cell, data) {
+  var dome_number = row.data('dome');
+  var power_side = row.data('power');
+  var filt_number = row.data('filt');
+
+  power_status = getData(data, ["goto_dome" + dome_number + "_power", "status_" + power_side, "filt" + filt_number]);
+  filt_data = getData(data, ["goto_dome" + dome_number + "_filt", filt_number.toString()]);
+  if (power_status == "off") {
+    status = 'OFFLINE';
+    style = 'text-danger';
+  } else {
+    status = 'ERROR';
+    style = 'text-danger';
+    filters = ['L', 'R', 'G', 'B'];
+    if (filt_data && 'current_filter_num' in filt_data && filt_data['current_filter_num'] < 4) {
+      if (data['homed']) {
+        status = filters[filt_data['current_filter_num']];
+        style = '';
+      } else if (filt_data['status'] == 'Moving') {
+        status = 'MOVING';
+        style = 'text-warning';
+      } else {
+        status = 'NOT HOMED';
+        style = 'text-warning';
+      }
     }
   }
 
@@ -336,9 +390,18 @@ function telFilt(row, cell, data, index) {
 }
 
 function telFoc(row, cell, data, index) {
+  var dome_number = row.data('dome');
+  var foc_number = row.data('foc');
+  power_status = getData(data, ["goto_dome" + dome_number + "_power", "status_MOUNT", "asa_gateways"]);
+  data = getData(data, ["goto_dome" + dome_number + "_foc", foc_number.toString()]);
+
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'current_pos' in data) {
+
+  if (power_status == "off") {
+    status = 'OFFLINE';
+    style = 'text-danger';
+  } else if (data && 'current_pos' in data) {
     if (data['status'] == 'Moving') {
       status = 'MOVING';
       style = 'text-warning';
@@ -353,14 +416,23 @@ function telFoc(row, cell, data, index) {
 }
 
 function telCovers(row, cell, data, index) {
+  var dome_number = row.data('dome');
+  var cover_number = row.data('cover');
+  power_status = getData(data, ["goto_dome" + dome_number + "_power", "status_MOUNT", "asa_gateways"]);
+  data = getData(data, ["goto_dome" + dome_number + "_ota", cover_number.toString()]);
+
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'position' in data) {
+
+  if (power_status == "off") {
+    status = 'OFFLINE';
+    style = 'text-danger';
+  } else if (data && 'position' in data) {
     if (data['position'] == 'full_open') {
       status = 'OPEN';
       style = 'text-success';
     } else if (data['position'] == 'part_open') {
-      status = 'MOVING';
+      status = 'PART OPEN';
       style = 'text-warning';
     } else if (data['position'] == 'closed') {
       status = 'CLOSED';
