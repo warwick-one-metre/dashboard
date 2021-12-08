@@ -57,13 +57,13 @@ GOTO_VAISALA = {
 }
 
 GOTO_ROOMALERT = {
-    'internal_temp': ('GOTO', 'ginttemp', '#22cc44'),
-    'internal_humidity': ('GOTO', 'ginthumid', '#22cc44'),
+    'internal_temp': ('GOTO 1', 'ginttemp', '#22cc44'),
+    'internal_humidity': ('GOTO 1', 'ginthumid', '#22cc44'),
 }
 
-GOTO_DOME2_INTERNAL = {
-    'temperature': ('RASA', 'rinttemp', '#FDE74C'),
-    'relative_humidity': ('RASA', 'rinthumid', '#FDE74C')
+GOTO_DOME2_ROOMALERT = {
+    'internal_temp': ('GOTO 2', 'g2inttemp', '#FDE74C'),
+    'internal_humidity': ('GOTO 2', 'g2inthumid', '#FDE74C')
 }
 
 SUPERWASP = {
@@ -170,7 +170,7 @@ def environment_json(date=None):
     data.update(__vaisala_json(db, 'weather_goto_vaisala', GOTO_VAISALA, 'gwindrange', start_str, end_str,
                                wind_range_offset=30000))
     data.update(__sensor_json(db, 'weather_goto_roomalert', GOTO_ROOMALERT, start_str, end_str))
-    data.update(__vaisala_json(db, 'weather_goto_dome2_internal', GOTO_DOME2_INTERNAL, None, start_str, end_str))
+    data.update(__sensor_json(db, 'weather_goto_dome2_roomalert', GOTO_DOME2_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp_roomalert', SUPERWASP_ROOMALERT, start_str, end_str))
     data.update(__sensor_json(db, 'weather_superwasp_aurora', SUPERWASP_AURORA, start_str, end_str))
     data.update(__sensor_json(db, 'weather_tng_seeing', TNG_SEEING, start_str, end_str))
