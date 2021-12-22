@@ -88,9 +88,9 @@ function conditionsLockdown(row, cell, data) {
 }
 
 function conditionFlags(row, cell, data) {
-  if (data) {
+  if (data && 'flags' in data && 'critical_flags' in data) {
     // Build the conditions tooltip
-    var conditions = {
+    var labels = {
       'windspeed': 'Wind&nbsp;Speed',
       'windgust': 'Wind&nbsp;Gust',
       'humidity': 'Humidity',
@@ -115,24 +115,18 @@ function conditionFlags(row, cell, data) {
     var safe = true;
     var tooltip = '<table style="margin: 15px">';
     var i = 0;
-    for (var c in conditions) {
-        if (!(c in data)) {
-          safe = false;
-          continue;
-        }
-
+    for (var c in data['flags']) {
         if (i++ == 0)
           tooltip += '<tr>';
 
-        tooltip += '<td style="text-align: right;">' + conditions[c] + ':</td>';
-
-        if (c == 'clouds' || c == 'dark' || c == 'dust') {
-          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'WARN') + '</td>';
-        } else {
-          if (data[c] == 1)
+        tooltip += '<td style="text-align: right;">' + (c in labels ? labels[c] : c) + ':</td>';
+        if (c in data['critical_flags']) {
+          if (data['flags'][c] == 1)
             safe = false;
 
-          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data[c]] + '">' + (data[c] == 0 ? 'SAFE' : 'UNSAFE') + '</td>';
+          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data['flags'][c]] + '">' + (data['flags'][c] == 0 ? 'SAFE' : 'UNSAFE') + '</td>';
+        } else {
+          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data['flags'][c]] + '">' + (data['flags'][c] == 0 ? 'SAFE' : 'WARN') + '</td>';
         }
 
         if (i == 2) {
@@ -271,18 +265,23 @@ function telAltAz(row, cell, data) {
 }
 
 function exqCamExposure(row, cell, data) {
+  var dome_number = row.data('dome');
+
   status = 'ERROR';
   style = 'text-danger';
-  if (data && 'goto_exq' in data && 'current_imgtype' in data['goto_exq']) {
-    status = data['goto_exq']['current_imgtype'].toUpperCase();
+  exq_data = getData(data, ["goto_dome" + dome_number + "_exq"]);
+  cam_data = getData(data, ["goto_dome" + dome_number + "_cam"]);
+
+  if (exq_data && 'current_imgtype' in exq_data) {
+    status = exq_data['current_imgtype'].toUpperCase();
     style = ''
 
-    if (data && 'goto_exq' in data && 'current_exptime' in data['goto_exq'])
-        status += ' (' + data['goto_exq']['current_exptime'] + 's)';
+    if ('current_exptime' in exq_data)
+        status += ' (' + exq_data['current_exptime'] + 's)';
 
-    if (data && 'goto_cam' in data && 'current_exposure' in data['goto_cam'] &&
-        'set_pos' in data['goto_cam']['current_exposure'] && 'set_total' in data['goto_cam']['current_exposure']) {
-      status += ' &ndash; ' + data['goto_cam']['current_exposure']['set_pos'] + ' / ' + data['goto_cam']['current_exposure']['set_total'];
+    if (cam_data && 'current_exposure' in cam_data &&
+        'set_pos' in cam_data['current_exposure'] && 'set_total' in cam_data['current_exposure']) {
+      status += ' &ndash; ' + cam_data['current_exposure']['set_pos'] + ' / ' + cam_data['current_exposure']['set_total'];
     }
   } else {
     status = 'NONE';

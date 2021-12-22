@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'GOTO &raquo; Dashboard' -%}
-{% set active_page = 'goto-dashboard' -%}
+{% set title = 'GOTO Dome 1 &raquo; Dashboard' -%}
+{% set active_page = 'goto1-dashboard' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
@@ -50,7 +50,7 @@
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["goto_dome1_dome", "lockdown"]' data-generator="conditionsLockdown">Lockdown</span>
-      <span class="list-group-item" data-index='["goto_dome1_conditions", "flags"]' data-generator="conditionFlags" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+      <span class="list-group-item" data-index='["goto_dome1_conditions"]' data-generator="conditionFlags" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
@@ -167,7 +167,7 @@
       <span class="list-group-item" data-index='["goto_dome1_mnt", "status"]' data-generator="telStatus">Mount</span>
       <span class="list-group-item" data-index='["goto_dome1_mnt"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["goto_dome1_mnt"]' data-generator="telAltAz">Alt / Az</span>
-      <span class="list-group-item" data-index='[]' data-generator="exqCamExposure">Exposure</span>
+      <span class="list-group-item" data-index='[]' data-dome="1" data-generator="exqCamExposure">Exposure</span>
       <span class="list-group-item" data-index='["goto_dome1_cam", "latest_run_number"]' data-generator="camRunNumber">Run Number</span>
     </div>
   </div>
@@ -203,19 +203,19 @@
     $('#disable-override-button').click(function() {
      $.ajax({
         type: 'GET',
-        url: '/override/goto/off',
+        url: '/override/goto1/off',
       });
     });
 
     $('#enable-override-button').click(function() {
      $.ajax({
         type: 'GET',
-        url: '/override/goto/on',
+        url: '/override/goto1/on',
       });
     });
 {% endif %}
 
-    pollDashboard('/data/goto/');
+    pollDashboard('/data/goto1/');
   });
 </script>
 {% endblock %}

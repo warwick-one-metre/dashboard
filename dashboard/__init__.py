@@ -274,30 +274,36 @@ def wasp_generated_data(path):
     abort(404)
 
 
-@app.route('/goto/')
-def goto_dashboard():
+@app.route('/goto1/')
+def goto1_dashboard():
     dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    return render_template('goto1/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
-@app.route('/goto/dome1/')
-def goto_dome_1():
+@app.route('/goto1/dome/')
+def goto1_dome():
     dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto/dome1.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    return render_template('goto1/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
-@app.route('/goto/dome2/')
-def goto_dome_2():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto/dome2.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/goto/resources/')
-def goto_resources():
+@app.route('/goto1/resources/')
+def goto1_resources():
     account = get_user_account()
     if 'goto' in account['permissions']:
-        return render_template('goto/resources.html', user_account=account)
+        return render_template('goto1/resources.html', user_account=account)
     abort(404)
+
+
+@app.route('/goto2/')
+def goto2_dashboard():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('goto2/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+
+
+@app.route('/goto2/dome/')
+def goto2_dome():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('goto2/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
 @app.route('/environment/')
@@ -352,7 +358,12 @@ def switch_light(light, state):
             return jsonify({})
 
         if light == 'goto1' and 'goto' in account['permissions']:
-            with daemons.goto_gtecs_power.connect() as power:
+            with daemons.goto_dome1_gtecs_power.connect() as power:
+                power.dashboard_switch('leds', state == 'on', account['username'])
+            return jsonify({})
+
+        if light == 'goto2' and 'goto' in account['permissions']:
+            with daemons.goto_dome2_gtecs_power.connect() as power:
                 power.dashboard_switch('leds', state == 'on', account['username'])
             return jsonify({})
 
@@ -368,8 +379,13 @@ def switch_light(light, state):
 def set_override(telescope, state):
     account = get_user_account()
     if state in ['on', 'off']:
-        if telescope == 'goto' and 'goto' in account['permissions']:
-            with daemons.goto_gtecs_conditions.connect() as conditions:
+        if telescope in ['goto1', 'goto2'] and 'goto' in account['permissions']:
+            if telescope == 'goto1':
+                daemon = daemons.goto_dome1_gtecs_conditions
+            else:
+                daemon = daemons.goto_dome2_gtecs_conditions
+
+            with daemon.connect() as conditions:
                 conditions.dashboard_override(state == 'on', account['username'])
             return jsonify({})
 
@@ -538,12 +554,12 @@ def w1m_generated_data(path):
     abort(404)
 
 
-@app.route('/data/goto/')
-def goto_dashboard_data():
+@app.route('/data/goto1/')
+def goto1_dashboard_data():
     data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
 
     # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/goto-private.json'))
+    private = json.load(open(GENERATED_DATA_DIR + '/goto-dome1-private.json'))
 
     account = get_user_account()
     if 'goto' in account['permissions']:
@@ -568,7 +584,39 @@ def goto_dashboard_data():
             'status_PDU2': {
                 'leds1': private['goto_dome1_power']['status_PDU2']['leds1'],
             }
-	}
+        }
+
+    return jsonify(**data)
+
+
+@app.route('/data/goto2/')
+def goto2_dashboard_data():
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
+
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/goto-dome2-private.json'))
+
+    account = get_user_account()
+    if 'goto' in account['permissions']:
+        data.update(private)
+    else:
+        data['goto_dome2_conditions'] = private['goto_dome2_conditions']
+
+        data['goto_dome2_dome'] = {
+            'mode': private['goto_dome2_dome']['mode'],
+            'dome': private['goto_dome2_dome']['dome'],
+            'lockdown': private['goto_dome2_dome']['lockdown'],
+            'dehumidifier_on': private['goto_dome2_dome']['dehumidifier_on'],
+            'hatch': private['goto_dome2_dome']['hatch']
+        }
+
+        data['goto_dome2_power'] = {
+            'status_UPS1': private['goto_dome2_power']['status_UPS1'],
+            'status_UPS2': private['goto_dome2_power']['status_UPS2'],
+            'status_PDU1': {
+                'leds': private['goto_dome2_power']['status_PDU1']['leds'],
+            }
+        }
 
     return jsonify(**data)
 

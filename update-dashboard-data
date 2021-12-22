@@ -229,16 +229,28 @@ generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
 # GOTO dashboard pages
 generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json', date, environment)
 
-generate_json(BASE_OUTPUT_DIR + '/goto-private.json', [
-    (daemons.goto_gtecs_power, 'goto_dome1_power', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_mnt, 'goto_dome1_mnt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_dome, 'goto_dome1_dome', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_filt, 'goto_dome1_filt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_foc, 'goto_dome1_foc', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_cam, 'goto_dome1_cam', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_exq, 'goto_dome1_exq', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_ota, 'goto_dome1_ota', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_gtecs_conditions, 'goto_dome1_conditions', lambda d: d.get_info(force_update=False))
+generate_json(BASE_OUTPUT_DIR + '/goto-dome1-private.json', [
+    (daemons.goto_dome1_gtecs_power, 'goto_dome1_power', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_mnt, 'goto_dome1_mnt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_dome, 'goto_dome1_dome', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_filt, 'goto_dome1_filt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_foc, 'goto_dome1_foc', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_cam, 'goto_dome1_cam', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_exq, 'goto_dome1_exq', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_ota, 'goto_dome1_ota', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome1_gtecs_conditions, 'goto_dome1_conditions', lambda d: d.get_info(force_update=False))
+])
+
+generate_json(BASE_OUTPUT_DIR + '/goto-dome2-private.json', [
+    (daemons.goto_dome2_gtecs_power, 'goto_dome2_power', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_mnt, 'goto_dome2_mnt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_dome, 'goto_dome2_dome', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_filt, 'goto_dome2_filt', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_foc, 'goto_dome2_foc', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_cam, 'goto_dome2_cam', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_exq, 'goto_dome2_exq', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_ota, 'goto_dome2_ota', lambda d: d.get_info(force_update=False)),
+    (daemons.goto_dome2_gtecs_conditions, 'goto_dome2_conditions', lambda d: d.get_info(force_update=False))
 ])
 
 # SuperWASP dashboard pages
@@ -263,8 +275,4 @@ generate_json(BASE_OUTPUT_DIR + '/goto-dome1-roomalert.json', [
 
 generate_json(BASE_OUTPUT_DIR + '/goto-dome2-roomalert.json', [
     (daemons.goto_dome2_roomalert, 'goto-dome2-roomalert', lambda d: d.last_measurement())
-])
-
-generate_json(BASE_OUTPUT_DIR + '/goto-dome2-sht35.json', [
-    (daemons.goto_dome2_sht35, 'goto-dome2-sht35', lambda d: d.last_measurement())
 ])
