@@ -426,7 +426,7 @@ def wasp_log():
             # If 'from' argument is present, returns latest 100 log messages with a greater id
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('wasp_leoobs', 'wasp_powerd')"
+                query += " WHERE source IN ('powerd@superwasp', 'superwasp_teld', 'opsd@superwasp', 'atik_camd@1', 'atik_camd@2', 'atik_camd@3', 'atik_camd@4', 'diskspaced@superwasp', 'pipelined@superwasp')"
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 
@@ -633,15 +633,43 @@ def wasp_dashboard_data():
         data.update(private)
 
     # Extract safe public info from private daemons
-    private_leoobs = private.get('leoobs', {})
-    roof_status = private_leoobs.get('roof_status', 0)
+    private_ops = private.get('superwasp_ops', {})
+    private_telescope = private.get('superwasp_telescope', {})
+
+    # Tel status:
+    #   0: error
+    #   1: offline
+    #   2: online
+    tel_status = 0
+    if 'state' in private_telescope:
+        tel_status = 1 if private_telescope['state'] == 0 else 2
+
+    # Roof status:
+    #   0: error
+    #   1: closed
+    #   2: open
+    roof_status = 0
+    if 'roof_state' in private_telescope and 'roof_heartbeat_state' in private_telescope:
+        if private_telescope['roof_heartbeat_state'] != 2:
+            roof_status = 1 if private_telescope['roof_state'] == 5 else 2
+
+    roof_mode = 0
+    if 'dome' in private_ops and 'mode' in private_ops['dome']:
+        roof_mode = private_ops['dome']['mode']
+
+    tel_mode = 0
+    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
+        tel_mode = private_ops['telescope']['mode']
 
     env = {}
-    if 'environment' in private_leoobs:
-        env = private_leoobs['environment']
+    if 'environment' in private_ops:
+        env = private_ops['environment']
 
     data['wasp_status'] = {
+        'tel': tel_status,
         'roof': roof_status,
+        'tel_mode': tel_mode,
+        'roof_mode': roof_mode,
         'environment': env
     }
 

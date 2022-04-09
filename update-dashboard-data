@@ -189,6 +189,7 @@ def generate_superwasp_json(output_path, date, environment):
                 'comp_room_temp', 'comp_room_humidity',
                 'cam_room_temp', 'cam_room_humidity',
                 'cam_rack_temp'],
+            'superwasp_diskspace': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
@@ -254,7 +255,18 @@ generate_json(BASE_OUTPUT_DIR + '/goto-dome2-private.json', [
 ])
 
 # SuperWASP dashboard pages
-generate_superwasp_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
+generate_superwasp_json(BASE_OUTPUT_DIR + '/superwasp-public.json', date, environment)
+
+generate_json(BASE_OUTPUT_DIR + '/superwasp-private.json', [
+    (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
+    (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
+    (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
+    #(daemons.superwasp_cam1, 'superwasp_cam_1', lambda d: d.report_status()),
+    (daemons.superwasp_cam2, 'superwasp_cam_2', lambda d: d.report_status()),
+    (daemons.superwasp_cam3, 'superwasp_cam_3', lambda d: d.report_status()),
+    #(daemons.superwasp_cam4, 'superwasp_cam_4', lambda d: d.report_status())
+])
+
 
 # Raw data for GOTO operations
 generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [

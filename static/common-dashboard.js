@@ -48,6 +48,16 @@ function pollDashboard(url) {
   window.setTimeout(function() { pollDashboard(url); }, 10000);
 }
 
+function getData(data, index) {
+  for (var i in index) {
+    data = data && index[i] in data ? data[index[i]] : undefined;
+    if (data === undefined)
+      break;
+  }
+
+  return data;
+}
+
 // Environment generators
 function fieldLimitsColor(field, value) {
   if (!('limits' in field))
@@ -121,4 +131,196 @@ function seeingIfAvailable(row, cell, data) {
     cell.html('NO DATA');
     cell.addClass('text-danger');
   }
+}
+
+// Header generators
+function opsHeaderTel(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+  rowstyle = 'list-group-item-danger';
+
+  if (data == 1) {
+    status = 'OFFLINE';
+  } else if (data == 2) {
+    status = 'ONLINE';
+    style = 'text-success';
+    rowstyle = 'list-group-item-success';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+  row.addClass(rowstyle);
+}
+
+function opsHeaderDome(row, cell, data) {
+  status = 'ERROR';
+  style = 'text-danger';
+  rowstyle = 'list-group-item-danger';
+
+  if (data == 1) {
+    status = 'CLOSED';
+  } else if (data == 2) {
+    status = 'OPEN';
+    style = 'text-success';
+    rowstyle = 'list-group-item-success';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+  row.addClass(rowstyle);
+}
+
+function opsHeaderMode(row, cell, data) {
+  var modes = [
+    ['ERROR', 'list-group-item-danger'],
+    ['AUTO', 'list-group-item-success'],
+    ['MANUAL', 'list-group-item-warning'],
+  ];
+
+  var mode = data in modes ? modes[data] : mode[0];
+  cell.html(mode[0]);
+  row.addClass(mode[1]);
+}
+
+function opsHeaderEnvironment(row, cell, data) {
+  if (('safe' in data) && ('conditions' in data)) {
+    cell.html(data['safe'] ? 'SAFE' : 'NOT SAFE');
+    row.addClass(data['safe'] ? 'list-group-item-success' : 'list-group-item-danger');
+
+    var status_classes = ['', 'text-success', 'text-warning', 'text-danger']
+    var tooltip = '<table style="margin: 5px">';
+    for (var c in data['conditions']) {
+      if (!(c in data['conditions']))
+        continue;
+
+      tooltip += '<tr><td style="text-align: right;">' + c + ':</td>';
+      var params = data['conditions'][c];
+      for (var p in params)
+        tooltip += '<td style="padding: 0 5px" class="' + status_classes[params[p]] + '">' + p + '</td>';
+
+      tooltip += '</tr>';
+    }
+    tooltip += '</table>';
+
+    var tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
+    if (tooltip_active)
+      row.tooltip('hide');
+
+    row.data('bs.tooltip', false);
+    row.tooltip({ html: true, title: tooltip });
+
+    if (tooltip_active)
+      row.tooltip('show');
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
+function powerUPS(row, cell, data) {
+  var prefix = row.data('prefix');
+  status = 'ERROR';
+  style = 'text-danger';
+
+  var status_field = prefix + '_status';
+  var remaining_field = prefix + '_battery_remaining';
+  var load_field = prefix + '_load';
+  var battery_healthy = prefix + '_battery_healthy';
+  if (battery_healthy in data && !data[battery_healthy])
+      row.addClass('list-group-item-danger');
+
+  if (data && status_field in data && remaining_field in data && load_field in data) {
+    if (data[status_field] == 2) {
+      status = 'ONLINE';
+      style = 'text-success';
+    }
+    else if (data[status_field] == 3) {
+      status = 'BATTERY';
+      style = 'text-warning';
+    }
+
+    status += ' (' + data[remaining_field] + '%&nbsp;/&nbsp;' + Math.round(data[load_field]) + '%)';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerOnOff(row, cell, data) {
+  if (data == 2) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data == 1) {
+    cell.html('POWER ON');
+    cell.addClass('text-success');
+  } else {
+    cell.html('POWER OFF');
+    cell.addClass('text-danger');
+  }
+}
+
+function powerOffOn(row, cell, data) {
+  if (data == 2) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data == 1) {
+    cell.html('POWER ON');
+    cell.addClass('text-danger');
+  } else {
+    cell.html('POWER OFF');
+    cell.addClass('text-success');
+  }
+}
+
+function domeTime(row, cell, data) {
+  if (data == null)
+    cell.html('N/A');
+  else {
+    cell.html(data);
+    cell.addClass('text-warning');
+  }
+}
+
+function opsActionName(row, cell, data) {
+  if (!('mode' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['mode'] == 2) {
+    cell.html('MANUAL');
+    cell.addClass('text-warning');
+  } else if ('action_name' in data) {
+    label = data['action_name'];
+    if ('action_number' in data && data['action_number'] > 0)
+      label += ' (' + data['action_number'] + ' / ' + data['action_count'] + ')';
+    cell.html(label);
+  }
+  else
+    cell.html('IDLE');
+}
+
+function opsActionTask(row, cell, data) {
+  if (!('mode' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['mode'] == 2) {
+    cell.html('MANUAL');
+    cell.addClass('text-warning');
+  } else if ('action_task' in data)
+    cell.html(data['action_task']);
+  else
+    cell.html('IDLE');
+}
+
+function pipelineObject(row, cell, data) {
+  if (!('frame_type' in data) || !('frame_object' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else if (data['frame_type'] == 'SCIENCE')
+    cell.html(data['frame_object']);
+  else
+    cell.html(data['frame_type']);
+}
+
+function pipelinePrefix(row, cell, data) {
+  cell.html(data);
 }

@@ -298,16 +298,6 @@ function camRunNumber(row, cell, data) {
   cell.html(run_number);
 }
 
-function getData(data, index) {
-  for (var i in index) {
-    data = data && index[i] in data ? data[index[i]] : undefined;
-    if (data === undefined)
-      break;
-  }
-
-  return data;
-}
-
 function camStatus(row, cell, data) {
   var dome_number = row.data('dome');
   var power_side = row.data('power');
