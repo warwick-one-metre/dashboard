@@ -1,87 +1,95 @@
 function reductionFrameDate(data) {
   if (!data || !('date' in data))
-    return ['ERROR', 'text-danger']
+    return ['ERROR', 'text-danger'];
 
   var date = parseUTCDate(data['date']);
-  return [formatUTCDate(date)]
+  return [formatUTCDate(date)];
 }
 
 function reductionFrameExptime(data) {
   if (!data || !('exptime' in data))
-    return ['ERROR', 'text-danger']
-  return [data['exptime'].toFixed(2) + ' s']
+    return ['ERROR', 'text-danger'];
+  return [data['exptime'].toFixed(2) + ' s'];
 }
 
-function reductionFrameExposure(data) {
-  if (!data || !('exposure_number' in data))
-    return ['ERROR', 'text-danger']
-  return [data['exposure_number']]
-}
+function reductionFrameFilename(data) {
+  if (!data || !('filename' in data) || !('saved' in data))
+    return ['ERROR', 'text-danger'];
 
-function reductionFrameObject(data) {
-  if (!data || !('object' in data))
-    return ['ERROR', 'text-danger']
+  if (!data['saved'])
+    return ['NOT SAVED', 'text-danger'];
 
-  return [data['object']]
+  return [data['filename']]
 }
 
 var cameraFields = {
-  'object': reductionFrameObject,
-  'exposure': reductionFrameExposure,
   'date': reductionFrameDate,
   'exptime': reductionFrameExptime,
+  'filename': reductionFrameFilename,
 }
 
-var sourceSize = [0, 0];
-var clipSize = 0;
+var sourceSize = {
+  1: [0, 0],
+  2: [0, 0],
+  3: [0, 0],
+  4: [0, 0]
+};
+
+var clipSize = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0
+};
 
 function queryPreviews() {
-  $.ajax({
-    type: 'GET',
-    dataType: 'json',
-    url: '/data/wasp/wasp',
-    statusCode: {
-      404: function() {
-        updateListGroup('wasp', cameraFields);
-        $('#wasp-updated').html('Updated ' + formatUTCDate(new Date()) + ' UTC');
+  for (let i = 1; i < 5; i++) {
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: '/data/wasp/' + i,
+      statusCode: {
+        404: function () {
+          updateListGroup(i, cameraFields);
 
-        // Remove previews
-        $('#wasp-thumb').attr('src', '');
-        $('#wasp-clib').attr('src', '');
+          // Remove previews
+          $('#' + i + '-thumb').attr('src', '');
+          $('#' + i + '-clip').attr('src', '');
 
-        sourceSize = [0, 0];
-        clipSize = 0;
+          sourceSize[i] = [0, 0];
+          clipSize[i] = 0;
+        }
       }
-    }
-  }).done(function(data) {
-    updateListGroup('wasp', cameraFields, data);
-    $('#wasp-updated').html('Updated ' + formatUTCDate(new Date()) + ' UTC');
+    }).done(function (data) {
+      updateListGroup(i, cameraFields, data);
 
-    // Update thumbnail if required
-    if (data && 'date' in data) {
-      // Date is for cache-busting only.
-      var date = parseUTCDate(data['date']).getTime();
-      $('#wasp-thumb').attr('src', $('#wasp-thumb').data('url') + '?' + date);
-      $('#wasp-clip').css('background-image', "url('" + $('#wasp-clip').data('url') + '?' + date + "')");
+      // Update thumbnail if required
+      if (data && 'date' in data) {
+        // Date is for cache-busting only.
+        var date = parseUTCDate(data['date']).getTime();
+        $('#' + i + '-thumb').attr('src', $('#' + i + '-thumb').data('url') + '?' + date);
+        $('#' + i + '-clip').css('background-image', "url('" + $('#' + i + '-clip').data('url') + '?' + date + "')");
 
-      sourceSize = data['size'];
-      clipSize = data['clipsize'];
-    }
-  });
+        sourceSize[i] = data['size'];
+        clipSize[i] = data['clipsize'];
+      }
+    });
+  }
 
   window.setTimeout(queryPreviews, 10000);
 }
 
 $(document).ready(function () {
-  var clip = $('#wasp-clip');
-  $('#wasp-thumb')
-  .mousemove(function(e) {
-    e.preventDefault();
-    a = this.getBoundingClientRect();
-    x = sourceSize[0] * (e.pageX - a.left - window.pageXOffset) / a.width + (clipSize - sourceSize[0] - clip.width()) / 2;
-    y = sourceSize[1] * (e.pageY - a.top - window.pageYOffset) / a.height + (clipSize - sourceSize[1] - clip.height()) / 2;
-    $('#wasp-clip').css('background-position', -x + 'px ' + -y + 'px');
-  });
+  for (let i = 1; i < 5; i++) {
+    var clip = $('#' + i + '-clip');
+    $('#' + i + '-thumb').mousemove(function(e) {
+      e.preventDefault();
+      a = this.getBoundingClientRect();
+      x = sourceSize[i][0] * (e.pageX - a.left - window.pageXOffset) / a.width + (clipSize[i] - sourceSize[i][0] - clip.width()) / 2;
+      y = sourceSize[i][1] * (e.pageY - a.top - window.pageYOffset) / a.height + (clipSize[i] - sourceSize[i][1] - clip.height()) / 2;
+      $('#' + i + '-clip').css('background-position', -x + 'px ' + -y + 'px');
+    });
+  }
 
   queryPreviews();
 });

@@ -47,9 +47,18 @@ W1M_GENERATED_DATA = {
 }
 
 WASP_GENERATED_DATA = {
-    'wasp': 'dashboard-wasp.json',
-    'wasp/thumb': 'dashboard-wasp-thumb.jpg',
-    'wasp/clip': 'dashboard-wasp-clip.jpg',
+    '1': 'dashboard-1.json',
+    '1/thumb': 'dashboard-1-thumb.jpg',
+    '1/clip': 'dashboard-1-clip.jpg',
+    '2': 'dashboard-2.json',
+    '2/thumb': 'dashboard-2-thumb.jpg',
+    '2/clip': 'dashboard-2-clip.jpg',
+    '3': 'dashboard-3.json',
+    '3/thumb': 'dashboard-3-thumb.jpg',
+    '3/clip': 'dashboard-3-clip.jpg',
+    '4': 'dashboard-4.json',
+    '4/thumb': 'dashboard-4-thumb.jpg',
+    '4/clip': 'dashboard-4-clip.jpg',
 }
 
 EUMETSAT_GENERATED_DATA = {

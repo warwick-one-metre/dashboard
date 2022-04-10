@@ -11,7 +11,7 @@ a:hover .overlaybutton {
   color: #1ca8dd;
 }
 
-#wasp-clip {
+.clipoverlay {
   position: absolute;
   left: 10px;
   top: 10px;
@@ -20,39 +20,84 @@ a:hover .overlaybutton {
   background-size: auto;
   background-repeat: no-repeat;
   background-position: -99999px -99999px;
+  border-radius: 3px;
 }
 
 </style>
 <div class="dashhead m-b">
   <div class="dashhead-titles">
     <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h6 class="dashhead-subtitle" id="wasp-updated">Loading...</h6>
   </div>
 </div>
 
 <div class="row m-b">
-  <div class="col-md-12" style="position: relative;">
+  <div class="col-md-8" style="position: relative;">
     <div class="list-group list-group-item" style="padding: 0">
-      <img id="wasp-thumb" data-url="/data/wasp/wasp/thumb" width="100%" style="border-radius: 3px">
-      <div id="wasp-clip" style="border-radius: 3px" data-url="/data/wasp/wasp/clip"></div>
+      <img id="1-thumb" data-url="/data/wasp/1/thumb" width="100%" style="border-radius: 3px">
+      <div id="1-clip" class="clipoverlay" data-url="/data/wasp/1/clip"></div>
+    </div>
+  </div>
+  <div class="col-md-4 dashboard-stats">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Camera 1</h5>
+      <span id="1-date" class="list-group-item">Exposure started: </span>
+      <span id="1-exptime" class="list-group-item">Exposure length:</span>
+      <span id="1-filename" class="list-group-item">Saved as:</span>
     </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-6 dashboard-stats">
-    <div class="list-group">
-      <span id="wasp-object" class="list-group-item">Object: </span>
-      <span id="wasp-exposure" class="list-group-item">Exposure number: </span>
+<div class="row m-b">
+  <div class="col-md-8" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="2-thumb" data-url="/data/wasp/2/thumb" width="100%" style="border-radius: 3px">
+      <div id="2-clip" class="clipoverlay" data-url="/data/wasp/2/clip"></div>
     </div>
   </div>
-  <div class="col-md-6 dashboard-stats">
+  <div class="col-md-4 dashboard-stats">
     <div class="list-group">
-      <span id="wasp-date" class="list-group-item">Exposure started: </span>
-      <span id="wasp-exptime" class="list-group-item">Exposure length:</span>
+      <h5 class="list-group-header" style="text-align: center">Camera 2</h5>
+      <span id="2-date" class="list-group-item">Exposure started: </span>
+      <span id="2-exptime" class="list-group-item">Exposure length:</span>
+      <span id="2-filename" class="list-group-item">Saved as:</span>
     </div>
   </div>
 </div>
+
+<div class="row m-b">
+  <div class="col-md-8" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="3-thumb" data-url="/data/wasp/3/thumb" width="100%" style="border-radius: 3px">
+      <div id="3-clip" class="clipoverlay" data-url="/data/wasp/3/clip"></div>
+    </div>
+  </div>
+  <div class="col-md-4 dashboard-stats">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Camera 3</h5>
+      <span id="3-date" class="list-group-item">Exposure started: </span>
+      <span id="3-exptime" class="list-group-item">Exposure length:</span>
+      <span id="3-filename" class="list-group-item">Saved as:</span>
+    </div>
+  </div>
+</div>
+
+<div class="row m-b">
+  <div class="col-md-8" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="4-thumb" data-url="/data/wasp/4/thumb" width="100%" style="border-radius: 3px">
+      <div id="4-clip" class="clipoverlay" data-url="/data/wasp/4/clip"></div>
+    </div>
+  </div>
+  <div class="col-md-4 dashboard-stats">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Camera 4</h5>
+      <span id="4-date" class="list-group-item">Exposure started: </span>
+      <span id="4-exptime" class="list-group-item">Exposure length:</span>
+      <span id="4-filename" class="list-group-item">Saved as:</span>
+    </div>
+  </div>
+</div>
+
 
 <script src="{{ url_for('static', filename='wasp-live.js') }}"></script>
 
