@@ -46,6 +46,15 @@ W1M_GENERATED_DATA = {
     'red/image': 'dashboard-RED-thumb.jpg',
 }
 
+CLASP_GENERATED_DATA = {
+    'cam1': 'dashboard-FLI1.json',
+    'cam1/thumb': 'dashboard-FLI1-thumb.jpg',
+    'cam1/clip': 'dashboard-FLI1-clip.jpg',
+    'cam2': 'dashboard-CAM2.json',
+    'cam2/thumb': 'dashboard-CAM2-thumb.jpg',
+    'cam2/clip': 'dashboard-CAM2-clip.jpg',
+}
+
 WASP_GENERATED_DATA = {
     '1': 'dashboard-1.json',
     '1/thumb': 'dashboard-1-thumb.jpg',
@@ -244,6 +253,28 @@ def w1m_resources():
     abort(404)
 
 
+@app.route('/clasp/')
+def clasp_dashboard():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('clasp/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+
+
+@app.route('/clasp/live/')
+def clasp_live():
+    account = get_user_account()
+    if 'satellites' in account['permissions']:
+        return render_template('clasp/live.html', user_account=account)
+    abort(404)
+
+
+@app.route('/data/clasp/<path:path>')
+def clasp_generated_data(path):
+    account = get_user_account()
+    if 'satellites' in account['permissions'] and path in CLASP_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, CLASP_GENERATED_DATA[path])
+    abort(404)
+
+
 @app.route('/clasp/dome/')
 def clasp_dome():
     dashboard_mode = __parse_dashboard_mode()
@@ -436,6 +467,85 @@ def wasp_log():
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
                 query += " WHERE source IN ('powerd@superwasp', 'superwasp_teld', 'opsd@superwasp', 'atik_camd@1', 'atik_camd@2', 'atik_camd@3', 'atik_camd@4', 'diskspaced@superwasp', 'pipelined@superwasp')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
+
+                query += ' ORDER BY id DESC LIMIT 250;'
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                return jsonify(messages=messages)
+        finally:
+            db.close()
+    abort(404)
+
+
+@app.route('/data/clasp/')
+def clasp_dashboard_data():
+    data = json.load(open(GENERATED_DATA_DIR + '/clasp-public.json'))
+
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/clasp-private.json'))
+
+    account = get_user_account()
+    if 'satellites' in account['permissions']:
+        data.update(private)
+
+    # Extract safe public info from private daemons
+    private_ops = private.get('clasp_ops', {})
+    private_dome = private.get('clasp_dome', {})
+    private_telescope = private.get('clasp_mount', {})
+
+    # Tel status:
+    #   0: error
+    #   1: offline
+    #   2: online
+    tel_status = 0
+    if 'state' in private_telescope:
+        tel_status = 1 if private_telescope['state'] == 0 else 2
+
+    # Dome status:
+    #   0: error
+    #   1: closed
+    #   2: open
+    dome_status = 0
+    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
+        if private_dome['heartbeat_status'] not in [2, 3]:
+            dome_status = 1 if private_dome['closed'] else 2
+
+    dome_mode = 0
+    if 'dome' in private_ops and 'mode' in private_ops['dome']:
+        dome_mode = private_ops['dome']['mode']
+
+    tel_mode = 0
+    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
+        tel_mode = private_ops['telescope']['mode']
+
+    env = {}
+    if 'environment' in private_ops:
+        env = private_ops['environment']
+
+    data['clasp_status'] = {
+        'tel': tel_status,
+        'dome': dome_status,
+        'tel_mode': tel_mode,
+        'dome_mode': dome_mode,
+        'environment': env
+    }
+
+    return jsonify(**data)
+
+
+@app.route('/data/clasp/log')
+def clasp_log():
+    account = get_user_account()
+    if 'satellites' in account['permissions']:
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('powerd@clasp', 'lmountd@clasp', 'domed@clasp', 'opsd@clasp', 'dehumidifierd@clasp', 'fli_camd@fli1', 'qhy_camd@cam1', 'qhy_camd@cam2', 'diskspaced@clasp', 'pipelined@clasp')"
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 

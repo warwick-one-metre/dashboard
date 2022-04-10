@@ -27,7 +27,11 @@
     (url_for('goto2_dashboard'), 'goto2-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('goto2_dome'), 'goto2-dome', 'Dome Camera', 'icon-video-camera', None),
   ]),
-  ('CLASP', [(url_for('clasp_dome'), 'clasp-dome', 'Dome Camera', 'icon-video-camera', None)]),
+  ('CLASP', [
+    (url_for('clasp_dashboard'), 'clasp-dashboard', 'Dashboard', 'icon-menu', None),
+    (url_for('clasp_live'), 'clasp-live', 'Live Data', 'icon-stopwatch', 'satellites'),
+    (url_for('clasp_dome'), 'clasp-dome', 'Dome Camera', 'icon-video-camera', None)
+  ])
 ] %}
 
 <nav class="sidebar-nav">

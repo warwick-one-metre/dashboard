@@ -170,11 +170,24 @@ function opsHeaderDome(row, cell, data) {
   row.addClass(rowstyle);
 }
 
+
+
 function opsHeaderMode(row, cell, data) {
   var modes = [
     ['ERROR', 'list-group-item-danger'],
     ['AUTO', 'list-group-item-success'],
     ['MANUAL', 'list-group-item-warning'],
+  ];
+
+  var mode = data in modes ? modes[data] : mode[0];
+  cell.html(mode[0]);
+  row.addClass(mode[1]);
+}
+
+function opsHeaderDehumidifier(row, cell, data) {
+  var modes = [
+    ['MANUAL', 'list-group-item-warning'],
+    ['AUTO', 'list-group-item-success'],
   ];
 
   var mode = data in modes ? modes[data] : mode[0];

@@ -1,0 +1,174 @@
+{% extends "layout.html" %}
+{% set title = 'CLASP &raquo; Dashboard' -%}
+{% set active_page = 'clasp-dashboard' -%}
+{% block body %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["clasp_status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
+      <span class="list-group-item" data-index='["clasp_status", "dome"]' data-generator="opsHeaderDome">Dome Status</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["clasp_status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
+      <span class="list-group-item" data-index='["clasp_status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["clasp_dehumidifier", "mode"]' data-generator="opsHeaderDehumidifier">Dehumidifier Control</span>
+      <span class="list-group-item" data-index='["clasp_status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+    </div>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
+      <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
+      <span class="list-group-item" data-index='["clasp_power", "ats_source"]' data-generator="powerOnOff">ATS</span>
+      <span class="list-group-item" data-index='["clasp_power", "mount"]' data-generator="powerOnOff">Mount</span>
+      <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerInstrument">Instrument</span>
+      <span class="list-group-item" data-index='["clasp_power", "light"]' data-generator="powerOffOn">Dome Light</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["clasp_power", "dehumidifier"]' data-generator="powerOffOn">Dehumidifier</span>
+      <span class="list-group-item" data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
+      <span class="list-group-item" data-index='["clasp_roomalert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
+      <span class="list-group-item" data-index='["clasp_roomalert", "internal_temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+      <span class="list-group-item" data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["w1m_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
+      <span class="list-group-item" data-index='["w1m_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
+      <span class="list-group-item" data-index='["w1m_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
+      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
+      <span class="list-group-item" data-index='["tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
+      <span class="list-group-item" data-index='["clasp_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">DAS1 Disk Space</span>
+      <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
+      <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
+      <span class="list-group-item" data-index='["ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
+      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
+    </div>
+  </div>
+</div>
+{% if user_account != None and 'w1m' in user_account['permissions'] %}
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Mount</h5>
+      <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telState">State</span>
+      <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telRADec">RA / Dec</span>
+      <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telAltAz">Alt / Az</span>
+      <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telSunMoon">Sun / Moon Sep.</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Dome</h5>
+      <span class="list-group-item" data-index='["clasp_dome", "shutter_a"]' data-generator="domeShutter">N. Shutter</span>
+      <span class="list-group-item" data-index='["clasp_dome", "shutter_b"]' data-generator="domeShutter">S. Shutter</span>
+      <span class="list-group-item" data-index='["clasp_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
+      <span class="list-group-item" data-index='["clasp_ops", "dome", "requested_open_date"]' data-generator="domeTime">Sched. Open</span>
+      <span class="list-group-item" data-index='["clasp_ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
+    </div>
+  </div>
+  <div class="col-md-6 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Cameras</h5>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <td>Status</td>
+            <td data-index='[]' data-generator="camStatus" data-cam="1"></td>
+            <td data-index='[]' data-generator="camStatus" data-cam="2"></td>
+          </tr>
+          <tr>
+            <td>Exposure</td>
+            <td data-index='[]' data-generator="camExposure" data-cam="1"></td>
+            <td data-index='[]' data-generator="camExposure" data-cam="2"></td>
+          </tr>
+          <tr>
+            <td>Temperature</td>
+            <td data-index='[]' data-generator="camTemp" data-cam="1"></td>
+            <td data-index='[]' data-generator="camTemp" data-cam="2"></td>
+          </tr>
+          <tr>
+            <td>Cooling</td>
+            <td data-index='[]' data-generator="camCool" data-cam="1"></td>
+            <td data-index='[]' data-generator="camCool" data-cam="2"></td>
+          </tr>
+          <tr>
+            <td>Focus</td>
+            <td data-index='["clasp_focus"]' data-generator="telFocus" data-focuser="1"></td>
+            <td data-index='["clasp_focus"]' data-generator="telFocus" data-focuser="2"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
+      <span class="list-group-item" data-index='["clasp_ops", "telescope"]' data-generator="opsActionName">Action</span>
+      <span class="list-group-item" data-index='["clasp_ops", "telescope"]' data-generator="opsActionTask">Status</span>
+      <span class="list-group-item" data-index='["clasp_pipeline"]' data-generator="pipelineObject">Object</span>
+      <span class="list-group-item" data-index='["clasp_pipeline", "frame_prefix"]' data-generator="pipelinePrefix">Prefix</span>
+    </div>
+  </div>
+  <div class="col-md-8 col-sm-6 col-xs-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">System Log</h5>
+      <div class="list-group-item" style="overflow-y: scroll; height: 140px;">
+        <table id="log-table">
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row dashboard-stats">
+  <div class="col-md-12">
+    <div class="list-group">
+      <h5 class="list-group-header text-center">Authentication Required</h5>
+      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='clasp-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
+<script>
+  $(document).ready(function() {
+    $('[data-toggle="tooltip"]').tooltip();
+    pollDashboard('/data/clasp');
+{% if user_account != None and 'satellites' in user_account['permissions'] %}
+    pollLog('{{ url_for('clasp_log') }}');
+{% endif %}
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% set title = 'CLASP &raquo; Live Data' -%}
+{% set active_page = 'clasp-live' -%}
+{% block body %}
+<style>
+.overlaybutton {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+a:hover .overlaybutton {
+  color: #1ca8dd;
+}
+
+.clipoverlay {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 200px;
+  height: 200px;
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: -99999px -99999px;
+  border-radius: 3px;
+}
+
+</style>
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+
+<div class="row m-b">
+  <div class="col-md-8" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="1-thumb" data-url="/data/clasp/cam1/thumb" width="100%" style="border-radius: 3px">
+      <div id="1-clip" class="clipoverlay" data-url="/data/clasp/cam1/clip"></div>
+    </div>
+  </div>
+  <div class="col-md-4 dashboard-stats">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Camera 1</h5>
+      <span id="1-date" class="list-group-item">Exposure started: </span>
+      <span id="1-exptime" class="list-group-item">Exposure length:</span>
+      <span id="1-filename" class="list-group-item">Saved as:</span>
+    </div>
+  </div>
+</div>
+
+<div class="row m-b">
+  <div class="col-md-8" style="position: relative;">
+    <div class="list-group list-group-item" style="padding: 0">
+      <img id="2-thumb" data-url="/data/clasp/cam2/thumb" width="100%" style="border-radius: 3px">
+      <div id="2-clip" class="clipoverlay" data-url="/data/clasp/cam2/clip"></div>
+    </div>
+  </div>
+  <div class="col-md-4 dashboard-stats">
+    <div class="list-group">
+      <h5 class="list-group-header" style="text-align: center">Camera 2</h5>
+      <span id="2-date" class="list-group-item">Exposure started: </span>
+      <span id="2-exptime" class="list-group-item">Exposure length:</span>
+      <span id="2-filename" class="list-group-item">Saved as:</span>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='clasp-live.js') }}"></script>
+
+{% endblock %}
