@@ -255,9 +255,9 @@ generate_json(BASE_OUTPUT_DIR + '/goto-dome2-private.json', [
 ])
 
 # SuperWASP dashboard pages
-generate_superwasp_json(BASE_OUTPUT_DIR + '/superwasp-public.json', date, environment)
+generate_superwasp_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
 
-generate_json(BASE_OUTPUT_DIR + '/superwasp-private.json', [
+generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
     (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
     (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
     (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),

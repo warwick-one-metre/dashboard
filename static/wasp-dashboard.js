@@ -50,7 +50,6 @@ function powerCompAircon(row, cell, data) {
 }
 
 function telState(row, cell, data) {
-
   var state = [
     ['DISABLED', 'text-danger'],
     ['STOPPED', 'text-danger'],
@@ -60,23 +59,22 @@ function telState(row, cell, data) {
     ['HOMING', 'text-warning'],
     ['LIMITING', 'text-warning'],
   ];
-  if (data === undefined) {
+  if (data && 'state' in data) {
+    if ('axes_homed' in data && !data['axes_homed']) {
+      cell.html('NOT HOMED');
+      cell.addClass('text-danger');
+    } else {
+      cell.html(state[data['state']][0]);
+      cell.addClass(state[data['state']][1]);
+    }
+  } else {
     cell.html('ERROR');
     cell.addClass('text-danger');
-    row.addClass('list-group-item-danger');
-  } else {
-    var s = state[data];
-    cell.html(s[0]);
-    cell.addClass(s[1]);
-    row.addClass(s[2]);
   }
 }
 
 function telRADec(row, cell, data) {
-  if (data && 'axes_homed' in data && !data['axes_homed']) {
-    cell.html('NOT HOMED');
-    cell.addClass('text-danger');
-  } else if (data && 'state' in data && (data['state'] < 1 || data['state'] > 3))
+  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
     cell.html('N/A')
   else if (!data || !('ra' in data) || !('dec' in data)) {
     cell.html('ERROR');
