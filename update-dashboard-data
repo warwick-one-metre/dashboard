@@ -224,7 +224,8 @@ def generate_clasp_json(output_path, date, environment):
             'clasp_roomalert': [
                 'internal_humidity', 'internal_temperature'
             ],
-            'clasp_diskspace': ['data_fs_available_bytes'],
+            'clasp_diskspace_1': ['data_fs_available_bytes'],
+            'clasp_diskspace_2': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
@@ -310,9 +311,9 @@ generate_json(BASE_OUTPUT_DIR + '/clasp-private.json', [
     (daemons.clasp_telescope, 'clasp_mount', lambda d: d.report_status()),
     (daemons.clasp_focus, 'clasp_focus', lambda d: d.report_status()),
     (daemons.clasp_dome, 'clasp_dome', lambda d: d.status()),
-    (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
+    (daemons.clasp_pipeline_1, 'clasp_pipeline', lambda d: d.report_status()),
     (daemons.clasp_camera_1, 'clasp_cam1', lambda d: d.report_status()),
-    #(daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
+    (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
 ])
 
 # Raw data for GOTO operations

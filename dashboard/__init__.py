@@ -47,9 +47,9 @@ W1M_GENERATED_DATA = {
 }
 
 CLASP_GENERATED_DATA = {
-    'cam1': 'dashboard-FLI1.json',
-    'cam1/thumb': 'dashboard-FLI1-thumb.jpg',
-    'cam1/clip': 'dashboard-FLI1-clip.jpg',
+    'cam1': 'dashboard-CAM1.json',
+    'cam1/thumb': 'dashboard-CAM1-thumb.jpg',
+    'cam1/clip': 'dashboard-CAM1-clip.jpg',
     'cam2': 'dashboard-CAM2.json',
     'cam2/thumb': 'dashboard-CAM2-thumb.jpg',
     'cam2/clip': 'dashboard-CAM2-clip.jpg',

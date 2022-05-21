@@ -30,6 +30,7 @@ function powerInstrument(row, cell, data) {
 function telState(row, cell, data) {
   var state = [
     ['DISABLED', 'text-danger'],
+    ['PARKED', ''],
     ['STOPPED', 'text-danger'],
     ['SLEWING', 'text-warning'],
     ['TRACKING', 'text-success'],
@@ -171,7 +172,7 @@ function camExposure(row, cell, data) {
 
 function camTemp(row, cell, data) {
   var cam_number = row.data('cam');
-  cam_temperature = getData(data, ["clasp_cam" + cam_number, "temperature"]);
+  cam_temperature = getData(data, ["clasp_cam" + cam_number, "cooler_temperature"]);
   cam_temperature_locked = getData(data, ["clasp_cam" + cam_number, "temperature_locked"]);
   if (cam_temperature === undefined || cam_temperature_locked === undefined) {
     status = 'ERROR';
@@ -186,15 +187,27 @@ function camTemp(row, cell, data) {
 }
 
 function camCool(row, cell, data) {
+  var state = [
+    ['UNKNOWN', 'text-danger'],
+    ['WARM', 'text-danger'],
+    ['WARMING', 'text-warning'],
+    ['COOLING', 'text-info'],
+    ['LOCKING', 'text-warning'],
+    ['LOCKED', 'text-success'],
+  ];
+
   var cam_number = row.data('cam');
-  cam_cooler_power = getData(data, ["clasp_cam" + cam_number, "cooler_power"]);
-  cam_cooler_enabled = getData(data, ["clasp_cam" + cam_number, "cooler_enabled"]);
-  if (cam_cooler_power === undefined || cam_cooler_enabled === undefined) {
+  cam_cooler_power = getData(data, ["clasp_cam" + cam_number, "cooler_pwm"]);
+  cam_cooler_mode = getData(data, ["clasp_cam" + cam_number, "cooler_mode"]);
+  if (cam_cooler_power === undefined || cam_cooler_mode === undefined) {
     status = 'ERROR';
     style = 'text-danger';
   } else {
-    status = cam_cooler_enabled ? cam_cooler_power.toFixed(0) + '%'  : 'DISABLED';
-    style = cam_cooler_enabled ? '' : 'text-danger';
+    status = state[cam_cooler_mode][0]
+    if (cam_cooler_mode !== 1)
+      status += ' (' + cam_cooler_power.toFixed(0) + '%)';
+
+    style = state[cam_cooler_mode][1];
   }
 
   cell.html(status);
