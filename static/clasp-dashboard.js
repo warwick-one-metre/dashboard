@@ -51,7 +51,7 @@ function telState(row, cell, data) {
 }
 
 function telRADec(row, cell, data) {
-  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
+  if (data && (('state' in data && (data['state'] < 2 || data['state'] > 4)) || ('axes_homed' in data && !data['axes_homed'])))
     cell.html('N/A')
   else if (!data || !('ra' in data) || !('dec' in data)) {
     cell.html('ERROR');
@@ -61,7 +61,7 @@ function telRADec(row, cell, data) {
 }
 
 function telAltAz(row, cell, data) {
-  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
+  if (data && (('state' in data && (data['state'] < 2 || data['state'] > 4)) || ('axes_homed' in data && !data['axes_homed'])))
     cell.html('N/A')
   else if (!data || !('alt' in data) || !('az' in data)) {
     cell.html('ERROR');
@@ -71,7 +71,7 @@ function telAltAz(row, cell, data) {
 }
 
 function telSunMoon(row, cell, data) {
-  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
+  if (data && (('state' in data && (data['state'] < 2 || data['state'] > 4)) || ('axes_homed' in data && !data['axes_homed'])))
     cell.html('N/A')
   else if (!data || !('sun_separation' in data) || !('moon_separation' in data)) {
     cell.html('ERROR');
