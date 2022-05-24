@@ -10,7 +10,7 @@
 </div>
 {% endif %}
 {% set enable_microphone = user_account != None and 'satellites' in user_account['permissions'] -%}
-{% set enable_video = False %}
+{% set enable_video = True %}
 {% set video = 'clasp' %}
 {% set audio = 'clasp' %}
 {% include 'camera.html' %}
