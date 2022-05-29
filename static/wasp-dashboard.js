@@ -227,3 +227,18 @@ function camCool(row, cell, data) {
   cell.html(status);
   cell.addClass(style);
 }
+
+function lensTemp(row, cell, data) {
+  var cam_number = row.data('cam');
+  lens_temperature = getData(data, ["superwasp_lensheater", "temp_" + cam_number]);
+  if (lens_temperature === undefined) {
+    status = 'ERROR';
+    style = 'text-danger';
+  } else {
+    status = lens_temperature.toFixed(0) + ' &deg;C';
+    style = '';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}

@@ -297,10 +297,11 @@ generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
     (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
     (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
     (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
-    #(daemons.superwasp_cam1, 'superwasp_cam_1', lambda d: d.report_status()),
+    (daemons.superwasp_cam1, 'superwasp_cam_1', lambda d: d.report_status()),
     (daemons.superwasp_cam2, 'superwasp_cam_2', lambda d: d.report_status()),
     (daemons.superwasp_cam3, 'superwasp_cam_3', lambda d: d.report_status()),
-    #(daemons.superwasp_cam4, 'superwasp_cam_4', lambda d: d.report_status())
+    (daemons.superwasp_cam4, 'superwasp_cam_4', lambda d: d.report_status()),
+    (daemons.superwasp_lensheater, 'superwasp_lensheater', lambda d: d.report_status())
 ])
 
 # CLASP dashboard pages
