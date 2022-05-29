@@ -38,6 +38,29 @@
         </div>
       </div>
 {% endif %}
+{% if enable_irleds %}
+      <div style="position: absolute; right: 10px; bottom: 10px; text-align: center;">
+        <a id="ir-button" href="#irmodal" data-toggle="modal" data-target="#irmodal" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='light.svg') }}" width="50"/><br /><span id="light-button-text">Infrared</span></a><br />
+      </div>
+      <div class="modal fade" id="irmodal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="myModalLabel">Control Infrared LEDs</h4>
+            </div>
+            <div class="modal-body">
+              Be careful if the instrument is exposing!
+            </div>
+            <div class="modal-footer">
+              <button id="enable-irleds-button" type="button" class="btn btn-danger" data-dismiss="modal">IR LEDs on</button>
+              <button id="disable-irleds-button" type="button" class="btn btn-success" data-dismiss="modal">IR LEDs off</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endif %}
 {% endif %}
     </div>
   </div>
@@ -111,6 +134,22 @@ $(document).ready(function () {
    $.ajax({
       type: 'GET',
       url: '/light/{{ light }}/off',
+    });
+  });
+{% endif %}
+
+{% if enable_irleds and not dashboard_mode %}
+  $('#enable-irleds-button').click(function() {
+   $.ajax({
+      type: 'GET',
+      url: '/light/{{ irleds }}/on',
+    });
+  });
+
+  $('#disable-irleds-button').click(function() {
+   $.ajax({
+      type: 'GET',
+      url: '/light/{{ irleds }}/off',
     });
   });
 {% endif %}

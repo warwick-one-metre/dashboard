@@ -12,9 +12,11 @@
 {% set enable_microphone = user_account != None and 'satellites' in user_account['permissions'] -%}
 {% set enable_video = True %}
 {% set enable_light = user_account != None and 'satellites' in user_account['permissions'] -%}
+{% set enable_irleds = user_account != None and 'satellites' in user_account['permissions'] -%}
 {% set video = 'wasp1' %}
 {% set audio = 'wasp' %}
 {% set light = 'wasp1' %}
+{% set irleds = 'waspir' %}
 {% include 'camera.html' %}
 
 {% endblock %}

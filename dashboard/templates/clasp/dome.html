@@ -11,8 +11,13 @@
 {% endif %}
 {% set enable_microphone = user_account != None and 'satellites' in user_account['permissions'] -%}
 {% set enable_video = True %}
+{% set enable_light = user_account != None and 'satellites' in user_account['permissions'] -%}
+{% set enable_irleds = user_account != None and 'satellites' in user_account['permissions'] -%}
 {% set video = 'clasp' %}
 {% set audio = 'clasp' %}
+{% set light = 'clasp' %}
+{% set irleds = 'claspir' %}
+
 {% include 'camera.html' %}
 
 {% endblock %}

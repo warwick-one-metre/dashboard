@@ -16,6 +16,8 @@
 
 import json
 import pymysql
+import requests
+from requests.auth import HTTPDigestAuth
 
 from flask import abort
 from flask import Flask
@@ -380,29 +382,51 @@ def west_camera():
     return render_template('west.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
+def _toggle_leds(daemon, light, account, state):
+    with daemon.connect() as power:
+        power.dashboard_switch(light, state == 'on', account['username'])
+    return jsonify({})
+
+
+def _toggle_webcam_ir(ip, password, enabled):
+    data = json.dumps({
+        'apiVersion': '1.2',
+        'method': 'enableLight' if enabled else 'disableLight',
+        'params': {'lightID': 'led0'}
+    })
+
+    requests.post('http://{}/axis-cgi/lightcontrol.cgi'.format(ip), data=data, auth=HTTPDigestAuth('root', password))
+    return jsonify({})
+
+
 @app.route('/light/<light>/<state>')
 def switch_light(light, state):
     account = get_user_account()
+
     if state in ['on', 'off']:
         if light == 'w1m' and 'w1m' in account['permissions']:
-            with daemons.onemetre_power.connect() as power:
-                power.dashboard_switch('light', state == 'on', account['username'])
-            return jsonify({})
+            return _toggle_leds(daemons.onemetre_power, 'light', account, state)
 
         if light == 'goto1' and 'goto' in account['permissions']:
-            with daemons.goto_dome1_gtecs_power.connect() as power:
-                power.dashboard_switch('leds', state == 'on', account['username'])
-            return jsonify({})
+            return _toggle_leds(daemons.goto_dome1_gtecs_power, 'leds', account, state)
 
         if light == 'goto2' and 'goto' in account['permissions']:
-            with daemons.goto_dome2_gtecs_power.connect() as power:
-                power.dashboard_switch('leds', state == 'on', account['username'])
-            return jsonify({})
+            return _toggle_leds(daemons.goto_dome2_gtecs_power, 'leds', account, state)
 
         if (light == 'wasp1' or light == 'wasp2') and 'satellites' in account['permissions']:
-            with daemons.superwasp_power.connect() as power:
-                power.dashboard_switch('ilight' if light == 'wasp1' else 'clight', state == 'on', account['username'])
-            return jsonify({})
+            return _toggle_leds(daemons.superwasp_power, 'ilight' if light == 'wasp1' else 'clight', account, state)
+
+        if light == 'clasp' and 'satellites' in account['permissions']:
+            return _toggle_leds(daemons.clasp_power, 'light', account, state)
+
+        if light == 'waspir' and 'satellites' in account['permissions']:
+            return _toggle_webcam_ir('10.2.6.118', app.config['WEBCAM_SUPERWASP_PASSWORD'], state == 'on')
+
+        if light == 'w1mir' and 'w1m' in account['permissions']:
+            return _toggle_webcam_ir('10.2.6.208', app.config['WEBCAM_W1M_PASSWORD'], state == 'on')
+
+        if light == 'claspir' and 'satellites' in account['permissions']:
+            return _toggle_webcam_ir('10.2.6.193', app.config['WEBCAM_CLASP_PASSWORD'], state == 'on')
 
     abort(404)
 

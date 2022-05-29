@@ -12,9 +12,12 @@
 {% set enable_microphone = user_account != None and 'w1m' in user_account['permissions'] -%}
 {% set enable_video = True %}
 {% set enable_light = user_account != None and 'w1m' in user_account['permissions'] -%}
+{% set enable_irleds = user_account != None and 'w1m' in user_account['permissions'] -%}
 {% set video = 'w1m' %}
 {% set audio = 'w1m' %}
 {% set light = 'w1m' %}
+{% set irleds = 'w1mir' %}
+
 {% include 'camera.html' %}
 
 {% endblock %}
