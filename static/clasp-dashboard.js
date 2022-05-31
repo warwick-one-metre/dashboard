@@ -1,34 +1,34 @@
 function powerInstrument(row, cell, data) {
-  fields = ['cam1', 'cam2', 'focuser'];
-  error = false;
+  const fields = ['cam1', 'cam2', 'focuser'];
+  let error = false;
 
-  var enabled = 0;
-  for (i in fields) {
-    if (!(fields[i] in data) || data[fields[i]] == 2)
+  let enabled = 0;
+  for (let i in fields) {
+    if (!(fields[i] in data) || data[fields[i]] === 2)
       error = true;
-    else if (data[fields[i]] == 1)
+    else if (data[fields[i]] === 1)
       enabled += 1;
   }
 
-  status = 'POWER MIXED';
-  style = 'text-warning';
+  let label = 'POWER MIXED';
+  let style = 'text-warning';
   if (error) {
-    status = 'ERROR';
+    label = 'ERROR';
     style = 'text-danger';
-  } else if (enabled == fields.length) {
-    status = 'POWER ON';
+  } else if (enabled === fields.length) {
+    label = 'POWER ON';
     style = 'text-success';
-  } else if (enabled == 0) {
-    status = 'POWER OFF';
+  } else if (enabled === 0) {
+    label = 'POWER OFF';
     style = 'text-danger';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function telState(row, cell, data) {
-  var state = [
+  const state = [
     ['DISABLED', 'text-danger'],
     ['PARKED', ''],
     ['STOPPED', 'text-danger'],
@@ -81,7 +81,7 @@ function telSunMoon(row, cell, data) {
 }
 
 function domeShutter(row, cell, data) {
-  var state = [
+  const state = [
     ['CLOSED', 'text-danger'],
     ['OPEN', 'text-success'],
     ['PARTIALLY OPEN', 'text-info'],
@@ -100,7 +100,7 @@ function domeShutter(row, cell, data) {
 }
 
 function domeHeartbeat(row, cell, data) {
-  var state = [
+  const state = [
     ['DISABLED', 'text-warning'],
     ['ACTIVE', 'text-success'],
     ['CLOSING DOME', 'text-danger'],
@@ -108,12 +108,12 @@ function domeHeartbeat(row, cell, data) {
     ['UNAVAILABLE', 'text-warning']
   ];
 
-  status = 'ERROR';
-  style = 'text-danger';
+  let label = 'ERROR';
+  let style = 'text-danger';
 
   if ('heartbeat_status' in data && 'heartbeat_remaining' in data) {
-    if (data['heartbeat_status'] == 1) {
-      status = data['heartbeat_remaining'] + 's remaining';
+    if (data['heartbeat_status'] === 1) {
+      label = data['heartbeat_remaining'] + 's remaining';
       if (data['heartbeat_remaining'] < 30)
         style = 'text-danger'
       else if (data['heartbeat_remaining'] < 60)
@@ -121,18 +121,19 @@ function domeHeartbeat(row, cell, data) {
       else
         style = 'text-success';
     } else {
-      status = state[data['heartbeat_status']][0];
+      label = state[data['heartbeat_status']][0];
       style = state[data['heartbeat_status']][1];
     }
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function camStatus(row, cell, data) {
-  var cam_number = row.data('cam');
-  var state = [
+  const cam = row.data('cam');
+  const cam_state = getData(data, ["clasp_cam" + cam, "state"]);
+  const state = [
     ['OFFLINE', 'text-danger'],
     ['INITIALIZING', 'text-danger'],
     ['IDLE'],
@@ -142,52 +143,63 @@ function camStatus(row, cell, data) {
     ['ABORTING', 'text-danger'],
   ];
 
-  cam_status = getData(data, ["clasp_cam" + cam_number, "state"]);
-  if (cam_status === undefined) {
-    status = 'ERROR';
+  let label, style;
+  if (cam_state === undefined) {
+    label = 'ERROR';
     style = 'text-danger';
   } else {
-    status = state[cam_status][0];
-    style = state[cam_status][1];
+    label = state[cam_state][0];
+    style = state[cam_state][1];
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function camExposure(row, cell, data) {
-  var cam_number = row.data('cam');
-  cam_exposure = getData(data, ["clasp_cam" + cam_number, "exposure_time"]);
-  if (cam_exposure === undefined) {
-    status = 'ERROR';
+  const cam = row.data('cam');
+  const cam_state = getData(data, ["clasp_cam" + cam, "state"]);
+  const cam_exposure = getData(data, ["clasp_cam" + cam, "exposure_time"]);
+  let label, style;
+  if (cam_state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cam_exposure === undefined) {
+    label = 'ERROR';
     style = 'text-danger';
   } else {
-    status = cam_exposure.toFixed(3) + ' s';
+    label = cam_exposure.toFixed(3) + ' s';
     style = '';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function camTemp(row, cell, data) {
-  var cam_number = row.data('cam');
-  cam_temperature = getData(data, ["clasp_cam" + cam_number, "cooler_temperature"]);
-  cam_temperature_locked = getData(data, ["clasp_cam" + cam_number, "temperature_locked"]);
-  if (cam_temperature === undefined || cam_temperature_locked === undefined) {
-    status = 'ERROR';
+  const cam = row.data('cam');
+  const cam_state = getData(data, ["clasp_cam" + cam, "state"]);
+  const cam_temperature = getData(data, ["clasp_cam" + cam, "cooler_temperature"]);
+  const cam_temperature_locked = getData(data, ["clasp_cam" + cam, "temperature_locked"]);
+
+  let label, style;
+  if (cam_state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cam_temperature === undefined || cam_temperature_locked === undefined) {
+    label = 'ERROR';
     style = 'text-danger';
   } else {
-    status = cam_temperature.toFixed(0) + ' &deg;C';
+    label = cam_temperature.toFixed(0) + ' &deg;C';
     style = cam_temperature_locked ? 'text-success' : 'text-danger';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function camCool(row, cell, data) {
-  var state = [
+  const state = [
     ['UNKNOWN', 'text-danger'],
     ['WARM', 'text-danger'],
     ['WARMING', 'text-warning'],
@@ -196,27 +208,33 @@ function camCool(row, cell, data) {
     ['LOCKED', 'text-success'],
   ];
 
-  var cam_number = row.data('cam');
-  cam_cooler_power = getData(data, ["clasp_cam" + cam_number, "cooler_pwm"]);
-  cam_cooler_mode = getData(data, ["clasp_cam" + cam_number, "cooler_mode"]);
-  if (cam_cooler_power === undefined || cam_cooler_mode === undefined) {
-    status = 'ERROR';
+  const cam = row.data('cam');
+  const cam_state = getData(data, ["clasp_cam" + cam, "state"]);
+  const cam_cooler_power = getData(data, ["clasp_cam" + cam, "cooler_pwm"]);
+  const cam_cooler_mode = getData(data, ["clasp_cam" + cam, "cooler_mode"]);
+
+  let label, style;
+  if (cam_state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cam_cooler_power === undefined || cam_cooler_mode === undefined) {
+    label = 'ERROR';
     style = 'text-danger';
   } else {
-    status = state[cam_cooler_mode][0]
+    label = state[cam_cooler_mode][0]
     if (cam_cooler_mode !== 1)
-      status += ' (' + cam_cooler_power.toFixed(0) + '%)';
+      label += ' (' + cam_cooler_power.toFixed(0) + '%)';
 
     style = state[cam_cooler_mode][1];
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function telFocus(row, cell, data) {
-  var focuser_number = row.data('focuser');
-  var state = [
+  const focuser = row.data('focuser');
+  const state = [
     ['OFFLINE', 'text-danger'],
     ['DISCONNECTED', 'text-danger'],
     ['ERROR', 'text-danger'],
@@ -225,17 +243,18 @@ function telFocus(row, cell, data) {
     ['MOVING', 'text-warning']
   ];
 
-  if (data && 'current_steps_' + focuser_number in data && 'status_' + focuser_number in data) {
-    var s = data['status_' + focuser_number];
-    status = state[s][0];
+  let label, style;
+  if (data && 'current_steps_' + focuser in data && 'status_' + focuser in data) {
+    const s = data['status_' + focuser];
+    label = state[s][0];
     style = state[s][1];
-    if (s == 4)
-      status = data['current_steps_' + focuser_number] + ' steps';
+    if (s === 4)
+      label = data['current_steps_' + focuser] + ' steps';
   } else {
-    status = 'ERROR';
+    label = 'ERROR';
     style = 'text-danger';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
