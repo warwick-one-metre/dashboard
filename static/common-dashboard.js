@@ -7,17 +7,17 @@ function updateGroups(data) {
     $(this).attr('class', 'list-group-item');
 
     // Add new content
-    var generator = $(this).data('generator');
-    var index = $(this).data('index');
+    const generator = $(this).data('generator');
+    const index = $(this).data('index');
 
-    var fieldData = data;
+    let fieldData = data;
     for (var i in index) {
       fieldData = fieldData && index[i] in fieldData ? fieldData[index[i]] : undefined;
       if (fieldData === undefined)
         break;
     }
 
-    var cell = $('<span class="pull-right">');
+    const cell = $('<span class="pull-right">');
     if (fieldData === undefined) {
       cell.html('ERROR');
       cell.addClass('text-danger');
@@ -27,7 +27,7 @@ function updateGroups(data) {
     $(this).append(cell);
   });
 
-  var date = 'date' in data ? parseUTCDate(data['date']) : new Date();
+  const date = 'date' in data ? parseUTCDate(data['date']) : new Date();
   $('#data-updated').html('Updated ' + formatUTCDate(date) + ' UTC');
 }
 
@@ -49,7 +49,7 @@ function pollDashboard(url) {
 }
 
 function getData(data, index) {
-  for (var i in index) {
+  for (let i in index) {
     data = data && index[i] in data ? data[index[i]] : undefined;
     if (data === undefined)
       break;
@@ -77,12 +77,12 @@ function fieldLimitsColor(field, value) {
 
 function envLatestMinMax(row, cell, data) {
   if ('latest' in data) {
-    var precision = row.data('precision');
+    let precision = row.data('precision');
     if (precision === undefined)
       precision = 1;
 
-    var display = data['latest'].toFixed(precision);
-    var units = row.data('units');
+    let display = data['latest'].toFixed(precision);
+    const units = row.data('units');
     if (units)
       display += units;
     cell.html(display);
@@ -93,15 +93,15 @@ function envLatestMinMax(row, cell, data) {
   }
 
   if ('max' in data && 'min' in data) {
-    var maxValue = $('<span>');
+    const maxValue = $('<span>');
     maxValue.html(data['max'].toFixed(1));
     maxValue.addClass(fieldLimitsColor(data, data['max']));
 
-    var minValue = $('<span>');
+    const minValue = $('<span>');
     minValue.html(data['min'].toFixed(1));
     minValue.addClass(fieldLimitsColor(data, data['min']));
 
-    var maxMinValue = $('<span class="pull-right data-minmax">');
+    const maxMinValue = $('<span class="pull-right data-minmax">');
     maxMinValue.append(maxValue);
     maxMinValue.append('<br>');
     maxMinValue.append(minValue);
@@ -111,8 +111,8 @@ function envLatestMinMax(row, cell, data) {
 
 function diskSpaceGB(row, cell, data) {
   if ('latest' in data) {
-    var display = +(data['latest'] / 1073741824).toFixed(1);
-    var units = row.data('units');
+    let display = +(data['latest'] / 1073741824).toFixed(1);
+    const units = row.data('units');
     if (units)
       display += units;
     cell.html(display);
@@ -122,8 +122,8 @@ function diskSpaceGB(row, cell, data) {
 
 function seeingIfAvailable(row, cell, data) {
   if ('latest' in data && data['latest'] > 0) {
-    var display = data['latest'].toFixed(2);
-    var units = row.data('units');
+    let display = data['latest'].toFixed(2);
+    const units = row.data('units');
     if (units)
       display += units;
     cell.html(display);
@@ -135,62 +135,60 @@ function seeingIfAvailable(row, cell, data) {
 
 // Header generators
 function opsHeaderTel(row, cell, data) {
-  status = 'ERROR';
-  style = 'text-danger';
-  rowstyle = 'list-group-item-danger';
+  let label = 'ERROR';
+  let style = 'text-danger';
+  let row_style = 'list-group-item-danger';
 
-  if (data == 1) {
-    status = 'OFFLINE';
-  } else if (data == 2) {
-    status = 'ONLINE';
+  if (data === 1) {
+    label = 'OFFLINE';
+  } else if (data === 2) {
+    label = 'ONLINE';
     style = 'text-success';
-    rowstyle = 'list-group-item-success';
+    row_style = 'list-group-item-success';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
-  row.addClass(rowstyle);
+  row.addClass(row_style);
 }
 
 function opsHeaderDome(row, cell, data) {
-  status = 'ERROR';
-  style = 'text-danger';
-  rowstyle = 'list-group-item-danger';
+  let label = 'ERROR';
+  let style = 'text-danger';
+  let row_style = 'list-group-item-danger';
 
-  if (data == 1) {
-    status = 'CLOSED';
-  } else if (data == 2) {
-    status = 'OPEN';
+  if (data === 1) {
+    label = 'CLOSED';
+  } else if (data === 2) {
+    label = 'OPEN';
     style = 'text-success';
-    rowstyle = 'list-group-item-success';
+    row_style = 'list-group-item-success';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
-  row.addClass(rowstyle);
+  row.addClass(row_style);
 }
 
-
-
 function opsHeaderMode(row, cell, data) {
-  var modes = [
+  const modes = [
     ['ERROR', 'list-group-item-danger'],
     ['AUTO', 'list-group-item-success'],
     ['MANUAL', 'list-group-item-warning'],
   ];
 
-  var mode = data in modes ? modes[data] : mode[0];
+  const mode = data in modes ? modes[data] : mode[0];
   cell.html(mode[0]);
   row.addClass(mode[1]);
 }
 
 function opsHeaderDehumidifier(row, cell, data) {
-  var modes = [
+  const modes = [
     ['MANUAL', 'list-group-item-warning'],
     ['AUTO', 'list-group-item-success'],
   ];
 
-  var mode = data in modes ? modes[data] : mode[0];
+  const mode = data in modes ? modes[data] : modes[0];
   cell.html(mode[0]);
   row.addClass(mode[1]);
 }
@@ -200,22 +198,22 @@ function opsHeaderEnvironment(row, cell, data) {
     cell.html(data['safe'] ? 'SAFE' : 'NOT SAFE');
     row.addClass(data['safe'] ? 'list-group-item-success' : 'list-group-item-danger');
 
-    var status_classes = ['', 'text-success', 'text-warning', 'text-danger']
-    var tooltip = '<table style="margin: 5px">';
-    for (var c in data['conditions']) {
+    const status_classes = ['', 'text-success', 'text-warning', 'text-danger'];
+    let tooltip = '<table style="margin: 5px">';
+    for (let c in data['conditions']) {
       if (!(c in data['conditions']))
         continue;
 
       tooltip += '<tr><td style="text-align: right;">' + c + ':</td>';
-      var params = data['conditions'][c];
-      for (var p in params)
+      const params = data['conditions'][c];
+      for (let p in params)
         tooltip += '<td style="padding: 0 5px" class="' + status_classes[params[p]] + '">' + p + '</td>';
 
       tooltip += '</tr>';
     }
     tooltip += '</table>';
 
-    var tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
+    const tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
     if (tooltip_active)
       row.tooltip('hide');
 
@@ -231,39 +229,39 @@ function opsHeaderEnvironment(row, cell, data) {
 }
 
 function powerUPS(row, cell, data) {
-  var prefix = row.data('prefix');
-  status = 'ERROR';
-  style = 'text-danger';
+  const prefix = row.data('prefix');
+  let label = 'ERROR';
+  let style = 'text-danger';
 
-  var status_field = prefix + '_status';
-  var remaining_field = prefix + '_battery_remaining';
-  var load_field = prefix + '_load';
-  var battery_healthy = prefix + '_battery_healthy';
+  const status_field = prefix + '_status';
+  const remaining_field = prefix + '_battery_remaining';
+  const load_field = prefix + '_load';
+  const battery_healthy = prefix + '_battery_healthy';
   if (battery_healthy in data && !data[battery_healthy])
       row.addClass('list-group-item-danger');
 
   if (data && status_field in data && remaining_field in data && load_field in data) {
-    if (data[status_field] == 2) {
-      status = 'ONLINE';
+    if (data[status_field] === 2) {
+      label = 'ONLINE';
       style = 'text-success';
     }
-    else if (data[status_field] == 3) {
-      status = 'BATTERY';
+    else if (data[status_field] === 3) {
+      label = 'BATTERY';
       style = 'text-warning';
     }
 
-    status += ' (' + data[remaining_field] + '%&nbsp;/&nbsp;' + Math.round(data[load_field]) + '%)';
+    label += ' (' + data[remaining_field] + '%&nbsp;/&nbsp;' + Math.round(data[load_field]) + '%)';
   }
 
-  cell.html(status);
+  cell.html(label);
   cell.addClass(style);
 }
 
 function powerOnOff(row, cell, data) {
-  if (data == 2) {
+  if (data === 2) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-  } else if (data == 1) {
+  } else if (data === 1) {
     cell.html('POWER ON');
     cell.addClass('text-success');
   } else {
@@ -273,10 +271,10 @@ function powerOnOff(row, cell, data) {
 }
 
 function powerOffOn(row, cell, data) {
-  if (data == 2) {
+  if (data === 2) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-  } else if (data == 1) {
+  } else if (data === 1) {
     cell.html('POWER ON');
     cell.addClass('text-danger');
   } else {
@@ -298,11 +296,11 @@ function opsActionName(row, cell, data) {
   if (!('mode' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-  } else if (data['mode'] == 2) {
+  } else if (data['mode'] === 2) {
     cell.html('MANUAL');
     cell.addClass('text-warning');
   } else if ('action_name' in data) {
-    label = data['action_name'];
+    let label = data['action_name'];
     if ('action_number' in data && data['action_number'] > 0)
       label += ' (' + data['action_number'] + ' / ' + data['action_count'] + ')';
     cell.html(label);
@@ -315,7 +313,7 @@ function opsActionTask(row, cell, data) {
   if (!('mode' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-  } else if (data['mode'] == 2) {
+  } else if (data['mode'] === 2) {
     cell.html('MANUAL');
     cell.addClass('text-warning');
   } else if ('action_task' in data)
@@ -328,7 +326,7 @@ function pipelineObject(row, cell, data) {
   if (!('frame_type' in data) || !('frame_object' in data)) {
     cell.html('ERROR');
     cell.addClass('text-danger');
-  } else if (data['frame_type'] == 'SCIENCE')
+  } else if (data['frame_type'] === 'SCIENCE')
     cell.html(data['frame_object']);
   else
     cell.html(data['frame_type']);
