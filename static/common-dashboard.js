@@ -257,6 +257,20 @@ function powerUPS(row, cell, data) {
   cell.addClass(style);
 }
 
+function powerATS(row, cell, data) {
+  let label, style;
+  if (data > 0) {
+    label = 'SOURCE ' + data;
+    style = '';
+  } else {
+    label = 'ERROR';
+    style = 'text-danger';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
 function powerOnOff(row, cell, data) {
   if (data === 2) {
     cell.html('ERROR');
