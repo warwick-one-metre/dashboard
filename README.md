@@ -1,10 +1,8 @@
-## La Palma observatory dashboard [![Travis CI build status](https://travis-ci.org/warwick-one-metre/dashboard.svg?branch=master)](https://travis-ci.org/warwick-one-metre/dashboard)
-
-Part of the observatory software for the Warwick La Palma telescopes.
+## La Palma observatory dashboard
 
 A Flask application that hosts dashboards showing the current / historical weather, webcams / audio, and telescope-specific information.
 
-See [Software Infrastructure](https://github.com/warwick-one-metre/docs/wiki/Software-Infrastructure) for an overview of the W1m software architecture and instructions for developing and deploying the code.
+See [Software Infrastructure](https://github.com/warwick-one-metre/docs/wiki/Software-Infrastructure) for an overview of the observatory software architecture and instructions for developing and deploying the code.
 
 ### Software Setup
 
@@ -36,7 +34,9 @@ The `dashboard_config` table is expected to contain three rows:
 | `1`  | `SECRET_KEY` | A complex random value used for encrypting cookies and other data.  This should be a string of at least 40 random characters.|
 | `2`  | `GITHUB_CLIENT_ID` | Part of the GitHub authentication support.  This should be set to the "Client ID" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
 | `3`  | `GITHUB_CLIENT_SECRET` | Part of the GitHub authentication support.  This should be set to the "Client Secret" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
-
+| `4`  | `WEBCAM_SUPERWASP_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
+| `5`  | `WEBCAM_W1M_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
+| `6`  | `WEBCAM_CLASP_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
 
 Once that is working, you can configure the dashboard and web-serving infrastructure to run at startup using:
 ```
@@ -66,7 +66,7 @@ sudo restorecon -Rv /srv/dashboard
 Now we need to share the temp data directory so that the pipeline daemon (on the TCS) can write preview data.
 Edit `/etc/exports` and add the following line:
 ```
-/srv/dashboard/generated    10.2.6.203(rw,sync,no_root_squash,no_all_squash)
+/srv/dashboard/generated    10.2.6.0/24(rw,sync,no_root_squash,no_all_squash)
 ```
 
 Note that this is the IP of the machine running `pipelined` and should be updated if that changes.

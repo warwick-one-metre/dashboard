@@ -6,9 +6,9 @@ Summary:   Web dashboard for the Warwick La Palma telescopes.
 License:   GPL-3.0
 Group:     Unspecified
 BuildArch: noarch
-Requires: nginx, nfs-utils, uwsgi, uwsgi-plugin-python36, uwsgi-logger-file, mariadb-server,
-Requires: observatory-log-server, observatory-weather-database-updater
-Requires: python3, python3-flask, python3-github-flask, python3-pymysql, python3-warwick-observatory-common
+Requires:  nginx nfs-utils uwsgi uwsgi-plugin-python3 uwsgi-logger-file mariadb-server
+Requires:  observatory-log-server observatory-weather-database-updater
+Requires:  python3 python3-flask python3-github-flask python3-PyMySQL python3-warwick-observatory-common
 
 %description
 
