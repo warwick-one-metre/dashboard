@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 
 {% set cameras = [
+  ('http://lapalma-observatory.warwick.ac.uk/data/allsky/static', 'Warwick All-Sky Camera', ''),
   ('http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg', 'GTC All-Sky Camera', 'http://www.gtc.iac.es/multimedia/webcams.php'),
   ('http://telescope.livjm.ac.uk/data/webfiles/QS/Latest/a_latest_hms.jpg', 'Liverpool Telescope Skycam', 'http://telescope.livjm.ac.uk/data/webfiles/Skycam/'),
   ('http://lapalma-observatory.warwick.ac.uk/data/eumetsat/ir', 'EUMETSAT 10.8 um', 'https://eumetview.eumetsat.int/static-images/MSG/IMAGERY/IR108/BW/index.htm'),
-  ('http://lapalma-observatory.warwick.ac.uk/data/eumetsat/dust', 'EUMETSAT Dust RGB', 'https://eumetview.eumetsat.int/static-images/MSG/RGB/DUST/'),
 ] -%}
 
 {% set title = 'Sky Cameras' -%}

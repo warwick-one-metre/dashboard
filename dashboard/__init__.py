@@ -77,6 +77,11 @@ EUMETSAT_GENERATED_DATA = {
     'dust': 'eumetsat-dust.jpg',
 }
 
+SKYCAM_GENERATED_DATA = {
+    'static': 'allsky-last-image.jpg'
+}
+
+
 app = Flask(__name__)
 
 # Stop Flask from telling the browser to cache dynamic files
@@ -367,6 +372,13 @@ def skycams():
 def eumetsat_generated_data(path):
     if path in EUMETSAT_GENERATED_DATA:
         return send_from_directory(GENERATED_DATA_DIR, EUMETSAT_GENERATED_DATA[path])
+    abort(404)
+
+
+@app.route('/data/allsky/<path:path>')
+def allskycam_generated_data(path):
+    if path in SKYCAM_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, SKYCAM_GENERATED_DATA[path])
     abort(404)
 
 
