@@ -36,18 +36,16 @@
       <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
       <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
       <span class="list-group-item" data-index='["clasp_power", "ats_source"]' data-generator="powerATS">ATS</span>
-      <span class="list-group-item" data-index='["clasp_power", "mount"]' data-generator="powerOnOff">Mount</span>
-      <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerInstrument">Instrument</span>
       <span class="list-group-item" data-index='["clasp_power", "light"]' data-generator="powerOffOn">Dome Light</span>
+      <span class="list-group-item" data-index='["clasp_power", "dehumidifier"]' data-generator="powerOffOn">Dehumidifier</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["clasp_power", "dehumidifier"]' data-generator="powerOffOn">Dehumidifier</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
-      <span class="list-group-item" data-index='["clasp_roomalert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["clasp_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
-      <span class="list-group-item" data-index='["clasp_roomalert", "internal_temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+      <span class="list-group-item" data-index='["clasp_domealert", "internal_temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
     </div>
   </div>
@@ -58,14 +56,12 @@
       <span class="list-group-item" data-index='["w1m_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
       <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
       <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
-      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
+      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
       <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
-      <span class="list-group-item" data-index='["clasp_diskspace_1", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">DAS1 Disk Space</span>
-      <span class="list-group-item" data-index='["clasp_diskspace_2", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">DAS2 Disk Space</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
       <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
       <span class="list-group-item" data-index='["ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
@@ -81,6 +77,8 @@
       <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telAltAz">Alt / Az</span>
       <span class="list-group-item" data-index='["clasp_mount"]' data-generator="telSunMoon">Sun / Moon Sep.</span>
+      <span class="list-group-item" data-index='["clasp_power", "mount"]' data-generator="powerOnOff">Mount</span>
+      <span class="list-group-item" data-index='["clasp_power", "focuser"]' data-generator="powerOnOff">Focuser</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -117,6 +115,11 @@
             <td>Cooling</td>
             <td data-index='[]' data-generator="camCool" data-cam="1"></td>
             <td data-index='[]' data-generator="camCool" data-cam="2"></td>
+          </tr>
+          <tr>
+            <td>Disk Space</td>
+            <td data-index='[]' data-generator="camDiskSpace" data-cam="1" data-units=" GB"></td>
+            <td data-index='[]' data-generator="camDiskSpace" data-cam="2" data-units=" GB"></td>
           </tr>
           <tr>
             <td>Focus</td>

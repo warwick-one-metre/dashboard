@@ -1,32 +1,3 @@
-function powerInstrument(row, cell, data) {
-  const fields = ['cam1', 'cam2', 'focuser'];
-  let error = false;
-
-  let enabled = 0;
-  for (let i in fields) {
-    if (!(fields[i] in data) || data[fields[i]] === 2)
-      error = true;
-    else if (data[fields[i]] === 1)
-      enabled += 1;
-  }
-
-  let label = 'POWER MIXED';
-  let style = 'text-warning';
-  if (error) {
-    label = 'ERROR';
-    style = 'text-danger';
-  } else if (enabled === fields.length) {
-    label = 'POWER ON';
-    style = 'text-success';
-  } else if (enabled === 0) {
-    label = 'POWER OFF';
-    style = 'text-danger';
-  }
-
-  cell.html(label);
-  cell.addClass(style);
-}
-
 function telState(row, cell, data) {
   const state = [
     ['DISABLED', 'text-danger'],
@@ -133,6 +104,7 @@ function domeHeartbeat(row, cell, data) {
 function camStatus(row, cell, data) {
   const cam = row.data('cam');
   const cam_state = getData(data, ["clasp_cam" + cam, "state"]);
+  const cam_power = getData(data, ["clasp_power", "cam" + cam]);
   const state = [
     ['OFFLINE', 'text-danger'],
     ['INITIALIZING', 'text-danger'],
@@ -144,8 +116,11 @@ function camStatus(row, cell, data) {
   ];
 
   let label, style;
-  if (cam_state === undefined) {
+  if (cam_state === undefined || cam_power === undefined) {
     label = 'ERROR';
+    style = 'text-danger';
+  } else if (cam_power == 0) {
+    label = 'POWER OFF';
     style = 'text-danger';
   } else {
     label = state[cam_state][0];
@@ -230,6 +205,13 @@ function camCool(row, cell, data) {
 
   cell.html(label);
   cell.addClass(style);
+}
+
+function camDiskSpace(row, cell, data){
+  const cam = row.data('cam');
+  //const diskspace = getData(data, ["clasp_diskspace_" + cam, "data_fs_available_bytes"]);
+  const diskspace = getData(data, ["clasp_diskspace_1", "data_fs_available_bytes"]);
+  diskSpaceGB(row, cell, diskspace);
 }
 
 function telFocus(row, cell, data) {
