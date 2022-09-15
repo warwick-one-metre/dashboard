@@ -9,7 +9,7 @@
   </div>
 </div>
 
-<div class="row dashboard-stats">
+    <div class="row dashboard-stats">
   <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["w1m_status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
@@ -24,7 +24,7 @@
   </div>
   <div class="col-md-4 col-sm-12 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["w1m_status", "dehumidifier_mode"]' data-generator="opsHeaderMode">Dehumidifier Control</span>
+      <span class="list-group-item" data-index='["w1m_dehumidifier", "mode"]' data-generator="opsHeaderDehumidifier">Dehumidifier Control</span>
       <span class="list-group-item" data-index='["w1m_status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
@@ -33,43 +33,35 @@
 <div class="row dashboard-stats">
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerMainUPS">Main UPS</span>
-      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerDomeUPS">Dome UPS</span>
-      <span class="list-group-item" data-index='["w1m_power", "telescope_80v"]' data-generator="powerOnOff">Tel Drive</span>
-      <span class="list-group-item" data-index='["w1m_power", "telescope_12v"]' data-generator="powerOnOff">Tel Controllers</span>
-      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerInstrument">Instrument</span>
-      <span class="list-group-item" data-index='["w1m_power", "light"]' data-generator="powerOnOff">Dome Light</span>
-      <span class="list-group-item" data-index='["w1m_power", "dehumidifier"]' data-generator="powerOnOff">Dehumidifier</span>
+      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
+      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
+      <span class="list-group-item" data-index='["w1m_power", "ats_source"]' data-generator="powerATS">ATS</span>
+      <span class="list-group-item" data-index='["w1m_power", "light"]' data-generator="powerOffOn">Dome Light</span>
+      <span class="list-group-item" data-index='["w1m_power", "dehumidifier"]' data-generator="powerOffOn">Dehumidifier</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <span class="list-group-item" data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
-      <span class="list-group-item" data-index='["w1m_roomalert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["w1m_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
-      <span class="list-group-item" data-index='["w1m_roomalert", "internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
-      <span class="list-group-item" data-index='["w1m_roomalert", "truss_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Truss Temp.</span>
-      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
-      <span class="list-group-item" data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
+      <span class="list-group-item" data-index='["w1m_domealert", "internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+      <span class="list-group-item" data-index='["w1m_domealert", "truss_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Truss Temp.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
-      <span class="list-group-item" data-index='["w1m_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
-      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
-      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
-      <span class="list-group-item" data-index='["tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
+      <span class="list-group-item" data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
+      <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
+      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["w1m_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">TCS Disk Space</span>
-      <span class="list-group-item" data-index='["w1m_roomalert", "security_system_safe"]' data-generator="switchSafeTripped">Hard Limits</span>
-      <span class="list-group-item" data-index='["w1m_roomalert", "trap_closed"]' data-generator="switchClosedOpen">Trap Door</span>
-      <span class="list-group-item" data-index='["w1m_roomalert", "hatch_closed"]' data-generator="switchClosedOpen">Side Hatch</span>
+      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
       <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
       <span class="list-group-item" data-index='["ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
@@ -80,55 +72,60 @@
 <div class="row dashboard-stats">
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Telescope</h5>
-      <span class="list-group-item" data-index='["w1m_telescope", "ra"]' data-generator="telRA">RA</span>
-      <span class="list-group-item" data-index='["w1m_telescope", "dec"]' data-generator="telDec">Dec</span>
-      <span class="list-group-item" data-index='["w1m_telescope", "alt"]' data-generator="telAlt">Altitude</span>
-      <span class="list-group-item" data-index='["w1m_telescope", "telescope_focus_um"]' data-generator="telFocus">Tel. Focus</span>
-      <span class="list-group-item" data-index='["w1m_telescope", "instrument_focus"]' data-generator="telInstrumentFocus">Red Focus</span>
+      <h5 class="list-group-header" style="text-align: center">Mount</h5>
+      <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telState">State</span>
+      <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telRADec">RA / Dec</span>
+      <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telAltAz">Alt / Az</span>
+      <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telSunMoon">Sun / Moon Sep.</span>
+      <span class="list-group-item" data-index='["w1m_domealert", "security_system_safe"]' data-generator="switchSafeTripped">Hard Limits</span>
+      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerOnOffMixed" data-switches='["telescope_80v", "telescope_12v", "telescope_covers"]'>Tel. Power</span>
+      <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerOnOffMixed" data-switches='["red_focus_controller", "red_focus_motor"]'>Red Foc. Power</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Dome</h5>
-      <span class="list-group-item" data-index='["w1m_ops", "dome", "requested_open_date"]' data-generator="domeTime">Sched. Open</span>
-      <span class="list-group-item" data-index='["w1m_ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
       <span class="list-group-item" data-index='["w1m_dome", "shutter_a"]' data-generator="domeShutter">E. Shutter</span>
       <span class="list-group-item" data-index='["w1m_dome", "shutter_b"]' data-generator="domeShutter">W. Shutter</span>
       <span class="list-group-item" data-index='["w1m_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
+      <span class="list-group-item" data-index='["w1m_ops", "dome", "requested_open_date"]' data-generator="domeTime">Sched. Open</span>
+      <span class="list-group-item" data-index='["w1m_ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
+      <span class="list-group-item" data-index='["w1m_domealert", "trap_closed"]' data-generator="switchClosedOpen">Trap Door</span>
+      <span class="list-group-item" data-index='["w1m_domealert", "hatch_closed"]' data-generator="switchClosedOpen">Side Hatch</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Blue Camera</h5>
-      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camStatus">Status</span>
+      <span class="list-group-item" data-index='[]' data-generator="camStatus" data-cam="blue">Status</span>
       <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-index='["w1m_blue", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
-      <span class="list-group-item" data-index='["w1m_blue", "exposure_time"]' data-generator="camExposure">Exposure</span>
-      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camGeometry">Geometry</span>
+      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-index='["w1m_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">Disk Space</span>
+      <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telFocus">Focus</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header text-center">Red Camera</h5>
-      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camStatus">Status</span>
+      <span class="list-group-item" data-index='[]' data-generator="camStatus" data-cam="red">Status</span>
       <span class="list-group-item" data-index='["w1m_red"]' data-generator="camTemperature">Temperature</span>
-      <span class="list-group-item" data-index='["w1m_red", "shutter_enabled"]' data-generator="camShutter">Shutter</span>
-      <span class="list-group-item" data-index='["w1m_red", "exposure_time"]' data-generator="camExposure">Exposure</span>
-      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camGeometry">Geometry</span>
+      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camShutter">Shutter</span>
+      <span class="list-group-item" data-index='["w1m_red"]' data-generator="camExposure">Exposure</span>
+      <span class="list-group-item" data-index='["w1m_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">Disk Space</span>
+      <span class="list-group-item" data-index='[]' data-generator="telRedFocus">Focus</span>
     </div>
   </div>
 </div>
 <div class="row dashboard-stats">
   <div class="col-md-5 col-sm-12 col-xs-12">
     <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Pipeline</h5>
+      <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
+      <span class="list-group-item" data-index='["w1m_ops", "telescope"]' data-generator="opsActionName">Action</span>
+      <span class="list-group-item" data-index='["w1m_ops", "telescope"]' data-generator="opsActionTask">Status</span>
+      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineObject">Object</span>
+      <span class="list-group-item" data-index='["w1m_pipeline", "frame_prefix"]' data-generator="pipelinePrefix">Prefix</span>
       <span class="list-group-item" data-index='["w1m_pipeline", "guide_camera_id"]' data-generator="pipelineGuiding">Guide Camera</span>
-      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineFrameType">Frame Type</span>
-      <span class="list-group-item" data-index='["w1m_pipeline", "archive_directory"]' data-generator="pipelineSaveDir">Archive Dir</span>
-      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineNextBlue">Next Blue Frame</span>
-      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineNextRed">Next Red Frame</span>
-      <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineProcess">Pipeline Steps</span>
     </div>
   </div>
   <div class="clearfix visible-sm-block visible-xs-block"></div>

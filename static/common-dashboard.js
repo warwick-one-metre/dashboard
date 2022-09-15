@@ -297,6 +297,44 @@ function powerOffOn(row, cell, data) {
   }
 }
 
+function powerOnOffMixed(row, cell, data) {
+  const switches = row.data('switches');
+  let error = false;
+  let enabled = 0;
+
+  for (let i in switches) {
+    if (!(switches[i] in data) || data[switches[i]] === 2)
+      error = true;
+    else if (data[switches[i]] === 1)
+      enabled += 1;
+  }
+
+  let status = 'POWER MIXED';
+  let style = 'text-warning';
+  if (error) {
+    status = 'ERROR';
+    style = 'text-danger';
+  } else if (enabled === switches.length) {
+    status = 'POWER ON';
+    style = 'text-success';
+  } else if (enabled === 0) {
+    status = 'POWER OFF';
+    style = 'text-danger';
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function switchClosedOpen(row, cell, data) {
+  if ('latest' in data)
+    cell.html(data['latest'] ? 'CLOSED' : 'OPEN');
+  else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
 function domeTime(row, cell, data) {
   if (data == null)
     cell.html('N/A');

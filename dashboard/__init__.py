@@ -673,10 +673,6 @@ def w1m_dashboard_data():
     if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
         tel_mode = private_ops['telescope']['mode']
 
-    dehumidifier_mode = 0
-    if 'dehumidifier' in private_ops and 'mode' in private_ops['dehumidifier']:
-        dehumidifier_mode = private_ops['dehumidifier']['mode']
-
     env = {}
     if 'environment' in private_ops:
         env = private_ops['environment']
@@ -686,7 +682,6 @@ def w1m_dashboard_data():
         'dome': dome_status,
         'tel_mode': tel_mode,
         'dome_mode': dome_mode,
-        'dehumidifier_mode': dehumidifier_mode,
         'environment': env
     }
 

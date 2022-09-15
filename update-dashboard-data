@@ -164,6 +164,9 @@ def generate_onemetre_json(output_path, date, environment):
     output['w1m_power'] = query_daemon(daemons.onemetre_power, 'w1m_power',
                                        lambda d: d.last_measurement())
 
+    output['w1m_dehumidifier'] = query_daemon(daemons.onemetre_dehumidifier, 'w1m_dehumidifier',
+                                              lambda d: d.status())
+
     try:
         with open(output_path, 'w') as output_file:
             json.dump(output or {}, output_file)
