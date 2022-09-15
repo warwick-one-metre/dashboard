@@ -782,6 +782,7 @@ def wasp_dashboard_data():
     # Extract safe public info from private daemons
     private_ops = private.get('superwasp_ops', {})
     private_telescope = private.get('superwasp_telescope', {})
+    private_roof = private.get('superwasp_roof', {})
 
     # Tel status:
     #   0: error
@@ -796,9 +797,9 @@ def wasp_dashboard_data():
     #   1: closed
     #   2: open
     roof_status = 0
-    if 'roof_state' in private_telescope and 'roof_heartbeat_state' in private_telescope:
-        if private_telescope['roof_heartbeat_state'] != 2:
-            roof_status = 1 if private_telescope['roof_state'] == 5 else 2
+    if 'status' in private_roof and 'heartbeat_status' in private_roof:
+        if private_roof['heartbeat_status'] != 2:
+            roof_status = 1 if private_roof['status'] == 1 else 2
 
     roof_mode = 0
     if 'dome' in private_ops and 'mode' in private_ops['dome']:

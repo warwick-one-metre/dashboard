@@ -34,22 +34,20 @@
     <div class="list-group">
       <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
       <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
-      <span class="list-group-item" data-index='["superwasp_power", "roofbattery"]' data-generator="roofBattery" data-units=" V">Roof Battery</span>
-      <span class="list-group-item" data-index='["superwasp_power", "roof_interface"]' data-generator="powerOnOff">Roof Interface</span>
-      <span class="list-group-item" data-index='["superwasp_power", "mount"]' data-generator="powerOnOff">Mount</span>
-      <span class="list-group-item" data-index='["superwasp_power", "lensheaters"]' data-generator="powerOnOff">Lens Heaters</span>
-      <span class="list-group-item" data-index='["superwasp_power", "ilight"]' data-generator="powerOffOn">Cam. Rm. Light</span>
+      <span class="list-group-item" data-index='["superwasp_power", "clight"]' data-generator="powerOffOn">Comp. Rm. Light</span>
+      <span class="list-group-item" data-index='["superwasp_aircon", "comp_room"]' data-generator="powerCompAircon">Comp. Rm. Aircon</span>
+      <span class="list-group-item" data-index='["superwasp_roomalert", "comp_room_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Comp. Rm. Temp.</span>
+      <span class="list-group-item" data-index='["superwasp_roomalert", "comp_room_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Comp. Rm. Hum.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["superwasp_aircon", "comp_room"]' data-generator="powerCompAircon">Comp. Rm. Aircon</span>
-      <span class="list-group-item" data-index='["superwasp_roomalert", "comp_room_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Comp. Rm. Temp.</span>
-      <span class="list-group-item" data-index='["superwasp_roomalert", "comp_room_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Comp. Rm. Hum.</span>
+      <span class="list-group-item" data-index='["superwasp_power", "ilight"]' data-generator="powerOffOn">Cam. Rm. Light</span>
       <span class="list-group-item" data-index='["superwasp_aircon", "instrument_room"]' data-generator="powerInstrAircon">Cam. Rm. Aircon</span>
       <span class="list-group-item" data-index='["superwasp_roomalert", "cam_room_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Cam. Rm. Temp.</span>
       <span class="list-group-item" data-index='["superwasp_roomalert", "cam_room_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Cam. Rm. Hum.</span>
       <span class="list-group-item" data-index='["superwasp_roomalert", "cam_rack_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Cam. Rack Temp.</span>
+      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
@@ -60,12 +58,10 @@
       <span class="list-group-item" data-index='["goto_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
       <span class="list-group-item" data-index='["goto_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
       <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
-      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
-      <span class="list-group-item" data-index='["superwasp_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">TCS Disk Space</span>
       <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
       <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
@@ -84,15 +80,19 @@
       <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="telAltAz">Alt / Az</span>
       <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="telSunMoon">Sun / Moon Sep.</span>
+      <span class="list-group-item" data-index='["superwasp_power", "mount"]' data-generator="powerOnOff">Mount</span>
+      <span class="list-group-item" data-index='["superwasp_power", "lensheaters"]' data-generator="powerOnOff">Lens Heaters</span>
     </div>
   </div>
   <div class="col-md-3 col-sm-6 col-xs-12">
     <div class="list-group">
       <h5 class="list-group-header" style="text-align: center">Roof</h5>
-      <span class="list-group-item" data-index='["superwasp_telescope", "roof_state"]' data-generator="roofState">State</span>
-      <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="roofHeartbeat">Heartbeat</span>
+      <span class="list-group-item" data-index='["superwasp_roof", "status"]' data-generator="roofState">State</span>
+      <span class="list-group-item" data-index='["superwasp_roof"]' data-generator="roofHeartbeat">Heartbeat</span>
       <span class="list-group-item" data-index='["superwasp_ops", "dome", "requested_open_date"]' data-generator="domeTime">Sched. Open</span>
       <span class="list-group-item" data-index='["superwasp_ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
+      <span class="list-group-item" data-index='["superwasp_power", "roofcharger"]' data-generator="powerOnOff">Roof Charger</span>
+      <span class="list-group-item" data-index='["superwasp_power", "battery_voltage_mean"]' data-generator="roofBattery" data-units=" V">Roof Battery</span>
     </div>
   </div>
   <div class="col-md-6 col-sm-6 col-xs-12">
@@ -130,10 +130,17 @@
           </tr>
           <tr>
             <td>Lens Temp.</td>
-            <td data-index='[]' data-generator="lensTemp" data-cam="1"></td>
-            <td data-index='[]' data-generator="lensTemp" data-cam="2"></td>
-            <td data-index='[]' data-generator="lensTemp" data-cam="3"></td>
-            <td data-index='[]' data-generator="lensTemp" data-cam="4"></td>
+            <td data-index='[]' data-generator="camLensTemp" data-cam="1"></td>
+            <td data-index='[]' data-generator="camLensTemp" data-cam="2"></td>
+            <td data-index='[]' data-generator="camLensTemp" data-cam="3"></td>
+            <td data-index='[]' data-generator="camLensTemp" data-cam="4"></td>
+          </tr>
+          <tr>
+            <td>Disk Space</td>
+            <td data-index='[]' data-generator="camDiskSpace" data-cam="1" data-units=" GB"></td>
+            <td data-index='[]' data-generator="camDiskSpace" data-cam="2" data-units=" GB"></td>
+            <td data-index='[]' data-generator="camDiskSpace" data-cam="3" data-units=" GB"></td>
+            <td data-index='[]' data-generator="camDiskSpace" data-cam="4" data-units=" GB"></td>
           </tr>
         </tbody>
       </table>

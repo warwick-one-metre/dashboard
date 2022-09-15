@@ -117,8 +117,8 @@ def generate_goto_json(output_path, date, environment):
                 'pressure'
             ],
             'rain': ['unsafe_boards'],
-            'goto_dome1_roomalert': ['internal_temp', 'internal_humidity'],
-            'goto_dome2_roomalert': ['internal_temp', 'internal_humidity', 'hatch_closed'],
+            'goto_dome1_domealert': ['internal_temp', 'internal_humidity'],
+            'goto_dome2_domealert': ['internal_temp', 'internal_humidity', 'hatch_closed'],
             'goto_ups': [
                 'dome1_upper_ups_status', 'dome1_upper_ups_battery_remaining', 'dome1_upper_ups_battery_healthy',
                 'dome1_lower_ups_status', 'dome1_lower_ups_battery_remaining', 'dome1_lower_ups_battery_healthy',
@@ -151,7 +151,7 @@ def generate_onemetre_json(output_path, date, environment):
                 'pressure', 'median_wind_speed'
             ],
             'rain': ['unsafe_boards'],
-            'w1m_roomalert': [
+            'w1m_domealert': [
                 'internal_humidity', 'internal_temp', 'truss_temp',
                 'security_system_safe', 'trap_closed', 'hatch_closed'
             ],
@@ -189,7 +189,10 @@ def generate_superwasp_json(output_path, date, environment):
                 'comp_room_temp', 'comp_room_humidity',
                 'cam_room_temp', 'cam_room_humidity',
                 'cam_rack_temp'],
-            'superwasp_diskspace': ['data_fs_available_bytes'],
+            'superwasp_diskspace_cam1': ['data_fs_available_bytes'],
+            'superwasp_diskspace_cam2': ['data_fs_available_bytes'],
+            'superwasp_diskspace_cam3': ['data_fs_available_bytes'],
+            'superwasp_diskspace_cam4': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
@@ -221,7 +224,7 @@ def generate_clasp_json(output_path, date, environment):
                 'pressure', 'median_wind_speed'
             ],
             'rain': ['unsafe_boards'],
-            'clasp_roomalert': [
+            'clasp_domealert': [
                 'internal_humidity', 'internal_temperature'
             ],
             'clasp_diskspace_1': ['data_fs_available_bytes'],
@@ -296,6 +299,7 @@ generate_superwasp_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment
 generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
     (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
     (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
+    (daemons.superwasp_roof, 'superwasp_roof', lambda d: d.status()),
     (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
     (daemons.superwasp_cam1, 'superwasp_cam_1', lambda d: d.report_status()),
     (daemons.superwasp_cam2, 'superwasp_cam_2', lambda d: d.report_status()),
@@ -312,7 +316,7 @@ generate_json(BASE_OUTPUT_DIR + '/clasp-private.json', [
     (daemons.clasp_telescope, 'clasp_mount', lambda d: d.report_status()),
     (daemons.clasp_focus, 'clasp_focus', lambda d: d.report_status()),
     (daemons.clasp_dome, 'clasp_dome', lambda d: d.status()),
-    (daemons.clasp_pipeline_1, 'clasp_pipeline', lambda d: d.report_status()),
+    (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
     (daemons.clasp_camera_1, 'clasp_cam1', lambda d: d.report_status()),
     (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
 ])
@@ -328,12 +332,4 @@ generate_json(BASE_OUTPUT_DIR + '/goto-vaisala.json', [
 
 generate_json(BASE_OUTPUT_DIR + '/netping.json', [
     (daemons.observatory_network_ping, 'netping', lambda d: d.last_measurement())
-])
-
-generate_json(BASE_OUTPUT_DIR + '/goto-dome1-roomalert.json', [
-    (daemons.goto_dome1_roomalert, 'goto-dome1-roomalert', lambda d: d.last_measurement())
-])
-
-generate_json(BASE_OUTPUT_DIR + '/goto-dome2-roomalert.json', [
-    (daemons.goto_dome2_roomalert, 'goto-dome2-roomalert', lambda d: d.last_measurement())
 ])
