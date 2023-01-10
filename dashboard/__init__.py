@@ -718,8 +718,6 @@ def goto1_dashboard_data():
         }
 
         data['goto_dome1_power'] = {
-            'status_UPS1': private['goto_dome1_power']['status_UPS1'],
-            'status_UPS2': private['goto_dome1_power']['status_UPS2'],
             'status_PDU1': {
                 'leds2': private['goto_dome1_power']['status_PDU1']['leds2'],
             },
@@ -753,8 +751,6 @@ def goto2_dashboard_data():
         }
 
         data['goto_dome2_power'] = {
-            'status_UPS1': private['goto_dome2_power']['status_UPS1'],
-            'status_UPS2': private['goto_dome2_power']['status_UPS2'],
             'status_PDU1': {
                 'leds': private['goto_dome2_power']['status_PDU1']['leds'],
             }
