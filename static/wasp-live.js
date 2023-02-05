@@ -19,7 +19,7 @@ function reductionFrameFilename(data) {
   if (!data['saved'])
     return ['NOT SAVED', 'text-danger'];
 
-  return [data['filename']]
+  return [data['filename'], 'filename']
 }
 
 var cameraFields = {
