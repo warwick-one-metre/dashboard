@@ -12,11 +12,9 @@
     (url_for('w1m_live'), 'w1m-live', 'Live Data', 'icon-stopwatch', 'w1m'),
     (url_for('w1m_resources'), 'w1m-resources', 'Resources', 'icon-info', 'w1m')
   ]),
-  ('SuperWASP', [
-    (url_for('wasp_dashboard'), 'wasp-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('wasp_live'), 'wasp-live', 'Live Data', 'icon-stopwatch', 'satellites'),
-    (url_for('wasp_dome1'), 'wasp-dome1', 'Dome Camera 1', 'icon-video-camera', None),
-    (url_for('wasp_dome2'), 'wasp-dome2', 'Dome Camera 2', 'icon-video-camera', 'satellites')
+  ('Half Metre', [
+    (url_for('halfmetre_dome'), 'halfmetre-dome', 'Dome Camera', 'icon-video-camera', None),
+    (url_for('halfmetre_serverroom'), 'halfmetre-serverroom', 'Server Room', 'icon-video-camera', 'satellites')
   ]),
   ('GOTO 1', [
     (url_for('goto1_dashboard'), 'goto1-dashboard', 'Dashboard', 'icon-menu', None),
@@ -31,6 +29,11 @@
     (url_for('clasp_dashboard'), 'clasp-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('clasp_live'), 'clasp-live', 'Live Data', 'icon-stopwatch', 'satellites'),
     (url_for('clasp_dome'), 'clasp-dome', 'Dome Camera', 'icon-video-camera', None)
+  ]),
+  ('SuperWASP', [
+    (url_for('superwasp_dashboard'), 'superwasp-dashboard', 'Dashboard', 'icon-menu', None),
+    (url_for('superwasp_live'), 'superwasp-live', 'Live Data', 'icon-stopwatch', 'satellites'),
+    (url_for('superwasp_dome'), 'superwasp-dome', 'Dome Camera', 'icon-video-camera', None),
   ])
 ] %}
 

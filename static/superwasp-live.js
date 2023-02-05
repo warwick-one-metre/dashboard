@@ -47,7 +47,7 @@ function queryPreviews() {
     $.ajax({
       type: 'GET',
       dataType: 'json',
-      url: '/data/wasp/' + i,
+      url: '/data/superwasp/' + i,
       statusCode: {
         404: function () {
           updateListGroup(i, cameraFields);

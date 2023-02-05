@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'SuperWASP &raquo; Dome Camera 2' -%}
-{% set active_page = 'wasp-dome2' -%}
+{% set title = 'Half Metre &raquo; Server Room Camera' -%}
+{% set active_page = 'halfmetre-serverroom' -%}
 {% block body %}
 {% if not dashboard_mode %}
 <div class="dashhead m-b">
@@ -12,8 +12,8 @@
 {% set enable_microphone = False -%}
 {% set enable_video = True %}
 {% set enable_light = user_account != None and 'satellites' in user_account['permissions'] -%}
-{% set video = 'wasp2' %}
-{% set light = 'wasp2' %}
+{% set video = 'serverroom' %}
+{% set light = 'serverroom' %}
 {% include 'camera.html' %}
 
 {% endblock %}

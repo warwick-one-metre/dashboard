@@ -57,7 +57,7 @@ CLASP_GENERATED_DATA = {
     'cam2/clip': 'dashboard-CAM2-clip.jpg',
 }
 
-WASP_GENERATED_DATA = {
+SUPERWASP_GENERATED_DATA = {
     '1': 'dashboard-1.json',
     '1/thumb': 'dashboard-1-thumb.jpg',
     '1/clip': 'dashboard-1-clip.jpg',
@@ -284,40 +284,51 @@ def clasp_dome():
     return render_template('clasp/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
-@app.route('/wasp/dome1/')
-def wasp_dome1():
+@app.route('/superwasp/dome/')
+def superwasp_dome():
     dashboard_mode = __parse_dashboard_mode()
-    return render_template('wasp/dome1.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    return render_template('superwasp/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
-@app.route('/wasp/dome2/')
-def wasp_dome2():
+@app.route('/halfmetre/dome/')
+def halfmetre_dome():
+    dashboard_mode = __parse_dashboard_mode()
+    return render_template('halfmetre/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+
+
+@app.route('/halfmetre/serverroom/')
+def halfmetre_serverroom():
     account = get_user_account()
     if 'satellites' in account['permissions']:
         dashboard_mode = __parse_dashboard_mode()
-        return render_template('wasp/dome2.html', user_account=account, dashboard_mode=dashboard_mode)
+        return render_template('halfmetre/serverroom.html', user_account=account, dashboard_mode=dashboard_mode)
     abort(404)
 
 
-@app.route('/wasp/')
-def wasp_dashboard():
-    return render_template('wasp/dashboard.html', user_account=get_user_account())
+@app.route('/superwasp/')
+def superwasp_dashboard():
+    return render_template('superwasp/dashboard.html', user_account=get_user_account())
 
 
-@app.route('/wasp/live/')
-def wasp_live():
+@app.route('/superwasp/live/')
+def superwasp_live():
     account = get_user_account()
     if 'satellites' in account['permissions']:
-        return render_template('wasp/live.html', user_account=account)
+        return render_template('superwasp/live.html', user_account=account)
     abort(404)
 
 
-@app.route('/data/wasp/<path:path>')
-def wasp_generated_data(path):
+@app.route('/data/superwasp/<path:path>')
+def superwasp_generated_data(path):
     account = get_user_account()
-    if 'satellites' in account['permissions'] and path in WASP_GENERATED_DATA:
-        return send_from_directory(GENERATED_DATA_DIR, WASP_GENERATED_DATA[path])
+    if 'satellites' in account['permissions'] and path in SUPERWASP_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, SUPERWASP_GENERATED_DATA[path])
     abort(404)
+
+
+@app.route('/halfmetre/')
+def halfmetre_dashboard():
+    return render_template('halfmetre/dashboard.html', user_account=get_user_account())
 
 
 @app.route('/goto1/')
@@ -425,13 +436,19 @@ def switch_light(light, state):
         if light == 'goto2' and 'goto' in account['permissions']:
             return _toggle_leds(daemons.goto_dome2_gtecs_power, 'leds', account, state)
 
-        if (light == 'wasp1' or light == 'wasp2') and 'satellites' in account['permissions']:
-            return _toggle_leds(daemons.superwasp_power, 'ilight' if light == 'wasp1' else 'clight', account, state)
+        if light == 'superwasp' and 'satellites' in account['permissions']:
+            return _toggle_leds(daemons.superwasp_power, 'light', account, state)
+
+        if (light in ['halfmetre', 'serverroom']) and 'satellites' in account['permissions']:
+            return _toggle_leds(daemons.halfmetre_power, 'ilight' if light == 'wasp1' else 'clight', account, state)
 
         if light == 'clasp' and 'satellites' in account['permissions']:
             return _toggle_leds(daemons.clasp_power, 'light', account, state)
 
-        if light == 'waspir' and 'satellites' in account['permissions']:
+        if light == 'superwaspir' and 'satellites' in account['permissions']:
+            return _toggle_webcam_ir('10.2.6.172', app.config['WEBCAM_SUPERWASP_PASSWORD'], state == 'on')
+
+        if light == 'halfmetreir' and 'satellites' in account['permissions']:
             return _toggle_webcam_ir('10.2.6.118', app.config['WEBCAM_SUPERWASP_PASSWORD'], state == 'on')
 
         if light == 'w1mir' and 'w1m' in account['permissions']:
@@ -484,8 +501,8 @@ def w1m_log():
     abort(404)
 
 
-@app.route('/data/wasp/log')
-def wasp_log():
+@app.route('/data/superwasp/log')
+def superwasp_log():
     account = get_user_account()
     if 'satellites' in account['permissions']:
         db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
@@ -494,7 +511,30 @@ def wasp_log():
             # If 'from' argument is present, returns latest 100 log messages with a greater id
             with db.cursor() as cur:
                 query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('powerd@superwasp', 'superwasp_teld', 'opsd@superwasp', 'atik_camd@1', 'atik_camd@2', 'atik_camd@3', 'atik_camd@4', 'diskspaced@superwasp', 'pipelined@superwasp')"
+                query += " WHERE source IN ('powerd@superwasp', 'lmountd@superwasp', 'domed@superwasp', 'opsd@superwasp', 'qhy_camd@swasp-cam1', 'qhy_camd@swasp-cam2', 'qhy_camd@swasp-cam3', 'qhy_camd@swasp-cam4', 'diskspaced@superwasp_cam1', 'diskspaced@superwasp_cam2', 'diskspaced@superwasp_cam3', 'diskspaced@superwasp_cam4', 'pipelined@superwasp')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
+
+                query += ' ORDER BY id DESC LIMIT 250;'
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                return jsonify(messages=messages)
+        finally:
+            db.close()
+    abort(404)
+
+
+@app.route('/data/halfmetre/log')
+def halfmetre_log():
+    account = get_user_account()
+    if 'satellites' in account['permissions']:
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('powerd@halfmetre', 'lmountd@halfmetre', 'opsd@halfmetre')"
                 if 'from' in request.args:
                     query += ' AND id > ' + db.escape(request.args['from'])
 
@@ -759,12 +799,68 @@ def goto2_dashboard_data():
     return jsonify(**data)
 
 
-@app.route('/data/wasp/')
-def wasp_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/wasp-public.json'))
+@app.route('/data/superwasp/')
+def superwasp_dashboard_data():
+    data = json.load(open(GENERATED_DATA_DIR + '/superwasp-public.json'))
 
     # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/wasp-private.json'))
+    private = json.load(open(GENERATED_DATA_DIR + '/superwasp-private.json'))
+
+    account = get_user_account()
+    if 'satellites' in account['permissions']:
+        data.update(private)
+
+    # Extract safe public info from private daemons
+    private_ops = private.get('superwasp_ops', {})
+    private_telescope = private.get('superwasp_telescope', {})
+    private_dome = private.get('superwasp_dome', {})
+
+    # Tel status:
+    #   0: error
+    #   1: offline
+    #   2: online
+    tel_status = 0
+    if 'state' in private_telescope:
+        tel_status = 1 if private_telescope['state'] == 0 else 2
+
+    # Dome status:
+    #   0: error
+    #   1: closed
+    #   2: open
+    dome_status = 0
+    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
+        if private_dome['heartbeat_status'] not in [2, 3]:
+            dome_status = 1 if private_dome['closed'] else 2
+
+    dome_mode = 0
+    if 'dome' in private_ops and 'mode' in private_ops['dome']:
+        dome_mode = private_ops['dome']['mode']
+
+    tel_mode = 0
+    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
+        tel_mode = private_ops['telescope']['mode']
+
+    env = {}
+    if 'environment' in private_ops:
+        env = private_ops['environment']
+
+    data['superwasp_status'] = {
+        'tel': tel_status,
+        'dome': dome_status,
+        'tel_mode': tel_mode,
+        'dome_mode': dome_mode,
+        'environment': env
+    }
+
+    return jsonify(**data)
+
+
+@app.route('/data/halfmetre/')
+def halfmetre_dashboard_data():
+    data = json.load(open(GENERATED_DATA_DIR + '/halfmetre-public.json'))
+
+    # Some private data is needed for the public info
+    private = json.load(open(GENERATED_DATA_DIR + '/halfmetre-private.json'))
 
     account = get_user_account()
     if 'satellites' in account['permissions']:

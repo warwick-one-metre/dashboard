@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% set title = 'SuperWASP &raquo; Live Data' -%}
-{% set active_page = 'wasp-live' -%}
+{% set active_page = 'superwasp-live' -%}
 {% block body %}
 <style>
 .overlaybutton {
@@ -33,8 +33,8 @@ a:hover .overlaybutton {
 <div class="row m-b">
   <div class="col-md-8" style="position: relative;">
     <div class="list-group list-group-item" style="padding: 0">
-      <img id="1-thumb" data-url="/data/wasp/1/thumb" width="100%" style="border-radius: 3px">
-      <div id="1-clip" class="clipoverlay" data-url="/data/wasp/1/clip"></div>
+      <img id="1-thumb" data-url="/data/superwasp/1/thumb" width="100%" style="border-radius: 3px">
+      <div id="1-clip" class="clipoverlay" data-url="/data/superwasp/1/clip"></div>
     </div>
   </div>
   <div class="col-md-4 dashboard-stats">
@@ -50,8 +50,8 @@ a:hover .overlaybutton {
 <div class="row m-b">
   <div class="col-md-8" style="position: relative;">
     <div class="list-group list-group-item" style="padding: 0">
-      <img id="2-thumb" data-url="/data/wasp/2/thumb" width="100%" style="border-radius: 3px">
-      <div id="2-clip" class="clipoverlay" data-url="/data/wasp/2/clip"></div>
+      <img id="2-thumb" data-url="/data/superwasp/2/thumb" width="100%" style="border-radius: 3px">
+      <div id="2-clip" class="clipoverlay" data-url="/data/superwasp/2/clip"></div>
     </div>
   </div>
   <div class="col-md-4 dashboard-stats">
@@ -67,8 +67,8 @@ a:hover .overlaybutton {
 <div class="row m-b">
   <div class="col-md-8" style="position: relative;">
     <div class="list-group list-group-item" style="padding: 0">
-      <img id="3-thumb" data-url="/data/wasp/3/thumb" width="100%" style="border-radius: 3px">
-      <div id="3-clip" class="clipoverlay" data-url="/data/wasp/3/clip"></div>
+      <img id="3-thumb" data-url="/data/superwasp/3/thumb" width="100%" style="border-radius: 3px">
+      <div id="3-clip" class="clipoverlay" data-url="/data/superwasp/3/clip"></div>
     </div>
   </div>
   <div class="col-md-4 dashboard-stats">
@@ -84,8 +84,8 @@ a:hover .overlaybutton {
 <div class="row m-b">
   <div class="col-md-8" style="position: relative;">
     <div class="list-group list-group-item" style="padding: 0">
-      <img id="4-thumb" data-url="/data/wasp/4/thumb" width="100%" style="border-radius: 3px">
-      <div id="4-clip" class="clipoverlay" data-url="/data/wasp/4/clip"></div>
+      <img id="4-thumb" data-url="/data/superwasp/4/thumb" width="100%" style="border-radius: 3px">
+      <div id="4-clip" class="clipoverlay" data-url="/data/superwasp/4/clip"></div>
     </div>
   </div>
   <div class="col-md-4 dashboard-stats">
@@ -99,6 +99,6 @@ a:hover .overlaybutton {
 </div>
 
 
-<script src="{{ url_for('static', filename='wasp-live.js') }}"></script>
+<script src="{{ url_for('static', filename='superwasp-live.js') }}"></script>
 
 {% endblock %}

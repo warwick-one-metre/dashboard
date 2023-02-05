@@ -183,28 +183,57 @@ def generate_superwasp_json(output_path, date, environment):
     output = {'date': date}
     if environment:
         output.update(extract_environment_data(environment, {
-            'goto_vaisala': [
+            'w1m_vaisala': [
                 'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
                 'pressure', 'median_wind_speed'
             ],
             'rain': ['unsafe_boards'],
-            'superwasp_roomalert': [
-                'comp_room_temp', 'comp_room_humidity',
-                'cam_room_temp', 'cam_room_humidity',
-                'cam_rack_temp'],
+            'clasp_domealert': ['superwasp_temperature', 'superwasp_humidity'],
             'superwasp_diskspace_cam1': ['data_fs_available_bytes'],
             'superwasp_diskspace_cam2': ['data_fs_available_bytes'],
             'superwasp_diskspace_cam3': ['data_fs_available_bytes'],
             'superwasp_diskspace_cam4': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
     output['superwasp_power'] = query_daemon(daemons.superwasp_power, 'superwasp_power',
-                                        lambda d: d.last_measurement())
-    output['superwasp_aircon'] = query_daemon(daemons.superwasp_aircon, 'superwasp_aircon',
-                                        lambda d: d.last_measurement())
+                                             lambda d: d.last_measurement())
+    output['superwasp_dehumidifier'] = query_daemon(daemons.superwasp_dehumidifier, 'superwasp_dehumidifier',
+                                                    lambda d: d.status())
+    try:
+        with open(output_path, 'w') as output_file:
+            json.dump(output or {}, output_file)
+
+        with open(STATUS_FILE, 'w') as output_file:
+            json.dump(status, output_file)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+
+def generate_halfmetre_json(output_path, date, environment):
+    """Queries daemons to generate the public data for the half metre dashboard page"""
+    output = {'date': date}
+    if environment:
+        output.update(extract_environment_data(environment, {
+            'goto_vaisala': [
+                'wind_speed', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure', 'median_wind_speed'
+            ],
+            'rain': ['unsafe_boards'],
+            'halfmetre_domealert': [
+                'comp_room_temp', 'comp_room_humidity',
+                'tel_room_temp', 'tel_room_humidity'],
+            'halfmetre_diskspace': ['data_fs_available_bytes'],
+            'tng': ['dust', 'seeing', 'solarimeter'],
+            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
+        }))
+
+    output['halfmetre_power'] = query_daemon(daemons.halfmetre_power, 'halfmetre_power',
+                                             lambda d: d.last_measurement())
+    output['halfmetre_aircon'] = query_daemon(daemons.halfmetre_aircon, 'halfmetre_aircon',
+                                              lambda d: d.last_measurement())
 
     try:
         with open(output_path, 'w') as output_file:
@@ -297,12 +326,12 @@ generate_json(BASE_OUTPUT_DIR + '/goto-dome2-private.json', [
 ])
 
 # SuperWASP dashboard pages
-generate_superwasp_json(BASE_OUTPUT_DIR + '/wasp-public.json', date, environment)
+generate_superwasp_json(BASE_OUTPUT_DIR + '/superwasp-public.json', date, environment)
 
-generate_json(BASE_OUTPUT_DIR + '/wasp-private.json', [
+generate_json(BASE_OUTPUT_DIR + '/superwasp-private.json', [
     (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
     (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
-    (daemons.superwasp_roof, 'superwasp_roof', lambda d: d.status()),
+    (daemons.superwasp_dome, 'superwasp_dome', lambda d: d.status()),
     (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
     (daemons.superwasp_cam1, 'superwasp_cam_1', lambda d: d.report_status()),
     (daemons.superwasp_cam2, 'superwasp_cam_2', lambda d: d.report_status()),
@@ -322,6 +351,17 @@ generate_json(BASE_OUTPUT_DIR + '/clasp-private.json', [
     (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
     (daemons.clasp_camera_1, 'clasp_cam1', lambda d: d.report_status()),
     (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
+])
+
+# Half metre dashboard pages
+generate_halfmetre_json(BASE_OUTPUT_DIR + '/halfmetre-public.json', date, environment)
+
+generate_json(BASE_OUTPUT_DIR + '/halfmetre-private.json', [
+    (daemons.halfmetre_operations, 'halfmetre_ops', lambda d: d.status()),
+    (daemons.halfmetre_telescope, 'halfmetre_telescope', lambda d: d.report_status()),
+    (daemons.halfmetre_roof, 'halfmetre_roof', lambda d: d.status()),
+    (daemons.halfmetre_pipeline, 'halfmetre_pipeline', lambda d: d.report_status()),
+    (daemons.halfmetre_cam, 'halfmetre_cam', lambda d: d.report_status()),
 ])
 
 # Raw data for GOTO operations

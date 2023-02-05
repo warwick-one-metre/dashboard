@@ -1,5 +1,5 @@
 Name:      observatory-dashboard
-Version:   20220915
+Version:   20230205
 Release:   0
 Url:       https://github.com/warwick-one-metre/dashboard
 Summary:   Web dashboard for the Warwick La Palma telescopes.
@@ -8,7 +8,7 @@ Group:     Unspecified
 BuildArch: noarch
 Requires:  nginx nfs-utils uwsgi uwsgi-plugin-python3 uwsgi-logger-file mariadb-server
 Requires:  observatory-log-server observatory-weather-database-updater
-Requires:  python3 python3-flask python3-github-flask python3-PyMySQL python3-warwick-observatory-common
+Requires:  python3 python3-flask python3-github-flask python3-warwick-observatory-common
 
 %description
 

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-{% set title = 'SuperWASP &raquo; Dashboard' -%}
-{% set active_page = 'wasp-dashboard' -%}
+{% set title = 'Half Metre &raquo; Dashboard' -%}
+{% set active_page = 'halfmetre-dashboard' -%}
 {% block body %}
 <div class="dashhead m-b">
   <div class="dashhead-titles">
@@ -178,15 +178,15 @@
 </div>
 {% endif %}
 <script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
-<script src="{{ url_for('static', filename='wasp-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='halfmetre-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
 <script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
 <script>
   $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
-    pollDashboard('/data/wasp');
+    pollDashboard('/data/halfmetre/');
 {% if user_account != None and 'satellites' in user_account['permissions'] %}
-    pollLog('{{ url_for('wasp_log') }}');
+    pollLog('{{ url_for('halfmetre_log') }}');
 {% endif %}
   });
 </script>
