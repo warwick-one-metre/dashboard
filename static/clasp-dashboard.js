@@ -209,8 +209,7 @@ function camCool(row, cell, data) {
 
 function camDiskSpace(row, cell, data){
   const cam = row.data('cam');
-  //const diskspace = getData(data, ["clasp_diskspace_" + cam, "data_fs_available_bytes"]);
-  const diskspace = getData(data, ["clasp_diskspace_1", "data_fs_available_bytes"]);
+  const diskspace = getData(data, ["clasp_diskspace_" + cam, "data_fs_available_bytes"]);
   diskSpaceGB(row, cell, diskspace);
 }
 
@@ -218,9 +217,6 @@ function telFocus(row, cell, data) {
   const focuser = row.data('focuser');
   const state = [
     ['OFFLINE', 'text-danger'],
-    ['DISCONNECTED', 'text-danger'],
-    ['ERROR', 'text-danger'],
-    ['INITIALIZING', 'text-warning'],
     ['IDLE'],
     ['MOVING', 'text-warning']
   ];
@@ -230,7 +226,7 @@ function telFocus(row, cell, data) {
     const s = data['status_' + focuser];
     label = state[s][0];
     style = state[s][1];
-    if (s === 4)
+    if (s === 1)
       label = data['current_steps_' + focuser] + ' steps';
   } else {
     label = 'ERROR';
