@@ -17,7 +17,7 @@ jobs:
           dnf -y install 'dnf-command(config-manager)'
           dnf -y config-manager --set-enabled crb
           dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm https://dl.fedoraproject.org/pub/epel/epel-next-release-latest-9.noarch.rpm
-          yum -y install git rpm-build rpm-sign make
+          yum -y install git rpm-build rpm-sign make systemd-rpm-macros
 
       - name: Clone Repository
         uses: actions/checkout@v2

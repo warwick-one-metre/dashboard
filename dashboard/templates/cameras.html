@@ -1,22 +1,46 @@
+{% extends "layout.html" %}
+{% set title = 'Site Cameras' -%}
+{% set active_page = 'site-cameras' -%}
+{% block body %}
+<style>
+.thumb-panel {
+  padding: 0; height: 107px; width: 190px; overflow: hidden; margin: auto auto;
+}
+
+.camera-label {
+  position: absolute;
+  font-weight: bold;
+  font-size: 0.9em;
+  top: 0px;
+  left: 0px;
+  padding: 3px 6px;
+  background-color: rgb(0, 0, 0, 0.6);
+  color: white;
+  border-bottom-right-radius: 5px;
+}
+</style>
+
+{% if not dashboard_mode %}
+<div class="dashhead m-b">
+  <div class="dashhead-titles">
+    <h2 class="dashhead-title">{{ title|safe }}</h2>
+  </div>
+</div>
+{% endif %}
 
 <div class="row">
   <div id="container" class="col-md-12" style="position: relative">
     <div class="list-group list-group-item" style="padding: 0">
-      <img id="video" src="/webcam/{{ video }}/static" width="100%" style="border-radius: 3px; min-height: 250px">
-{% if not dashboard_mode %}
-{% if enable_video %}
-      <div style="position: absolute; left: 10px; top: 10px; text-align: center;">
+      <img id="video" src="{{ cameras[0].camera_url }}" width="100%" style="border-radius: 3px; min-height: 250px">
+      <img id="spinner" src="{{ url_for('static', filename='loading.gif') }}" style="display: none; position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; width: 64px; height: 64px;">
+      <div id="video-button-container" style="display: none; position: absolute; left: 10px; top: 10px; text-align: center;">
         <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
       </div>
-{% endif %}
-{% if enable_microphone %}
-      <div style="position: absolute; right: 10px; top: 10px; text-align: center;">
+      <div id="audio-button-container" style="display: none; position: absolute; right: 10px; top: 10px; text-align: center;">
         <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='speaker.svg') }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
         <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="5" data-slider-selection="after" data-slider-tooltip="hide">
       </div>
-{% endif %}
-{% if enable_light %}
-      <div style="position: absolute; left: 10px; bottom: 10px; text-align: center;">
+      <div id="light-button-container" style="display: none; position: absolute; left: 10px; bottom: 10px; text-align: center;">
         <a id="light-button" href="#lightmodal" data-toggle="modal" data-target="#lightmodal" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='light.svg') }}" width="50"/><br /><span id="light-button-text">Light</span></a><br />
       </div>
       <div class="modal fade" id="lightmodal" tabindex="-1" role="dialog">
@@ -37,9 +61,7 @@
           </div>
         </div>
       </div>
-{% endif %}
-{% if enable_irleds %}
-      <div style="position: absolute; right: 10px; bottom: 10px; text-align: center;">
+      <div id="ir-button-container" style="display: none; position: absolute; right: 10px; bottom: 10px; text-align: center;">
         <a id="ir-button" href="#irmodal" data-toggle="modal" data-target="#irmodal" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='light.svg') }}" width="50"/><br /><span id="light-button-text">Infrared</span></a><br />
       </div>
       <div class="modal fade" id="irmodal" tabindex="-1" role="dialog">
@@ -60,105 +82,29 @@
           </div>
         </div>
       </div>
-{% endif %}
-{% endif %}
     </div>
   </div>
 </div>
-{% if not dashboard_mode %}
+
 <div class="row">
-  <div class="col-md-12">
-{% if enable_video %}
-    <p class="description">Video sync may drift over time. You may need to stop and restart playback periodically.</p>
-{% endif %}
-{% if enable_microphone %}
-    <p class="description">Audio playback requires browser support for WebSockets and WebAudio.</p>
-{% endif %}
+  <div class="col-md-12" id="source-container">
+    <p class="description">Image source: <a id="source" href="{{ cameras[0][2] }}" >{{ cameras[0][1] }}</a>.</p>
   </div>
 </div>
+<br />
+<div class="row">
+{% for c in cameras %}
+  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 m-b">
+    <a class="btn list-group list-group-item thumb-panel" onclick="selectCamera(this);">
+      <img src="{{ c.camera_url }}/thumb" data-url="{{ c.camera_url }}/thumb" data-camera-url="{{ c.camera_url }}"{% if (c.video_url) %} data-video-url="{{ c.video_url }}"{% endif %}{% if (c.audio_url) %} data-audio-url="{{ c.audio_url }}"{% endif %}{% if (c.light_url) %} data-light-url="{{ c.light_url }}"{% endif %}{% if (c.infrared_url) %} data-infrared-url="{{ c.infrared_url }}"{% endif %}{% if (c.source_url) %} data-source-url="{{ c.source_url }}"{% endif %} alt="{{ c.label }}" width="100%">
+      <div class="camera-label">{{ c.label }}</div>
+    </a>
+  </div>
+{% endfor %}
+</div>
+
 <script src="{{ url_for('static', filename='bootstrap-slider.js') }}"></script>
-
-{% if enable_microphone %}
 <script src="https://cdn.jsdelivr.net/binaryjs/0.2.1/binary.min.js"></script>
-<script src="{{ url_for('static', filename='audio.js') }}"></script>
-{% endif %}
-{% endif %}
-<script>
-$(document).ready(function () {
-{% if enable_microphone and not dashboard_mode %}
-  $('#audio-volume').slider()
-  $('#audio-volume').on('slide', function(ev){
-    setAudioStreamVolume(ev.value);
-  });
+<script src="{{ url_for('static', filename='cameras.js') }}"></script>
 
-  var audioPlaying = false;
-  $('#audio-button').click(function() {
-    if (audioPlaying) {
-      $('#audio-button-text').html('Play');
-      stopAudioStream();
-      audioPlaying = false;
-    } else {
-      $('#audio-button-text').html('Stop');
-      var gain = $('#audio-volume').data('slider').getValue();
-      startAudioStream("wss://lapalma-observatory.warwick.ac.uk/microphone/{{ audio }}", 22050, 0.2, gain);
-      audioPlaying = true;
-    }
-  });
-{% endif %}
-
-  var videoPlaying = false;
-{% if enable_video and not dashboard_mode %}
-  $('#video-button').click(function() {
-    if (videoPlaying) {
-      $('#video-button-text').html('Play');
-      $('#video').attr('src', '/webcam/{{ video }}/static?' + Date.now());
-      videoPlaying = false;
-    } else {
-      $('#video-button-text').html('Stop');
-      $('#video').attr('src', '/webcam/{{ video }}/live?' + Date.now());
-
-      videoPlaying = true;
-    }
-  });
-{% endif %}
-
-{% if enable_light and not dashboard_mode %}
-  $('#enable-light-button').click(function() {
-   $.ajax({
-      type: 'GET',
-      url: '/light/{{ light }}/on',
-    });
-  });
-
-  $('#disable-light-button').click(function() {
-   $.ajax({
-      type: 'GET',
-      url: '/light/{{ light }}/off',
-    });
-  });
-{% endif %}
-
-{% if enable_irleds and not dashboard_mode %}
-  $('#enable-irleds-button').click(function() {
-   $.ajax({
-      type: 'GET',
-      url: '/light/{{ irleds }}/on',
-    });
-  });
-
-  $('#disable-irleds-button').click(function() {
-   $.ajax({
-      type: 'GET',
-      url: '/light/{{ irleds }}/off',
-    });
-  });
-{% endif %}
-
-  // Refresh the view every 30 seconds if not live
-  window.setInterval(function() {
-    if (!videoPlaying)
-      $('#video').attr('src', '/webcam/{{ video }}/static?' + Date.now());
-  }, 30000);
-});
-</script>
-
+{% endblock %}

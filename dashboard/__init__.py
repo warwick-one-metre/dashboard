@@ -15,6 +15,8 @@
 # pylint: disable=invalid-name
 
 import json
+import os.path
+
 import pymysql
 import requests
 from requests.auth import HTTPDigestAuth
@@ -75,10 +77,6 @@ SUPERWASP_GENERATED_DATA = {
 EUMETSAT_GENERATED_DATA = {
     'ir': 'eumetsat-ir.jpg',
     'dust': 'eumetsat-dust.jpg',
-}
-
-SKYCAM_GENERATED_DATA = {
-    'static': 'allsky-last-image.jpg'
 }
 
 
@@ -242,12 +240,6 @@ def w1m_live():
     abort(404)
 
 
-@app.route('/w1m/dome/')
-def w1m_dome():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('w1m/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
 @app.route('/w1m/resources/')
 def w1m_resources():
     account = get_user_account()
@@ -278,33 +270,6 @@ def clasp_generated_data(path):
     abort(404)
 
 
-@app.route('/clasp/dome/')
-def clasp_dome():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('clasp/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/superwasp/dome/')
-def superwasp_dome():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('superwasp/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/halfmetre/dome/')
-def halfmetre_dome():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('halfmetre/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/halfmetre/serverroom/')
-def halfmetre_serverroom():
-    account = get_user_account()
-    if 'satellites' in account['permissions']:
-        dashboard_mode = __parse_dashboard_mode()
-        return render_template('halfmetre/serverroom.html', user_account=account, dashboard_mode=dashboard_mode)
-    abort(404)
-
-
 @app.route('/superwasp/')
 def superwasp_dashboard():
     return render_template('superwasp/dashboard.html', user_account=get_user_account())
@@ -325,22 +290,10 @@ def superwasp_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, SUPERWASP_GENERATED_DATA[path])
     abort(404)
 
-
-@app.route('/halfmetre/')
-def halfmetre_dashboard():
-    return render_template('halfmetre/dashboard.html', user_account=get_user_account())
-
-
 @app.route('/goto1/')
 def goto1_dashboard():
     dashboard_mode = __parse_dashboard_mode()
     return render_template('goto1/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/goto1/dome/')
-def goto1_dome():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto1/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
 @app.route('/goto1/resources/')
@@ -357,12 +310,6 @@ def goto2_dashboard():
     return render_template('goto2/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
-@app.route('/goto2/dome/')
-def goto2_dome():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto2/dome.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
 @app.route('/environment/')
 def environment():
     dashboard_mode = __parse_dashboard_mode()
@@ -374,35 +321,58 @@ def infrastructure():
     return render_template('infrastructure.html', user_account=get_user_account())
 
 
-@app.route('/skycams/')
-def skycams():
-    return render_template('skycams.html', user_account=get_user_account())
+class SiteCamera:
+    def __init__(self, id, label, authorised=False, video=False, audio=False, light=False, infrared=False, source=None):
+        self.id = id
+        self.label = label
+        self.source_url = source or ''
+        self.camera_url = '/camera/' + id
+        self.video_url = '/video/' + id if video and authorised else ''
+        self.audio_url = 'wss://lapalma-observatory.warwick.ac.uk/microphone/' + id if audio and authorised else ''
+        self.light_url = '/light/' + id if light and authorised else ''
+        self.infrared_url = '/light/' + id + 'ir' if infrared and authorised else ''
 
 
-@app.route('/data/eumetsat/<path:path>')
-def eumetsat_generated_data(path):
-    if path in EUMETSAT_GENERATED_DATA:
-        return send_from_directory(GENERATED_DATA_DIR, EUMETSAT_GENERATED_DATA[path])
+@app.route('/cameras')
+def site_cameras():
+    user_account = get_user_account()
+    authorised_goto = user_account is not None and 'goto' in user_account['permissions']
+    authorised_satellites = user_account is not None and 'satellites' in user_account['permissions']
+    authorised_onemetre = user_account is not None and 'w1m' in user_account['permissions']
+    authorised_extcams = authorised_goto or authorised_satellites
+
+    cameras = [
+        SiteCamera('ext1', 'West Camera', authorised=authorised_extcams, video=True),
+        SiteCamera('ext2', 'East Camera', authorised=authorised_extcams, video=True),
+        SiteCamera('allsky', 'All-Sky'),
+        SiteCamera('gtcsky', 'GTC All-Sky', source='http://www.gtc.iac.es/multimedia/webcams.php'),
+        SiteCamera('eumetsat', 'EUMETSAT 10.8 um', source='https://eumetview.eumetsat.int/static-images/MSG/IMAGERY/IR108/BW/index.htm'),
+        SiteCamera('serverroom', 'Server Room', authorised=authorised_extcams, video=True, audio=False, light=True),
+        SiteCamera('goto1', 'GOTO 1', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
+        SiteCamera('goto2', 'GOTO 2', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
+        SiteCamera('halfmetre', 'Half Metre', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
+        SiteCamera('w1m', 'W1m', authorised=authorised_onemetre, video=True, audio=True, light=True, infrared=True),
+        SiteCamera('superwasp', 'SuperWASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
+        SiteCamera('clasp', 'CLASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True)
+    ]
+
+    dashboard_mode = __parse_dashboard_mode()
+
+    return render_template('cameras.html', user_account=user_account, dashboard_mode=dashboard_mode, cameras=cameras)
+
+
+@app.route('/camera/<path:camera>')
+def camera_image(camera):
+    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat', 'serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']:
+        return send_from_directory(os.path.join(GENERATED_DATA_DIR, 'cameras'), camera + '.jpg')
     abort(404)
 
 
-@app.route('/data/allsky/<path:path>')
-def allskycam_generated_data(path):
-    if path in SKYCAM_GENERATED_DATA:
-        return send_from_directory(GENERATED_DATA_DIR, SKYCAM_GENERATED_DATA[path])
+@app.route('/camera/<path:camera>/thumb')
+def camera_thumb(camera):
+    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat', 'serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']:
+        return send_from_directory(os.path.join(GENERATED_DATA_DIR, 'cameras'), camera + '_thumb.jpg')
     abort(404)
-
-
-@app.route('/eastcam/')
-def east_camera():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('east.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/westcam/')
-def west_camera():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('west.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
 
 
 def _toggle_leds(daemon, light, account, state):
@@ -927,22 +897,4 @@ def raw_goto_vaisala():
 @app.route('/data/raw/netping')
 def raw_netping():
     data = json.load(open(GENERATED_DATA_DIR + '/netping.json'))
-    return jsonify(**data)
-
-
-@app.route('/data/raw/goto-dome1-roomalert')
-def raw_goto_dome1_roomalert():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-dome1-roomalert.json'))
-    return jsonify(**data)
-
-
-@app.route('/data/raw/goto-dome2-roomalert')
-def raw_goto_dome2_roomalert():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-dome2-roomalert.json'))
-    return jsonify(**data)
-
-
-@app.route('/data/raw/goto-dome2-sht35')
-def raw_goto_dome2_sht35():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-dome2-sht35.json'))
     return jsonify(**data)

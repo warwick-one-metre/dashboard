@@ -2,38 +2,25 @@
   ('Observatory', [
     (url_for('environment'), 'environment', 'Environment', 'icon-cloud', None),
     (url_for('infrastructure'), 'infrastructure', 'Infrastructure', 'icon-home', None),
-    (url_for('east_camera'), 'east-camera', 'East Camera', 'icon-video-camera', None),
-    (url_for('west_camera'), 'west-camera', 'West Camera', 'icon-video-camera', None),
-    (url_for('skycams'), 'skycams', 'Sky Cameras', 'icon-video-camera', None)
+    (url_for('site_cameras'), 'site-cameras', 'Cameras', 'icon-video-camera', None)
   ]),
   ('W1m', [
     (url_for('w1m_dashboard'), 'w1m-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('w1m_dome'), 'w1m-dome', 'Dome Camera', 'icon-video-camera', None),
     (url_for('w1m_live'), 'w1m-live', 'Live Data', 'icon-stopwatch', 'w1m'),
     (url_for('w1m_resources'), 'w1m-resources', 'Resources', 'icon-info', 'w1m')
   ]),
-  ('Half Metre', [
-    (url_for('halfmetre_dome'), 'halfmetre-dome', 'Dome Camera', 'icon-video-camera', None),
-    (url_for('halfmetre_serverroom'), 'halfmetre-serverroom', 'Server Room', 'icon-video-camera', 'satellites')
-  ]),
-  ('GOTO 1', [
-    (url_for('goto1_dashboard'), 'goto1-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('goto1_dome'), 'goto1-dome', 'Dome Camera', 'icon-video-camera', None),
+  ('GOTO', [
+    (url_for('goto1_dashboard'), 'goto1-dashboard', 'G1 Dashboard', 'icon-menu', None),
+    (url_for('goto2_dashboard'), 'goto2-dashboard', 'G2 Dashboard', 'icon-menu', None),
     (url_for('goto1_resources'), 'goto1-resources', 'Resources', 'icon-info', 'goto')
-  ]),
-  ('GOTO 2', [
-    (url_for('goto2_dashboard'), 'goto2-dashboard', 'Dashboard', 'icon-menu', None),
-    (url_for('goto2_dome'), 'goto2-dome', 'Dome Camera', 'icon-video-camera', None),
   ]),
   ('CLASP', [
     (url_for('clasp_dashboard'), 'clasp-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('clasp_live'), 'clasp-live', 'Live Data', 'icon-stopwatch', 'satellites'),
-    (url_for('clasp_dome'), 'clasp-dome', 'Dome Camera', 'icon-video-camera', None)
   ]),
   ('SuperWASP', [
     (url_for('superwasp_dashboard'), 'superwasp-dashboard', 'Dashboard', 'icon-menu', None),
     (url_for('superwasp_live'), 'superwasp-live', 'Live Data', 'icon-stopwatch', 'satellites'),
-    (url_for('superwasp_dome'), 'superwasp-dome', 'Dome Camera', 'icon-video-camera', None),
   ])
 ] %}
 
