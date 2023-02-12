@@ -181,7 +181,11 @@ $(document).ready(function () {
     $('#spinner').hide();
   });
 
-  // Select first image
-  selectCamera($(".thumb-panel").first());
+  // Select requested image, fall back to first
+  let match = $("#thumb-" + $(location).attr('hash').substr(1));
+  if (match.length == 0)
+    match = $(".thumb-panel");
+
+  selectCamera(match.first());
   window.setInterval(reloadImages, 30000);
 });

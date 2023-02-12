@@ -95,7 +95,7 @@
 <div class="row">
 {% for c in cameras %}
   <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 m-b">
-    <a class="btn list-group list-group-item thumb-panel" onclick="selectCamera(this);">
+    <a class="btn list-group list-group-item thumb-panel" id="thumb-{{ c.id }}" href="#{{ c.id }}" onclick="selectCamera(this);">
       <img src="{{ c.camera_url }}/thumb" data-url="{{ c.camera_url }}/thumb" data-camera-url="{{ c.camera_url }}"{% if (c.video_url) %} data-video-url="{{ c.video_url }}"{% endif %}{% if (c.audio_url) %} data-audio-url="{{ c.audio_url }}"{% endif %}{% if (c.light_url) %} data-light-url="{{ c.light_url }}"{% endif %}{% if (c.infrared_url) %} data-infrared-url="{{ c.infrared_url }}"{% endif %}{% if (c.source_url) %} data-source-url="{{ c.source_url }}"{% endif %} alt="{{ c.label }}" width="100%">
       <div class="camera-label">{{ c.label }}</div>
     </a>
