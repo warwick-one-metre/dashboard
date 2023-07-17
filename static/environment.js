@@ -1,4 +1,5 @@
-var data = {};
+let data = {};
+
 
 function colorSeriesLabel(label, series) {
   return '<span style="color: ' + series.color + '">' + label + '</span>';
@@ -8,17 +9,17 @@ function redrawPlot() {
   if (!data.data)
     return;
 
-  var d = [];
-  var plot = $(this);
+  let d = [];
+  const plot = $(this);
 
-  var axis = 0;
-  if (plot.data('column') == 'right')
+  let axis = 0;
+  if (plot.data('column') === 'right')
     axis = 1;
 
-  var series = plot.data('series');
-  var range = [undefined, undefined];
-  for (var s in series) {
-    var sensor = data.data[series[s]];
+  const type = plot.data('type');
+  let range = [undefined, undefined];
+  for (let sensor_name in data.data[type]) {
+    const sensor = data.data[type][sensor_name];
     if (sensor) {
       d.push(sensor);
       range[0] = range[0] !== undefined ? Math.min(range[0], sensor['min']) : sensor['min'];
@@ -26,47 +27,72 @@ function redrawPlot() {
     }
   }
 
-  var regenerateLinkedPlots = function(plot, options) {
-    regenerateBindings = true;
-    window.setTimeout(function() {
+  let no_data = false;
+  if (d.length === 0) {
+    no_data = true;
+    d.push({
+      'color': 'red',
+      'label': 'NO DATA',
+      'data': []
+    })
+  }
+
+  let regenerateLinkedPlots = function (plot, options) {
+    let regenerateBindings = true;
+    window.setTimeout(function () {
       if (!regenerateBindings)
         return;
 
-      var plots = {};
-      var getPlot = function(id) { return plots[id]; };
+      let plots = {};
+      let getPlot = function (id) {
+        return plots[id];
+      };
 
-      $('.weather-plot').each(function() { plots[$(this).attr('id')] = $(this).data('plot'); });
+      $('.weather-plot').each(function () {
+        plots[$(this).attr('id')] = $(this).data('plot');
+      });
 
       // Link the plot hover together only after all plots have been created
-      for (var key in plots) {
-        var plot = plots[key];
-        var linkedPlots = plot.getPlaceholder().data('linkedplots');
+      for (let key in plots) {
+        let plot = plots[key];
+        let linkedPlots = plot.getPlaceholder().data('linkedplots');
         if (linkedPlots !== undefined)
           plot.getOptions().linkedplots = linkedPlots.map(getPlot);
-      };
+      }
 
       regenerateBindings = false;
     });
   }
 
-  var options = {
-    series: { shadowSize: 0 },
-    axisLabels: { show: true },
-    xaxis: { mode: 'time', minTickSize: [1, 'minute'], timeformat:'', min: data.start, max: data.end },
-    grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
-    crosshair: { mode: "x", color: '#545454' },
-    yaxis: { axisLabel: plot.data('axislabel'), axisLabelPadding: 9, labelWidth: 20 },
-    legend: { noColumns: 6, units: plot.data('labelunits'), backgroundColor: '#252830', backgroundOpacity: 0.5, margin: 1, labelFormatter: colorSeriesLabel },
+  let options = {
+    series: {shadowSize: 0},
+    axisLabels: {show: true},
+    xaxis: {mode: 'time', minTickSize: [1, 'minute'], timeformat: '', min: data.start, max: data.end},
+    grid: {
+      margin: {left: axis === 0 ? 0 : 15, top: 0, right: axis === 1 ? 0 : 15, bottom: 0},
+      hoverable: true,
+      autoHighlight: false
+    },
+    crosshair: {mode: "x", color: '#545454'},
+    yaxis: {axisLabel: plot.data('axislabel'), axisLabelPadding: 9, labelWidth: 20},
+    legend: {
+      noColumns: 6,
+      units: plot.data('labelunits'),
+      backgroundColor: '#252830',
+      backgroundOpacity: 0.5,
+      margin: 1,
+      labelFormatter: colorSeriesLabel
+    },
     linkedplots: [],
-    hooks: { bindEvents: bindHoverHooks, processOptions: regenerateLinkedPlots }
+    hooks: {bindEvents: bindHoverHooks, processOptions: regenerateLinkedPlots}
   };
 
   if (plot.data('points') !== undefined) {
-    options.lines = { show: false };
-    options.points = { show: true, fill: 1, radius: 2, lineWidth: 0, fillColor: false };
+    options.lines = {show: false};
+    options.points = {show: true, fill: 1, radius: 2, lineWidth: 0, fillColor: false};
   } else {
-    options.lines = { show: true, lineWidth: 1 };
-    options.points = { show: false };
+    options.lines = {show: true, lineWidth: 1};
+    options.points = {show: false};
   }
 
   if (plot.data('ydecimals') !== undefined)
@@ -75,15 +101,18 @@ function redrawPlot() {
   if (plot.data('labelfudge') !== undefined)
     options.yaxis.labelFudge = plot.data('labelfudge');
 
-  if (plot.data('min') !== undefined)
+  if (plot.data('min') !== undefined && !no_data)
     options.yaxis.min = plot.data('min');
 
-  if (plot.data('max'))
+  if (plot.data('max') !== undefined && !no_data)
     options.yaxis.max = plot.data('max');
   else
     options.yaxis.max = range[0] + 1.5 * (range[1] - range[0]);
 
-  if (axis == 1)
+  if (no_data)
+    options.crosshair.mode = null;
+
+  if (axis === 1)
     options.yaxis.position = 'right';
 
   if (plot.data('hidetime') === undefined) {
@@ -95,19 +124,19 @@ function redrawPlot() {
 }
 
 function setHoverXPosition(plot, offsetX) {
-  var axes = plot.getAxes();
-  var offset = plot.getPlotOffset();
-  var dataset = plot.getData();
-  var options = plot.getOptions();
-  var legend = plot.getPlaceholder().find('.legendLabel :first-child');
+  let axes = plot.getAxes();
+  let offset = plot.getPlotOffset();
+  let dataset = plot.getData();
+  let options = plot.getOptions();
+  let legend = plot.getPlaceholder().find('.legendLabel :first-child');
 
-  var start = axes.xaxis.p2c(axes.xaxis.min);
-  var end = axes.xaxis.p2c(axes.xaxis.max);
-  var fractionalPos = (offsetX - offset.left) / (end - start);
+  let start = axes.xaxis.p2c(axes.xaxis.min);
+  let end = axes.xaxis.p2c(axes.xaxis.max);
+  let fractionalPos = (offsetX - offset.left) / (end - start);
 
   if (fractionalPos < 0 || fractionalPos > 1) {
     // Clear labels
-    for (var i = 0; i < dataset.length; i++)
+    for (let i = 0; i < dataset.length; i++)
       $(legend.eq(i)).html(dataset[i].label);
 
     // Clear crosshair
@@ -115,92 +144,86 @@ function setHoverXPosition(plot, offsetX) {
     return;
   }
 
-  var x = axes.xaxis.min + (axes.xaxis.max - axes.xaxis.min) * fractionalPos;
-  plot.setCrosshair({ x: x });
-  for (var i = 0; i < dataset.length; i++) {
-    var series = dataset[i];
+  let x = axes.xaxis.min + (axes.xaxis.max - axes.xaxis.min) * fractionalPos;
+  plot.setCrosshair({x: x});
+  for (let i = 0; i < dataset.length; i++) {
+    let series = dataset[i];
 
-    var j = 0;
+    let j = 0;
     for (; j < series.data.length; j++)
-      if (series.data[j] !== null && series.data[j][0] < x)
+      if (series.data[j] !== null && series.data[j][0] > x)
         break;
 
-    var p1 = series.data[j - 1];
-    var p2 = series.data[j];
-
+    let p1 = series.data[j - 1];
+    let p2 = series.data[j];
     if (p1 != null && p2 != null) {
-      var y = (p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0])).toFixed(2);
+      let y = (p1[1] + (p2[1] - p1[1]) * (x - p1[0]) / (p2[0] - p1[0])).toFixed(2);
       $(legend.eq(i)).text(y + options.legend.units);
-    }
-    else
+    } else
       $(legend.eq(i)).html(dataset[i].label);
   }
 }
 
 function bindHoverHooks(plot, eventHolder) {
-  var axes = plot.getAxes();
-  var offset = plot.getPlotOffset();
-  var dataset = plot.getData();
-  var options = plot.getOptions();
-  var start = axes.xaxis.p2c(axes.xaxis.min);
-  var end = axes.xaxis.p2c(axes.xaxis.max);
+  let options = plot.getOptions();
 
-  var linkedPlots = [];
-  eventHolder.mousemove(function(e) {
+  eventHolder.mousemove(function (e) {
     setHoverXPosition(plot, e.offsetX);
-    for (var i = 0; i < options.linkedplots.length; i++)
-        setHoverXPosition(options.linkedplots[i], e.offsetX);
+    for (let i = 0; i < options.linkedplots.length; i++)
+      setHoverXPosition(options.linkedplots[i], e.offsetX);
   });
 
-  eventHolder.mouseout(function(e) {
+  eventHolder.mouseout(function (_) {
     setHoverXPosition(plot, -1);
-    for (var i = 0; i < options.linkedplots.length; i++)
-        setHoverXPosition(options.linkedplots[i], -1);
+    for (let i = 0; i < options.linkedplots.length; i++)
+      setHoverXPosition(options.linkedplots[i], -1);
   });
 }
 
 function redrawWindPlot() {
-  var plot = $(this);
-  var speeds = [data.data.wwindspeed, data.data.gwindspeed, data.data.swwindspeed];
+  let plot = $(this);
 
-  var getMaxSpeed = function(a,b) {
-    if (a === null && b === null)
-      return 0;
-    else if (a === null)
-      return b;
-    else if (b === null)
-      return a;
+  const type = plot.data('type');
+  let max = undefined;
+  let d = []
+  for (let sensor_name in data.data[type]) {
+    const sensor = data.data[type][sensor_name];
+    d.push(sensor);
+    max = max !== undefined ? Math.max(max, sensor['max']) : sensor['max'];
+  }
 
-    return Math.max(a, b[1]);
-  };
+  if (d.length === 0) {
+    d.push({
+      'color': 'red',
+      'label': 'NO DATA',
+      'data': []
+    })
+  }
 
-  var maxVaisala = data.data.wwindspeed.data.reduce(getMaxSpeed, 0);
-  var maxSWASP = data.data.swwindspeed.data.reduce(getMaxSpeed, 0);
-  var maxGOTO = data.data.gwindspeed.data.reduce(getMaxSpeed, 0);
-  var maxRadius = 1.1 * Math.max(maxVaisala, maxSWASP, maxGOTO, 15 / 1.1);
+  let maxRadius = 1.1 * Math.max(max, 15 / 1.1);
 
   function drawPoints(plot, ctx) {
-    var axes = plot.getAxes();
-    var offset = plot.getPlotOffset();
+    let axes = plot.getAxes();
+    let offset = plot.getPlotOffset();
 
     // Clip to plot area to prevent overdraw
-    var plotWidth = ctx.canvas.width - offset.right - offset.left;
-    var plotHeight = ctx.canvas.height - offset.top - offset.bottom;
-    var yScale = 1 / maxRadius;
-    var xScale = yScale * plotHeight / plotWidth;
+    let plotWidth = ctx.canvas.width - offset.right - offset.left;
+    let plotHeight = ctx.canvas.height - offset.top - offset.bottom;
+    let yScale = 1 / maxRadius;
+    let xScale = yScale * plotHeight / plotWidth;
 
     ctx.save();
     ctx.rect(offset.left, offset.top, plot.width(), plot.height());
     ctx.clip();
 
     // Background axes
-    var dl = offset.left + axes.xaxis.p2c(-maxRadius * xScale);
-    var dt = offset.top + axes.yaxis.p2c(maxRadius * yScale);
-    var dr = offset.left + axes.xaxis.p2c(maxRadius * xScale);
-    var db = offset.top + axes.yaxis.p2c(-maxRadius * yScale);
+    let dl = offset.left + axes.xaxis.p2c(-maxRadius * xScale);
+    let dt = offset.top + axes.yaxis.p2c(maxRadius * yScale);
+    let dr = offset.left + axes.xaxis.p2c(maxRadius * xScale);
+    let db = offset.top + axes.yaxis.p2c(-maxRadius * yScale);
 
-    var hCenter = offset.left + axes.xaxis.p2c(0);
-    var vCenter = offset.top + axes.yaxis.p2c(0);
+    let hCenter = offset.left + axes.xaxis.p2c(0);
+    let vCenter = offset.top + axes.yaxis.p2c(0);
 
     ctx.strokeStyle = '#545454';
 
@@ -221,8 +244,9 @@ function redrawWindPlot() {
 
     // Background radial curves and tick labels
     $('#wind-plot .wind-labels').remove();
-    for (var r = 0; r < maxRadius * 1.414 * plotWidth / plotHeight; r += 10) {
-      var cr = axes.yaxis.p2c(-yScale * r) - axes.yaxis.p2c(0);
+    let wind_plot = $('#wind-plot');
+    for (let r = 0; r < maxRadius * 1.414 * plotWidth / plotHeight; r += 10) {
+      let cr = axes.yaxis.p2c(-yScale * r) - axes.yaxis.p2c(0);
 
       if (r > 0) {
         ctx.beginPath();
@@ -231,50 +255,45 @@ function redrawWindPlot() {
       }
 
       if (r * xScale < 0.975) {
-        var label = r == 0 ? '&nbsp;&nbsp;&nbsp;' + r: r;
-        var o = plot.pointOffset({ x: r * xScale, y: 0});
-        $('#wind-plot').append('<div style="position:absolute;left:' + (o.left - 10) + 'px;top:' + o.top + 'px;font-size:smaller;width:20px" class="wind-labels axisLabels">' + label + '</div>');
+        let label = r === 0 ? '&nbsp;&nbsp;&nbsp;' + r : r;
+        let o = plot.pointOffset({x: r * xScale, y: 0});
+        wind_plot.append('<div style="position:absolute;left:' + (o.left - 10) + 'px;top:' + o.top + 'px;font-size:smaller;width:20px" class="wind-labels axisLabels">' + label + '</div>');
         if (r > 0) {
-          o = plot.pointOffset({ x: -r * xScale, y: 0});
-          $('#wind-plot').append('<div style="position:absolute;left:' + (o.left - 10) + 'px;top:' + o.top + 'px;font-size:smaller;width:20px" class="wind-labels axisLabels">' + label + '</div>');
+          o = plot.pointOffset({x: -r * xScale, y: 0});
+          wind_plot.append('<div style="position:absolute;left:' + (o.left - 10) + 'px;top:' + o.top + 'px;font-size:smaller;width:20px" class="wind-labels axisLabels">' + label + '</div>');
         }
       }
     }
 
     // Background compass indicators
-    var labelHCenter = offset.left + plot.width() / 2;
-    var labelVCenter = offset.top + plot.height() / 2;
-    var labelPlotWidth = plot.width();
-    var labelPlotHeight = plot.height();
-    $('#wind-plot').append('<div style="left:' + (labelHCenter - 17) + 'px;top:' + (offset.top - 1) + 'px;" class="wind-labels axisLabels">N</div>');
-    $('#wind-plot').append('<div style="left:' + (offset.left + labelPlotWidth - 17) + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">E</div>');
-    $('#wind-plot').append('<div style="left:' + (labelHCenter - 17) + 'px;top:' + (offset.top + labelPlotHeight - 17) + 'px;" class="wind-labels axisLabels">S</div>');
-    $('#wind-plot').append('<div style="left:' + offset.left + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">W</div>');
+    let labelHCenter = offset.left + plot.width() / 2;
+    let labelVCenter = offset.top + plot.height() / 2;
+    let labelPlotWidth = plot.width();
+    let labelPlotHeight = plot.height();
+    wind_plot.append('<div style="left:' + (labelHCenter - 17) + 'px;top:' + (offset.top - 1) + 'px;" class="wind-labels axisLabels">N</div>');
+    wind_plot.append('<div style="left:' + (offset.left + labelPlotWidth - 17) + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">E</div>');
+    wind_plot.append('<div style="left:' + (labelHCenter - 17) + 'px;top:' + (offset.top + labelPlotHeight - 17) + 'px;" class="wind-labels axisLabels">S</div>');
+    wind_plot.append('<div style="left:' + offset.left + 'px;top:' + (labelVCenter - 17) + 'px;" class="wind-labels axisLabels">W</div>');
 
     // Historical data is drawn with constant opacity
     // This will be adjusted per-point if we are drawing live data
     ctx.globalAlpha = 0.4;
 
     // Data points
-    var series = plot.getData();
-    for (var i = 0; i < series.length; i++) {
-      var dir = series[i];
-      var speed = speeds[i];
-      var r = series[i].points.radius;
-      ctx.fillStyle = series[i].color;
+    let series = plot.getData();
+    for (let i = 0; i < series.length; i++) {
+      let s = series[i];
+      let r = s.points.radius;
+      ctx.fillStyle = s.color;
 
-      for (var j = dir.data.length - 1; j >= 0; j--) {
-        if (speed.data[j] === null)
-          continue;
+      for (let j = s.data.length - 1; j >= 0; j--) {
 
-        var dy = speed.data[j][1] * Math.cos(dir.data[j][1] * Math.PI / 180);
-        var dx = speed.data[j][1] * Math.sin(dir.data[j][1] * Math.PI / 180);
-        var x = offset.left + axes.xaxis.p2c(xScale * dx);
-        var y = offset.top + axes.yaxis.p2c(yScale * dy);
+        let x = offset.left + axes.xaxis.p2c(xScale * s.data[j][1]);
+        let y = offset.top + axes.yaxis.p2c(yScale * s.data[j][2]);
 
         // Opacity scales from full at 0 age to 1 at 1 hour, then stays constant
         if (!dateString)
-            ctx.globalAlpha = Math.min(Math.max(0.1, 1 - (data.end - dir.data[j][0]) / 3600000), 1);
+          ctx.globalAlpha = Math.min(Math.max(0.1, 1 - (data.end - s.data[j][0]) / 3600000), 1);
 
         ctx.beginPath();
         ctx.arc(x, y, r, 0, 2 * Math.PI, true);
@@ -282,23 +301,18 @@ function redrawWindPlot() {
       }
     }
 
-    // Add a border around the most recent point
-    ctx.globalAlpha = 1.0;
-
     if (!dateString) {
       ctx.strokeStyle = '#fff';
-      for (var i = 0; i < series.length; i++) {
-        var dir = series[i];
-        var speed = speeds[i];
-        if (speed.data[0] === undefined)
+      for (let i = 0; i < series.length; i++) {
+      let s = series[i];
+        if (s.data[0] === undefined)
           continue;
 
-        var dy = speed.data[0][1] * Math.cos(dir.data[0][1] * Math.PI / 180);
-        var dx = speed.data[0][1] * Math.sin(dir.data[0][1] * Math.PI / 180);
-        var x = offset.left + axes.xaxis.p2c(xScale * dx);
-        var y = offset.top + axes.yaxis.p2c(yScale * dy);
+        let x = offset.left + axes.xaxis.p2c(xScale * s.data[0][1]);
+        let y = offset.top + axes.yaxis.p2c(yScale * s.data[0][2]);
+
         ctx.beginPath();
-        ctx.arc(x, y, r, 0, 2 * Math.PI, true);
+        ctx.arc(x, y, s.points.radius, 0, 2 * Math.PI, true);
         ctx.stroke();
       }
     }
@@ -308,29 +322,39 @@ function redrawWindPlot() {
     ctx.beginPath();
     ctx.closePath();
     ctx.restore();
-  };
+  }
 
-  var axis = 0;
-  if (plot.data('column') == 'right')
+  let axis = 0;
+  if (plot.data('column') === 'right')
     axis = 1;
 
-  var options = {
-    lines: { show: false },
-    xaxis: { min: -1, max: 1, tickLength: 0, axisLabel: '&nbsp;', axisLabelPadding: 0, ticks: [] },
-    yaxis: { min: -1, max: 1, tickLength: 0,  axisLabel: 'Wind (km/h)', axisLabelPadding: 29, ticks: [] },
-    legend: { noColumns: 0, backgroundColor: '#252830', backgroundOpacity: 0.5, margin: 1, labelFormatter: colorSeriesLabel },
-    grid: { margin: { left: axis == 0 ? 0 : 15, top: 0, right: axis == 1 ? 0 : 15, bottom: 0}, hoverable: true, autoHighlight: false },
-    points: { show: false },
-    hooks: { draw: [drawPoints] },
+  let options = {
+    lines: {show: false},
+    xaxis: {min: -1, max: 1, tickLength: 0, axisLabel: '&nbsp;', axisLabelPadding: 0, ticks: []},
+    yaxis: {min: -1, max: 1, tickLength: 0, axisLabel: 'Wind (km/h)', axisLabelPadding: 29, ticks: []},
+    legend: {
+      noColumns: 0,
+      backgroundColor: '#252830',
+      backgroundOpacity: 0.5,
+      margin: 1,
+      labelFormatter: colorSeriesLabel
+    },
+    grid: {
+      margin: {left: axis === 0 ? 0 : 15, top: 0, right: axis === 1 ? 0 : 15, bottom: 0},
+      hoverable: true,
+      autoHighlight: false
+    },
+    points: {show: false},
+    hooks: {draw: [drawPoints]},
   };
 
-  if (axis == 1)
+  if (axis === 1)
     options.yaxis.position = 'right';
 
-  $.plot(this, [data.data.wwinddir, data.data.gwinddir, data.data.swwinddir], options);
+  $.plot(this, d, options);
 }
 
-var queryUpdate;
+let queryUpdate;
 var dateString = null;
 
 function queryData() {
@@ -338,25 +362,26 @@ function queryData() {
   if (queryUpdate)
     window.clearTimeout(queryUpdate);
 
-  var url = dataURL;
+  let url = dataURL;
   if (dateString)
     url += '?date=' + dateString;
 
-  $('#headerdesc').text('Loading...');
+  $('#data-updated').text('Loading...');
+
   $.ajax({
     url: url,
     type: 'GET',
     dataType: 'json',
-    success: function(json) {
+    success: function (json) {
       data = json;
 
       $('.weather-plot').each(redrawPlot);
       $('.wind-plot').each(redrawWindPlot);
 
       if (dateString)
-        $('#headerdesc').text('Archived data for night of ' + dateString);
+        $('#data-updated').text('Archived data for night of ' + dateString);
       else
-        $('#headerdesc').text('Live data (updated ' + formatUTCDate(new Date(data.end)) + ' UTC)');
+        $('#data-updated').text('Live data (updated ' + formatUTCDate(new Date(data.end)) + ' UTC)');
     }
   });
 
@@ -366,12 +391,12 @@ function queryData() {
 }
 
 function setup() {
-  var init = true;
+  let init = true;
 
   // Automatically switch label side based on column layout
   $('.weather-plot').each(function() {
     var plot = $(this);
-    var redraw = $(this).attr('id') == 'wind-plot' ? redrawWindPlot : redrawPlot;
+    var redraw = $(this).attr('id') === 'wind-plot' ? redrawWindPlot : redrawPlot;
     var sensor = $(this).data('sidesensor');
     if (!sensor)
       return;
@@ -379,11 +404,11 @@ function setup() {
     var onResize = function() {
       var float = $('#'+sensor).css('float');
       var updated = false;
-      if (float == 'none' && plot.data('column') != 'left') {
+      if (float === 'none' && plot.data('column') !== 'left') {
         plot.data('column', 'left');
         updated = true;
       }
-      else if (float == 'left' && plot.data('column') != 'right') {
+      else if (float === 'left' && plot.data('column') !== 'right') {
         plot.data('column', 'right');
         updated = true;
       }
@@ -396,7 +421,7 @@ function setup() {
     onResize();
   });
 
-  var picker = $('#datepicker');
+   var picker = $('#datepicker');
   if (picker.length) {
     var setDataSource = function() {
       // e.date is in local time, but we need UTC - fetch it directly from the picker.
@@ -435,5 +460,4 @@ function setup() {
     init = false;
     queryData();
   }
-};
-
+}

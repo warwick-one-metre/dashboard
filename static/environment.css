@@ -58,9 +58,8 @@
 #windspeed-container { margin-top: -20px; }
 #wind-container { height: 320px; }
 
-#main-ups-battery-container, #dome-ups-battery-container, #rasa-ups-battery-container, #goto-main-ups-battery-container, #goto-dome-ups-battery-container, #swasp-ups1-battery-container, #swasp-ups2-battery-container { height: 52px; }
-#swasp-ups3-battery-container { height: 87px; margin-top: -5px; }
-#dome-ups-battery-container, #rasa-ups-battery-container, #goto-main-ups-battery-container, #goto-main-ups-battery-container, #goto-dome-ups-battery-container, #swasp-ups1-battery-container, #swasp-ups2-battery-container  { margin-top: -5px; }
+#ups-battery-container, #ups-load-container { height: 193px; }
+#ups-load-container { height: 228px; margin-top: -5px; }
 #network-internal-container { height: 130px; margin-top: 0px; }
 #network-external-container { height: 130px; margin-top: -5px; }
 #wasp-roofbattery-container { height: 166px; margin-top: -5px; }

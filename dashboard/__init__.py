@@ -20,6 +20,8 @@ import os.path
 import pymysql
 import requests
 from requests.auth import HTTPDigestAuth
+from astropy.time import Time
+import astropy.units as u
 
 from flask import abort
 from flask import Flask
@@ -31,10 +33,8 @@ from flask import send_from_directory
 from flask import session
 from flask import url_for
 from flask_github import GitHub
-
 from warwick.observatory.common import daemons
-
-from dashboard import environment_json
+from werkzeug.exceptions import NotFound
 
 # pylint: disable=missing-docstring
 
@@ -80,7 +80,7 @@ EUMETSAT_GENERATED_DATA = {
 }
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../static')
 
 # Stop Flask from telling the browser to cache dynamic files
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = -1
@@ -622,24 +622,43 @@ def infrastructure_log():
     abort(404)
 
 
-@app.route('/data/environment')
-def environment_data():
-    date = request.args['date'] if 'date' in request.args else None
-    data, start, end = environment_json.environment_json(date)
+def environment_json(base):
+    now = Time.now()
+    today = Time(now.datetime.strftime('%Y-%m-%d'), format='isot', scale='utc') + 12 * u.hour
+    if today > now:
+        today -= 1 * u.day
 
-    response = jsonify(data=data, start=start, end=end)
+    path = 'latest.json.gz'
+    if 'date' in request.args:
+        # Map today's date to today.json
+        # HACK: use .datetime to work around missing strftime on ancient astropy
+        if today.strftime('%Y-%m-%d') == request.args['date']:
+            path = 'today.json.gz'
+        else:
+            # Validate that it is a well-formed date
+            date = Time(request.args['date'], format='isot', scale='utc')
+            path = date.datetime.strftime('%Y/%Y-%m-%d.json.gz')
+
+    try:
+        response = send_from_directory(GENERATED_DATA_DIR, os.path.join(base, path))
+        response.headers['Content-Encoding'] = 'gzip'
+    except NotFound:
+        start = today.unix * 1000,
+        end = (today + 1 * u.day).unix * 1000,
+        response = jsonify(data={}, start=start, end=end)
+
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
+
+
+@app.route('/data/environment')
+def environment_data():
+    return environment_json('environment')
 
 
 @app.route('/data/infrastructure')
 def infrastructure_data():
-    date = request.args['date'] if 'date' in request.args else None
-    data, start, end = environment_json.infrastructure_json(date)
-
-    response = jsonify(data=data, start=start, end=end)
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+    return environment_json('infrastructure')
 
 
 @app.route('/data/w1m/')
