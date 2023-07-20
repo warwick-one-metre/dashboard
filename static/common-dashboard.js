@@ -110,7 +110,7 @@ function envLatestMinMax(row, cell, data) {
 }
 
 function diskSpaceGB(row, cell, data) {
-  if ('latest' in data) {
+  if (data && 'latest' in data) {
     let display = +(data['latest'] / 1073741824).toFixed(1);
     const units = row.data('units');
     if (units)

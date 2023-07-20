@@ -208,8 +208,7 @@ function camCool(row, cell, data) {
 }
 
 function camDiskSpace(row, cell, data){
-  const cam = row.data('cam');
-  const diskspace = getData(data, ["clasp_diskspace_" + cam, "data_fs_available_bytes"]);
+  const diskspace = getData(data, ["clasp_diskspace", "data_fs_available_bytes"]);
   diskSpaceGB(row, cell, diskspace);
 }
 
