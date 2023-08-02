@@ -14,7 +14,7 @@
     <link href="{{ url_for('static', filename='toolkit-inverse.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='application.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='slider.css') }}" rel="stylesheet">
-    {% if active_page in ['environment', 'infrastructure'] %}
+    {% if active_page in ['site-environment', 'site-infrastructure'] %}
     <link href="{{ url_for('static', filename='environment.css') }}" rel="stylesheet">
     {% endif %}
     <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
