@@ -1,8 +1,8 @@
 {% set categories = [
   ('Observatory', [
+    (url_for('site_overview'), 'site-overview', 'Overview', 'icon-video-camera', None),
     (url_for('environment'), 'site-environment', 'Environment', 'icon-cloud', None),
-    (url_for('infrastructure'), 'site-infrastructure', 'Infrastructure', 'icon-home', None),
-    (url_for('site_cameras'), 'site-cameras', 'Cameras', 'icon-video-camera', None)
+    (url_for('infrastructure'), 'site-infrastructure', 'Infrastructure', 'icon-home', None)
   ]),
   ('W1m', [
     (url_for('w1m_dashboard'), 'w1m-dashboard', 'Dashboard', 'icon-menu', None),

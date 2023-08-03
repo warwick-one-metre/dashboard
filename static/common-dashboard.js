@@ -228,6 +228,52 @@ function opsHeaderEnvironment(row, cell, data) {
   }
 }
 
+function opsStatus(row, cell, data) {
+  if (!('safe' in data) || !('conditions' in data) || !('dome_closed' in data) || !('dome_auto' in data)) {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+    return;
+  }
+
+  let mode_class = data['dome_auto'] ? 'text-success' : 'text-warning';
+  let mode_label = data['dome_auto'] ? 'AUTO' : 'MANUAL';
+  let dome_class = data['observable'] ^ data['dome_closed'] ? 'text-success' : 'text-danger';
+  let dome_label = data['dome_closed'] ? 'CLOSED' : 'OPEN';
+  let label = '<span class="' + mode_class + '">' + mode_label + '</span>&nbsp;/&nbsp;<span class="' + dome_class + '">' + dome_label + '</span>';
+
+  if (!data['safe'])
+    label += '&nbsp;(<span class="text-danger">ENV</span>)';
+
+  cell.html(label);
+
+  if (('safe' in data) && ('conditions' in data)) {
+    const status_classes = ['', 'text-success', 'text-warning', 'text-danger'];
+    let tooltip = '<table style="margin: 5px">';
+    let rows = 0;
+    for (let c in data['conditions']) {
+      if (!(c in data['conditions']))
+        continue;
+
+      tooltip += '<tr><td style="text-align: right;">' + c + ':</td>';
+      const params = data['conditions'][c];
+      for (let p in params)
+        tooltip += '<td style="padding: 0 5px" class="' + status_classes[params[p]] + '">' + p + '</td>';
+
+      tooltip += '</tr>';
+      rows += 1;
+    }
+
+    if (rows === 0)
+      tooltip += '<tr><td style="text-align: center;">NO DATA</td></tr>'
+    tooltip += '</table>';
+
+    row.tooltip({ html: true, title: tooltip });
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
 function powerUPS(row, cell, data) {
   const prefix = row.data('prefix');
   let label = 'ERROR';

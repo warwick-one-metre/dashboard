@@ -222,10 +222,6 @@ def logout():
 
 
 # Main pages
-@app.route('/')
-def main_redirect():
-    return redirect(url_for('environment'))
-
 
 @app.route('/w1m/')
 def w1m_dashboard():
@@ -334,7 +330,12 @@ class SiteCamera:
 
 
 @app.route('/cameras')
-def site_cameras():
+def cameras_redirect():
+    return redirect(url_for('site_overview'))
+
+
+@app.route('/')
+def site_overview():
     user_account = get_user_account()
     authorised_goto = user_account is not None and 'goto' in user_account['permissions']
     authorised_satellites = user_account is not None and 'satellites' in user_account['permissions']
@@ -358,7 +359,7 @@ def site_cameras():
 
     dashboard_mode = __parse_dashboard_mode()
 
-    return render_template('cameras.html', user_account=user_account, dashboard_mode=dashboard_mode, cameras=cameras)
+    return render_template('overview.html', user_account=user_account, dashboard_mode=dashboard_mode, cameras=cameras)
 
 
 @app.route('/camera/<path:camera>')
