@@ -1,0 +1,9 @@
+[Unit]
+Description=Polls observatory systems and updates the cached dashboard json files
+
+[Service]
+User=dashboarddata
+Group=dashboarddata
+ExecStart=/usr/bin/update-dashboard-overview
+Restart=always
+RestartSec=10

@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+#
+# This file is part of dashboard.
+#
+# dashboard is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# dashboard is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with environmentd.  If not, see <http://www.gnu.org/licenses/>.
+
+# pylint: disable=broad-except
+# pylint: disable=invalid-name
+
+"""Generates status json that is served by the web dashboard"""
+
+import datetime
+import gzip
+import json
+import shutil
+from warwick.observatory.common import daemons, log
+
+BASE_OUTPUT_DIR = '/srv/dashboard/generated'
+STATUS_FILE = BASE_OUTPUT_DIR + '/update-dashboard-overview.json'
+
+try:
+    with open(STATUS_FILE, 'r') as infile:
+        status = json.load(infile)
+except Exception:
+    status = {}
+
+
+def query_daemon(daemon, key, query):
+    """Query status data from a daemon setting / clearing error flags on failure"""
+    try:
+        with daemon.connect() as d:
+            response = query(d)
+
+        # Some daemons will return None on error
+        if response is None:
+            if not key in status or status[key]:
+                print('received empty response from ' + key + '')
+                log.error('dashboardd', 'Lost contact with ' + key + ' (empty response)')
+            status[key] = False
+        else:
+            if key in status and not status[key]:
+                log.info('dashboardd', 'Restored contact with ' + key)
+            status[key] = True
+            return response
+    except Exception as e:
+        print('failed to query ' + key + ' with error: ' + str(e))
+        if not key in status or status[key]:
+            log.error('dashboardd', 'Lost contact with ' + key + ' (' + str(e) + ')')
+        status[key] = False
+
+    return None
+
+
+def extract_environment_data(data, data_map):
+    """Extract weather data from the observatory_environment response
+       data_map defines a dictionary of daemons and sensors that are requested
+    """
+    try:
+        ret = {}
+        for daemon, sensors in data_map.items():
+            ret[daemon] = {}
+            if daemon not in data or 'parameters' not in data[daemon]:
+                continue
+
+            daemon_data = data[daemon]['parameters']
+            for sensor in sensors:
+                ret[daemon][sensor] = {}
+                if daemon_data[sensor]['current']:
+                    for s in ['latest', 'min', 'max', 'limits', 'warn_limits']:
+                        if s in daemon_data[sensor]:
+                            ret[daemon][sensor][s] = daemon_data[sensor][s]
+        return ret
+    except:
+        return {}
+
+
+def generate_json(output_path, date):
+    """Queries the observatory environment daemon and saves as json
+       the data useful for the GOTO dashboard page
+    """
+    output = {'date': date}
+    environment = query_daemon(daemons.observatory_environment, 'environment', lambda d: d.status())
+    if environment:
+        output.update(extract_environment_data(environment, {
+            'w1m_vaisala': [
+                'wind_speed', 'median_wind_speed', 'wind_gust', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure'
+            ],
+            'goto_vaisala': [
+                'wind_speed', 'median_wind_speed', 'wind_gust', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure'
+            ],
+            'halfmetre_vaisala': [
+                'wind_speed', 'median_wind_speed', 'wind_gust', 'temperature', 'relative_humidity', 'dew_point_delta',
+                'pressure', 'rg11_unsafe'
+            ],
+            'rain': ['unsafe_boards'],
+            'cloudwatcher': ['sky_temp'],
+            'tng': ['dust', 'seeing'],
+            'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
+        }))
+
+    rockit_telescopes = [
+        (daemons.clasp_dome, daemons.clasp_operations, 'clasp'),
+        (daemons.halfmetre_roof, daemons.halfmetre_operations, 'halfmetre'),
+        (daemons.onemetre_dome, daemons.onemetre_operations, 'onemetre'),
+        (daemons.superwasp_dome, daemons.superwasp_operations, 'superwasp')
+    ]
+
+    for dome_daemon, ops_daemon, key in rockit_telescopes:
+        dome_data = query_daemon(dome_daemon, f'{key}_dome', lambda d: d.status())
+        ops_data = query_daemon(ops_daemon, f'{key}_operations', lambda d: d.status())
+        output[f'{key}_ops'] = {
+            'dome_closed': dome_data.get('closed', None),
+            'dome_auto': ops_data.get('dome').get('mode', 0) == 1,
+            'safe': ops_data.get('environment', {}).get('safe', None),
+            'observable': ops_data.get('environment', {}).get('safe', None),
+            'conditions': ops_data.get('environment', {}).get('conditions', {})
+        }
+
+    goto_telescopes = [
+        (daemons.goto_dome1_gtecs_dome, daemons.goto_dome1_gtecs_conditions, 'goto1'),
+        (daemons.goto_dome2_gtecs_dome, daemons.goto_dome2_gtecs_conditions, 'goto2'),
+    ]
+
+    goto_flags = {
+      'windspeed': 'Wind&nbsp;Speed',
+      'windgust': 'Wind&nbsp;Gust',
+      'humidity': 'Humidity',
+      'internal': 'Internal',
+      'temperature': 'Temperature',
+      'ice': 'Ice',
+      'dew_point': 'Dew&nbsp;Point',
+      'rain': 'Rain',
+      'ups': 'UPS&nbsp;Status',
+      'diskspace': 'Disk&nbsp;Space',
+      'link': 'Network',
+      'override': 'Override',
+      'clouds': 'Clouds',
+      'dark': 'Dark',
+      'dust': 'Dust'
+    }
+
+    for dome_daemon, conditions_daemon, key in goto_telescopes:
+        dome_data = query_daemon(dome_daemon, f'{key}_dome', lambda d: d.get_info(force_update=False)) or {}
+        conditions_data = query_daemon(conditions_daemon, f'{key}_conditions', lambda d: d.get_info(force_update=False)) or {}
+        output[f'{key}_ops'] = {
+            'dome_closed': dome_data.get('dome', None) == 'closed',
+            'dome_auto': dome_data.get('mode') == 'robotic',
+            'safe': not dome_data.get('conditions_bad', True),
+            'observable': not dome_data.get('conditions_bad', True) and conditions_data.get('flags', {}).get('dark', 1) == 0,
+            'conditions': {}
+        }
+        ignored = conditions_data.get('ignored_flags', [])
+        for flag, value in conditions_data.get('flags', {}).items():
+            safe = 1 if value == 0 else 3
+            if flag in ignored:
+                safe = 0
+
+            output[f'{key}_ops']['conditions'][goto_flags.get(flag, flag)] = {'SAFE': safe}
+    try:
+        with gzip.open(output_path + '.tmp', 'w') as output_file:
+            output_file.write(json.dumps(output or {}).encode('utf-8'))
+
+        shutil.move(output_path + '.tmp', output_path)
+
+        with open(STATUS_FILE, 'w') as output_file:
+            json.dump(status, output_file)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+
+date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
+generate_json(BASE_OUTPUT_DIR + '/overview.json.gz', date)

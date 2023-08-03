@@ -651,6 +651,14 @@ def environment_json(base):
     return response
 
 
+@app.route('/data/overview')
+def overview_data():
+    response = send_from_directory(GENERATED_DATA_DIR, 'overview.json.gz')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+
+
 @app.route('/data/environment')
 def environment_data():
     return environment_json('environment')
