@@ -1,9 +1,9 @@
 [Unit]
 Description=Polls observatory systems and updates the cached dashboard json files
-Wants=update-dashboard-data.timer
 
 [Service]
-User=nfsnobody
-Group=nfsnobody
+User=dashboarddata
+Group=dashboarddata
 ExecStart=/usr/bin/update-dashboard-data
-
+Restart=always
+RestartSec=10
