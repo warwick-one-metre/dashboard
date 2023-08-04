@@ -1,6 +1,18 @@
 let data = {};
 
 
+function formatUTCDate(date) {
+  let d = [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(),
+    date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()];
+
+  for (let i = 0; i < d.length; i++)
+    if (d[i] < 10)
+      d[i] = '0' + d[i];
+
+  return d[0] + '-' + d[1] + '-' + d[2] + ' ' + d[3] + ':' + d[4] + ':' + d[5];
+}
+
+
 function colorSeriesLabel(label, series) {
   return '<span style="color: ' + series.color + '">' + label + '</span>';
 }
@@ -287,12 +299,11 @@ function redrawWindPlot() {
       ctx.fillStyle = s.color;
 
       for (let j = s.data.length - 1; j >= 0; j--) {
-
         let x = offset.left + axes.xaxis.p2c(xScale * s.data[j][1]);
         let y = offset.top + axes.yaxis.p2c(yScale * s.data[j][2]);
 
         // Opacity scales from full at 0 age to 1 at 1 hour, then stays constant
-        if (!dateString)
+        if (!datepicker.getDate())
           ctx.globalAlpha = Math.min(Math.max(0.1, 1 - (data.end - s.data[j][0]) / 3600000), 1);
 
         ctx.beginPath();
@@ -301,13 +312,13 @@ function redrawWindPlot() {
       }
     }
 
-    if (!dateString) {
+    // Add a border around the most recent point
+    ctx.globalAlpha = 1.0;
+
+    if (!datepicker.getDate()) {
       ctx.strokeStyle = '#fff';
       for (let i = 0; i < series.length; i++) {
-      let s = series[i];
-        if (s.data[0] === undefined)
-          continue;
-
+        let s = series[i];
         let x = offset.left + axes.xaxis.p2c(xScale * s.data[0][1]);
         let y = offset.top + axes.yaxis.p2c(yScale * s.data[0][2]);
 
@@ -355,7 +366,7 @@ function redrawWindPlot() {
 }
 
 let queryUpdate;
-var dateString = null;
+let datepicker = null;
 
 function queryData() {
   // Clear a queued refresh if this was triggered manually
@@ -363,8 +374,13 @@ function queryData() {
     window.clearTimeout(queryUpdate);
 
   let url = dataURL;
-  if (dateString)
-    url += '?date=' + dateString;
+  let dateString = "";
+  if (datepicker) {
+    dateString = datepicker.getDate('yyyy-mm-dd');
+    if (dateString) {
+      url += '?date=' + dateString;
+    }
+  }
 
   $('#data-updated').text('Loading...');
 
@@ -395,20 +411,22 @@ function setup() {
 
   // Automatically switch label side based on column layout
   $('.weather-plot').each(function() {
-    var plot = $(this);
-    var redraw = $(this).attr('id') === 'wind-plot' ? redrawWindPlot : redrawPlot;
-    var sensor = $(this).data('sidesensor');
+    let plot = $(this);
+    let redraw = $(this).attr('id') === 'wind-plot' ? redrawWindPlot : redrawPlot;
+    let sensor = $(this).data('sidesensor');
     if (!sensor)
       return;
 
-    var onResize = function() {
-      var float = $('#'+sensor).css('float');
-      var updated = false;
-      if (float === 'none' && plot.data('column') !== 'left') {
+    console.log(sensor, $('#'+sensor));
+
+    let onResize = function() {
+      let offset = $('#'+sensor)[0].offsetTop;
+      let updated = false;
+      if (offset > 500 && plot.data('column') !== 'left') {
         plot.data('column', 'left');
         updated = true;
       }
-      else if (float === 'left' && plot.data('column') !== 'right') {
+      else if (offset < 500 && plot.data('column') !== 'right') {
         plot.data('column', 'right');
         updated = true;
       }
@@ -421,43 +439,40 @@ function setup() {
     onResize();
   });
 
-   var picker = $('#datepicker');
-  if (picker.length) {
-    var setDataSource = function() {
-      // e.date is in local time, but we need UTC - fetch it directly from the picker.
-      dateString = picker.data('datepicker').getFormattedDate('yyyy-mm-dd');
-      queryData();
-    }
+  const dp = document.getElementById("datepicker");
+  if (dp !== undefined) {
+    datepicker = new Datepicker(dp, {
+      format: 'yyyy-mm-dd',
+      autoclose: true,
+      clearButton: true,
+      minDate: '2016-09-14',
+      maxView: 1,
+      maxDate: new Date(),
+      buttonClass: 'btn',
+    });
 
-    picker.datepicker().on('changeDate', setDataSource);
+    datepicker.element.addEventListener('changeDate', _ => queryData());
 
-    // Date shouldn't advance until 12:00 UT
-    var endDate = new Date();
-    endDate.setHours(endDate.getHours()-12);
-    picker.datepicker('setEndDate', endDate.toISOString().substr(0, 10));
-
-    var incrementDate = function(increment) {
+    let incrementDate = function(increment) {
+      let dateString = datepicker.getDate('yyyy-mm-dd');
       if (dateString) {
-        var date = new Date(dateString)
+        let date = new Date(dateString)
         date.setUTCDate(date.getUTCDate() + increment);
-        picker.datepicker('setUTCDate', date);
+        datepicker.setDate(date);
       } else {
         // Change from Live to today
-        var endDate = new Date();
-        endDate.setHours(endDate.getHours()-12);
-        picker.datepicker('update', endDate.toISOString().substr(0, 10));
+        let date = new Date()
+        date.setHours(date.getHours() - 12);
+        datepicker.setDate(date.toISOString().substr(0, 10))
       }
 
-      setDataSource();
+      queryData();
     }
 
     $('#prev-date').click(function() { incrementDate(-1); });
     $('#next-date').click(function() { incrementDate(+1); });
-
-    init = false;
-    setDataSource();
-  } else {
-    init = false;
-    queryData();
   }
+
+  init = false;
+  queryData();
 }

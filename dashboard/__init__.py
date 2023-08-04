@@ -42,7 +42,7 @@ from werkzeug.exceptions import NotFound
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
-GENERATED_DATA_DIR = '/srv/dashboard/generated'
+GENERATED_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'generated')
 W1M_GENERATED_DATA = {
     'blue': 'dashboard-BLUE.json',
     'blue/image': 'dashboard-BLUE-thumb.jpg',
@@ -94,7 +94,7 @@ with db.cursor() as cur:
         app.config[x[0]] = x[1]
 db.close()
 
-# Use github's OAuth interface for verifying user identity
+# Use GitHub's OAuth interface for verifying user identity
 github = GitHub(app)
 
 
@@ -127,7 +127,7 @@ def get_user_account():
             print('Failed to clean expired session data with error')
             print(e)
 
-        # Logged in users store an encrypted version of their github token in the session cookie
+        # Logged-in users store an encrypted version of their GitHub token in the session cookie
         if 'github_token' in session:
             # Check whether we have any cached state
             try:
@@ -179,23 +179,15 @@ def get_user_account():
 
 @github.access_token_getter
 def get_github_oauth_token():
-    """Fetch the github oauth token.
+    """Fetch the GitHub oauth token.
        Used internally by the OAuth API"""
     return session.get('github_token')
-
-
-def __parse_dashboard_mode():
-    try:
-        return request.args.get('dashboard') == 'true'
-    except:
-        pass
-    return False
 
 
 @app.route('/login-callback')
 @github.authorized_handler
 def authorized(oauth_token):
-    next_url = request.args.get('next') or url_for('environment')
+    next_url = request.args.get('next') or url_for('site_overview')
     if oauth_token:
         session['github_token'] = oauth_token
 
@@ -209,7 +201,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    next = request.args['next'] if 'next' in request.args else url_for('environment')
+    next_url = request.args['next'] if 'next' in request.args else url_for('site_overview')
     token = session.pop('github_token', None)
     if token:
         # Restore the connection if needed
@@ -218,44 +210,45 @@ def logout():
             cur.execute('DELETE FROM `dashboard_sessions` WHERE `github_token` = %s', (token,))
         db.close()
 
-    return redirect(next)
+    return redirect(next_url)
 
 
 # Main pages
 
 @app.route('/w1m/')
 def w1m_dashboard():
+    account = get_user_account()
+    if 'w1m' not in account['permissions']:
+        return redirect(url_for('site_overview'))
+
     return render_template('w1m/dashboard.html', user_account=get_user_account())
 
 
 @app.route('/w1m/live/')
 def w1m_live():
     account = get_user_account()
-    if 'w1m' in account['permissions']:
-        return render_template('w1m/live.html', user_account=account)
-    abort(404)
+    if 'w1m' not in account['permissions']:
+        abort(404)
 
-
-@app.route('/w1m/resources/')
-def w1m_resources():
-    account = get_user_account()
-    if 'w1m' in account['permissions']:
-        return render_template('w1m/resources.html', user_account=account)
-    abort(404)
+    return render_template('w1m/live.html', user_account=account)
 
 
 @app.route('/clasp/')
 def clasp_dashboard():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('clasp/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    account = get_user_account()
+    if 'satellites' not in account['permissions']:
+        return redirect(url_for('site_overview'))
+
+    return render_template('clasp/dashboard.html', user_account=get_user_account())
 
 
 @app.route('/clasp/live/')
 def clasp_live():
     account = get_user_account()
-    if 'satellites' in account['permissions']:
-        return render_template('clasp/live.html', user_account=account)
-    abort(404)
+    if 'satellites' not in account['permissions']:
+        abort(404)
+
+    return render_template('clasp/live.html', user_account=account)
 
 
 @app.route('/data/clasp/<path:path>')
@@ -268,15 +261,20 @@ def clasp_generated_data(path):
 
 @app.route('/superwasp/')
 def superwasp_dashboard():
+    account = get_user_account()
+    if 'satellites' not in account['permissions']:
+        return redirect(url_for('site_overview'))
+
     return render_template('superwasp/dashboard.html', user_account=get_user_account())
 
 
 @app.route('/superwasp/live/')
 def superwasp_live():
     account = get_user_account()
-    if 'satellites' in account['permissions']:
-        return render_template('superwasp/live.html', user_account=account)
-    abort(404)
+    if 'satellites' not in account['permissions']:
+        abort(404)
+
+    return render_template('superwasp/live.html', user_account=account)
 
 
 @app.route('/data/superwasp/<path:path>')
@@ -286,30 +284,28 @@ def superwasp_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, SUPERWASP_GENERATED_DATA[path])
     abort(404)
 
+
 @app.route('/goto1/')
 def goto1_dashboard():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto1/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
-
-
-@app.route('/goto1/resources/')
-def goto1_resources():
     account = get_user_account()
-    if 'goto' in account['permissions']:
-        return render_template('goto1/resources.html', user_account=account)
-    abort(404)
+    if 'goto' not in account['permissions']:
+        return redirect(url_for('site_overview'))
+
+    return render_template('goto1/dashboard.html', user_account=get_user_account())
 
 
 @app.route('/goto2/')
 def goto2_dashboard():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('goto2/dashboard.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    account = get_user_account()
+    if 'goto' not in account['permissions']:
+        return redirect(url_for('site_overview'))
+
+    return render_template('goto2/dashboard.html', user_account=get_user_account())
 
 
 @app.route('/environment/')
 def environment():
-    dashboard_mode = __parse_dashboard_mode()
-    return render_template('environment.html', user_account=get_user_account(), dashboard_mode=dashboard_mode)
+    return render_template('environment.html', user_account=get_user_account())
 
 
 @app.route('/infrastructure/')
@@ -342,36 +338,47 @@ def site_overview():
     authorised_onemetre = user_account is not None and 'w1m' in user_account['permissions']
     authorised_extcams = authorised_goto or authorised_satellites
 
-    cameras = [
+    authorised = len(user_account['permissions']) > 0
+
+    external_cameras = [
         SiteCamera('ext1', 'West Camera', authorised=authorised_extcams, video=True),
         SiteCamera('ext2', 'East Camera', authorised=authorised_extcams, video=True),
         SiteCamera('allsky', 'All-Sky'),
         SiteCamera('gtcsky', 'GTC All-Sky', source='http://www.gtc.iac.es/multimedia/webcams.php'),
         SiteCamera('eumetsat', 'EUMETSAT 10.8 um', source='https://eumetview.eumetsat.int/static-images/MSG/IMAGERY/IR108/BW/index.htm'),
-        SiteCamera('serverroom', 'Server Room', authorised=authorised_extcams, video=True, audio=False, light=True),
-        SiteCamera('goto1', 'GOTO 1', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
-        SiteCamera('goto2', 'GOTO 2', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
-        SiteCamera('halfmetre', 'Half Metre', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
-        SiteCamera('w1m', 'W1m', authorised=authorised_onemetre, video=True, audio=True, light=True, infrared=True),
-        SiteCamera('superwasp', 'SuperWASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
-        SiteCamera('clasp', 'CLASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True)
     ]
 
-    dashboard_mode = __parse_dashboard_mode()
+    internal_cameras = []
+    camera_height = 452
+    if authorised:
+        camera_height = 544
+        external_cameras.append(SiteCamera('serverroom', 'Server Room', authorised=authorised_extcams, video=True, audio=False, light=True))
+        internal_cameras = [
+            SiteCamera('goto1', 'GOTO 1', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('goto2', 'GOTO 2', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('halfmetre', 'Half Metre', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('w1m', 'W1m', authorised=authorised_onemetre, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('superwasp', 'SuperWASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('clasp', 'CLASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True)
+        ]
 
-    return render_template('overview.html', user_account=user_account, dashboard_mode=dashboard_mode, cameras=cameras)
+    return render_template('overview.html',
+                           user_account=user_account, authorised=authorised, camera_height=camera_height,
+                           external_cameras=external_cameras, internal_cameras=internal_cameras)
 
 
 @app.route('/camera/<path:camera>')
 def camera_image(camera):
-    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat', 'serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']:
+    authorised = len(get_user_account()['permissions']) > 0
+    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat'] or (authorised and camera in ['serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']):
         return send_from_directory(os.path.join(GENERATED_DATA_DIR, 'cameras'), camera + '.jpg')
     abort(404)
 
 
 @app.route('/camera/<path:camera>/thumb')
 def camera_thumb(camera):
-    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat', 'serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']:
+    authorised = len(get_user_account()['permissions']) > 0
+    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat'] or (authorised and camera in ['serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']):
         return send_from_directory(os.path.join(GENERATED_DATA_DIR, 'cameras'), camera + '_thumb.jpg')
     abort(404)
 
@@ -466,7 +473,9 @@ def w1m_log():
                 query += ' ORDER BY id DESC LIMIT 250;'
                 cur.execute(query)
                 messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                return jsonify(messages=messages)
+                response = jsonify(messages=messages)
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
         finally:
             db.close()
     abort(404)
@@ -512,10 +521,113 @@ def halfmetre_log():
                 query += ' ORDER BY id DESC LIMIT 250;'
                 cur.execute(query)
                 messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                return jsonify(messages=messages)
+                response = jsonify(messages=messages)
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
         finally:
             db.close()
     abort(404)
+
+
+@app.route('/data/clasp/log')
+def clasp_log():
+    account = get_user_account()
+    if 'satellites' in account['permissions']:
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('powerd@clasp', 'lmountd@clasp', 'domed@clasp', 'opsd@clasp', 'dehumidifierd@clasp', 'fli_camd@fli1', 'qhy_camd@cam1', 'qhy_camd@cam2', 'diskspaced@clasp', 'pipelined@clasp')"
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
+
+                query += ' ORDER BY id DESC LIMIT 250;'
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                response = jsonify(messages=messages)
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
+        finally:
+            db.close()
+    abort(404)
+
+
+@app.route('/data/infrastructure/log')
+def infrastructure_log():
+    account = get_user_account()
+    if 'infrastructure_log' in account['permissions']:
+        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+        try:
+            # Returns latest 250 log messages.
+            # If 'from' argument is present, returns latest 100 log messages with a greater id
+            with db.cursor() as cur:
+                query = 'SELECT id, date, type, source, message from obslog'
+                query += " WHERE source IN ('environmentd', 'dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', " \
+                    "'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd', " \
+                    "'iropacityd', 'gotoupsd', 'waspupsd', 'robodimmd', 'wasp_roofbatteryd', 'aircond')"
+
+                if 'from' in request.args:
+                    query += ' AND id > ' + db.escape(request.args['from'])
+
+                query += ' ORDER BY id DESC LIMIT 250;'
+                cur.execute(query)
+                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
+                response = jsonify(messages=messages)
+                response.headers['Access-Control-Allow-Origin'] = '*'
+                return response
+
+        finally:
+            db.close()
+    abort(404)
+
+
+def environment_json(base):
+    now = Time.now()
+    today = Time(now.datetime.strftime('%Y-%m-%d'), format='isot', scale='utc') + 12 * u.hour
+    if today > now:
+        today -= 1 * u.day
+
+    path = 'latest.json.gz'
+    if 'date' in request.args:
+        # Map today's date to today.json
+        # HACK: use .datetime to work around missing strftime on ancient astropy
+        if today.strftime('%Y-%m-%d') == request.args['date']:
+            path = 'today.json.gz'
+        else:
+            # Validate that it is a well-formed date
+            date = Time(request.args['date'], format='isot', scale='utc')
+            path = date.datetime.strftime('%Y/%Y-%m-%d.json.gz')
+
+    try:
+        response = send_from_directory(GENERATED_DATA_DIR, os.path.join(base, path))
+        response.headers['Content-Encoding'] = 'gzip'
+    except NotFound:
+        start = today.unix * 1000,
+        end = (today + 1 * u.day).unix * 1000,
+        response = jsonify(data={}, start=start, end=end)
+
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
+
+@app.route('/data/overview')
+def overview_data():
+    response = send_from_directory(GENERATED_DATA_DIR, 'overview.json.gz')
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
+    return response
+
+
+@app.route('/data/environment')
+def environment_data():
+    return environment_json('environment')
+
+
+@app.route('/data/infrastructure')
+def infrastructure_data():
+    return environment_json('infrastructure')
 
 
 @app.route('/data/clasp/')
@@ -571,103 +683,9 @@ def clasp_dashboard_data():
         'environment': env
     }
 
-    return jsonify(**data)
-
-
-@app.route('/data/clasp/log')
-def clasp_log():
-    account = get_user_account()
-    if 'satellites' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('powerd@clasp', 'lmountd@clasp', 'domed@clasp', 'opsd@clasp', 'dehumidifierd@clasp', 'fli_camd@fli1', 'qhy_camd@cam1', 'qhy_camd@cam2', 'diskspaced@clasp', 'pipelined@clasp')"
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
-
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                return jsonify(messages=messages)
-        finally:
-            db.close()
-    abort(404)
-
-
-@app.route('/data/infrastructure/log')
-def infrastructure_log():
-    account = get_user_account()
-    if 'infrastructure_log' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('environmentd', 'dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', " \
-                    "'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd', " \
-                    "'iropacityd', 'gotoupsd', 'waspupsd', 'robodimmd', 'wasp_roofbatteryd', 'aircond')"
-
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
-
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                return jsonify(messages=messages)
-        finally:
-            db.close()
-    abort(404)
-
-
-def environment_json(base):
-    now = Time.now()
-    today = Time(now.datetime.strftime('%Y-%m-%d'), format='isot', scale='utc') + 12 * u.hour
-    if today > now:
-        today -= 1 * u.day
-
-    path = 'latest.json.gz'
-    if 'date' in request.args:
-        # Map today's date to today.json
-        # HACK: use .datetime to work around missing strftime on ancient astropy
-        if today.strftime('%Y-%m-%d') == request.args['date']:
-            path = 'today.json.gz'
-        else:
-            # Validate that it is a well-formed date
-            date = Time(request.args['date'], format='isot', scale='utc')
-            path = date.datetime.strftime('%Y/%Y-%m-%d.json.gz')
-
-    try:
-        response = send_from_directory(GENERATED_DATA_DIR, os.path.join(base, path))
-        response.headers['Content-Encoding'] = 'gzip'
-    except NotFound:
-        start = today.unix * 1000,
-        end = (today + 1 * u.day).unix * 1000,
-        response = jsonify(data={}, start=start, end=end)
-
+    response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
-
-
-@app.route('/data/overview')
-def overview_data():
-    response = send_from_directory(GENERATED_DATA_DIR, 'overview.json.gz')
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Content-Encoding'] = 'gzip'
-    return response
-
-
-@app.route('/data/environment')
-def environment_data():
-    return environment_json('environment')
-
-
-@app.route('/data/infrastructure')
-def infrastructure_data():
-    return environment_json('infrastructure')
 
 
 @app.route('/data/w1m/')
@@ -723,8 +741,9 @@ def w1m_dashboard_data():
         'environment': env
     }
 
-    return jsonify(**data)
-
+    response = jsonify(**data)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/data/w1m/<path:path>')
 def w1m_generated_data(path):
@@ -764,8 +783,9 @@ def goto1_dashboard_data():
             }
         }
 
-    return jsonify(**data)
-
+    response = jsonify(**data)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/data/goto2/')
 def goto2_dashboard_data():
@@ -794,8 +814,9 @@ def goto2_dashboard_data():
             }
         }
 
-    return jsonify(**data)
-
+    response = jsonify(**data)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 @app.route('/data/superwasp/')
 def superwasp_dashboard_data():
@@ -850,7 +871,9 @@ def superwasp_dashboard_data():
         'environment': env
     }
 
-    return jsonify(**data)
+    response = jsonify(**data)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 
 @app.route('/data/halfmetre/')
@@ -906,7 +929,9 @@ def halfmetre_dashboard_data():
         'environment': env
     }
 
-    return jsonify(**data)
+    response = jsonify(**data)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 
 # Raw sensor data for GOTO ops

@@ -49,6 +49,7 @@
   color: #cfd2da;
 }
 
+
 #rdboards-label td.legendLabel, #vrain-label td.legendLabel { width: 145px; }
 #ext-humidity-container, #int-humidity-container,  #ext-temperature-container, #int-temperature-container, #dew-container, #skyclarity-container, #windspeed-container, #seeing-container, #raindetector-container { height: 105px; }
 #skyclarity-container { height: 139px; }

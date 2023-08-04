@@ -2,193 +2,172 @@
 {% set title = 'Site Overview' -%}
 {% set active_page = 'site-overview' -%}
 {% block body %}
-<style>
-.thumb-panel {
-  padding: 0; height: 107px; width: 190px; overflow: hidden; margin: auto auto;
-}
-
-.camera-label {
-  position: absolute;
-  font-weight: bold;
-  font-size: 0.9em;
-  top: 0px;
-  left: 0px;
-  padding: 3px 6px;
-  background-color: rgb(0, 0, 0, 0.6);
-  color: white;
-  border-bottom-right-radius: 5px;
-}
-</style>
-
-{% if not dashboard_mode %}
-<div class="dashhead m-b">
-  <div class="dashhead-titles">
-    <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
-  </div>
-</div>
-{% endif %}
-
-<div class="row dashboard-stats">
-  <div class="col-md-6 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <table class="table table-bordered">
-        <tbody>
-          <tr>
-            <td></td>
-            <td class="text-center"><strong>W1m</strong></td>
-            <td class="text-center"><strong>0.5m</strong></td>
-            <td class="text-center"><strong>GOTO</strong></td>
-          </tr>
-          <tr>
-            <td>Ext. Temperature</td>
-            <td data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
-            <td data-index='["halfmetre_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
-            <td data-index='["goto_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
-          </tr>
-          <tr>
-            <td>Ext. Humidity</td>
-            <td data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH"></td>
-            <td data-index='["halfmetre_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH"></td>
-            <td data-index='["goto_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH"></td>
-          </tr>
-          <tr>
-            <td>T > Dew Pt.</td>
-            <td data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
-            <td data-index='["halfmetre_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
-            <td data-index='["goto_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
-          </tr>
-          <tr>
-            <td>Med. Wind</td>
-            <td data-index='["w1m_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
-            <td data-index='["halfmetre_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
-            <td data-index='["goto_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
-          </tr>
-          <tr>
-            <td>Wind Gust</td>
-            <td data-index='["w1m_vaisala", "wind_gust"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
-            <td data-index='["halfmetre_vaisala", "wind_gust"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
-            <td data-index='["goto_vaisala", "wind_gust"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
-          </tr>
-          <tr>
-            <td>Rain Detectors</td>
-            <td data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0"></td>
-            <td data-index='["halfmetre_vaisala", "rg11_unsafe"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0"></td>
-            <td><span class="pull-right">0 / 0</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["cloudwatcher", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
-      <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
-      <span class="list-group-item" data-index='["halfmetre_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
-      <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
-      <span class="list-group-item" data-index='["ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
-      <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
-      <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="envLatestMinMax" data-units=" arcsec">Seeing (TNG)</span>
-    </div>
-  </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["superwasp_ops"]' data-generator="opsStatus" data-toggle="tooltip" data-placement="left" data-container="body" data-animation="false">SuperWASP</span>
-      <span class="list-group-item" data-index='["clasp_ops"]' data-generator="opsStatus" data-toggle="tooltip" data-placement="left" data-container="body" data-animation="false">CLASP</span>
-      <span class="list-group-item" data-index='["onemetre_ops"]' data-generator="opsStatus" data-toggle="tooltip" data-placement="left" data-container="body" data-animation="false">W1m</span>
-      <span class="list-group-item" data-index='["halfmetre_ops"]' data-generator="opsStatus" data-toggle="tooltip" data-placement="left" data-container="body" data-animation="false">0.5m</span>
-      <span class="list-group-item" data-index='["goto1_ops"]' data-generator="opsStatus" data-toggle="tooltip" data-placement="left" data-container="body" data-animation="false">GOTO1</span>
-      <span class="list-group-item" data-index='["goto2_ops"]' data-generator="opsStatus" data-toggle="tooltip" data-placement="left" data-container="body" data-animation="false">GOTO2</span>
-
-    </div>
-  </div>
-
-</div>
-
-<div class="row">
-  <div id="container" class="col-md-12" style="position: relative">
-    <div class="list-group list-group-item" style="padding: 0">
-      <img id="video" src="{{ cameras[0].camera_url }}" width="100%" style="border-radius: 3px; min-height: 250px">
-      <img id="spinner" src="{{ url_for('static', filename='loading.gif') }}" style="display: none; position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; width: 64px; height: 64px;">
-      <div id="video-button-container" style="display: none; position: absolute; left: 10px; top: 10px; text-align: center;">
-        <a id="video-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='video.svg') }}" width="50"/><br /><span id="video-button-text">Play</span></a><br />
-      </div>
-      <div id="audio-button-container" style="display: none; position: absolute; right: 10px; top: 10px; text-align: center;">
-        <a id="audio-button" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='speaker.svg') }}" width="50"/><br /><span id="audio-button-text">Play</span></a><br />
-        <input id="audio-volume" type="text" style="width:80px" value="" data-slider-min="0" data-slider-max="10" data-slider-step="0.1" data-slider-value="5" data-slider-selection="after" data-slider-tooltip="hide">
-      </div>
-      <div id="light-button-container" style="display: none; position: absolute; left: 10px; bottom: 10px; text-align: center;">
-        <a id="light-button" href="#lightmodal" data-toggle="modal" data-target="#lightmodal" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='light.svg') }}" width="50"/><br /><span id="light-button-text">Light</span></a><br />
-      </div>
-      <div class="modal fade" id="lightmodal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Control Light</h4>
-            </div>
-            <div class="modal-body">
-              Be careful if the dome is open!
-            </div>
-            <div class="modal-footer">
-              <button id="enable-light-button" type="button" class="btn btn-danger" data-dismiss="modal">Light on</button>
-              <button id="disable-light-button" type="button" class="btn btn-success" data-dismiss="modal">Light off</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
+    <div class="row dashboard-stats">
+        <div class="col-lg-6 col-md-12 col-xs-12 g-2">
+            <table class="table table-bordered my-0">
+                <tbody>
+                <tr>
+                    <td></td>
+                    <td class="text-center fw-bold">W1m</td>
+                    <td class="text-center fw-bold">0.5m</td>
+                    <td class="text-center fw-bold">GOTO</td>
+                </tr>
+                <tr>
+                    <td>Ext. Temperature</td>
+                    <td data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
+                    <td data-index='["halfmetre_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
+                    <td data-index='["goto_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
+                </tr>
+                <tr>
+                    <td>Ext. Humidity</td>
+                    <td data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH"></td>
+                    <td data-index='["halfmetre_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH"></td>
+                    <td data-index='["goto_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH"></td>
+                </tr>
+                <tr>
+                    <td>T > Dew Pt.</td>
+                    <td data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
+                    <td data-index='["halfmetre_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
+                    <td data-index='["goto_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C"></td>
+                </tr>
+                <tr>
+                    <td>Med. Wind</td>
+                    <td data-index='["w1m_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
+                    <td data-index='["halfmetre_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
+                    <td data-index='["goto_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
+                </tr>
+                <tr>
+                    <td>Wind Gust</td>
+                    <td data-index='["w1m_vaisala", "wind_gust"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
+                    <td data-index='["halfmetre_vaisala", "wind_gust"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
+                    <td data-index='["goto_vaisala", "wind_gust"]' data-generator="envLatestMinMax" data-units=" km/h"></td>
+                </tr>
+                <tr>
+                    <td>Rain Detectors</td>
+                    <td data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0"></td>
+                    <td data-index='["halfmetre_vaisala", "rg11_unsafe"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0"></td>
+                    <td><span class="float-end">0 / 0</span></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
-      </div>
-      <div id="ir-button-container" style="display: none; position: absolute; right: 10px; bottom: 10px; text-align: center;">
-        <a id="ir-button" href="#irmodal" data-toggle="modal" data-target="#irmodal" class="btn btn-primary-outline p-x overlaybutton" style="margin-bottom: 10px"><img src="{{ url_for('static', filename='light.svg') }}" width="50"/><br /><span id="light-button-text">Infrared</span></a><br />
-      </div>
-      <div class="modal fade" id="irmodal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Control Infrared LEDs</h4>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["cloudwatcher", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
+                <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
+                <span class="list-group-item" data-index='["halfmetre_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
+                <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
+                <span class="list-group-item" data-index='["ephem", "moon_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Moon Altitude</span>
+                <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
+                <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="envLatestMinMax" data-units=" arcsec">Seeing (TNG)</span>
             </div>
-            <div class="modal-body">
-              Be careful if the instrument is exposing!
-            </div>
-            <div class="modal-footer">
-              <button id="enable-irleds-button" type="button" class="btn btn-danger" data-dismiss="modal">IR LEDs on</button>
-              <button id="disable-irleds-button" type="button" class="btn btn-success" data-dismiss="modal">IR LEDs off</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
         </div>
-      </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["superwasp_ops"]' data-generator="opsStatus" data-bs-toggle="tooltip" data-bs-placement="left">SuperWASP</span>
+                <span class="list-group-item" data-index='["clasp_ops"]' data-generator="opsStatus" data-bs-toggle="tooltip" data-bs-placement="left">CLASP</span>
+                <span class="list-group-item" data-index='["onemetre_ops"]' data-generator="opsStatus" data-bs-toggle="tooltip" data-bs-placement="left">W1m</span>
+                <span class="list-group-item" data-index='["halfmetre_ops"]' data-generator="opsStatus" data-bs-toggle="tooltip" data-bs-placement="left">0.5m</span>
+                <span class="list-group-item" data-index='["goto1_ops"]' data-generator="opsStatus" data-bs-toggle="tooltip" data-bs-placement="left">GOTO1</span>
+                <span class="list-group-item" data-index='["goto2_ops"]' data-generator="opsStatus" data-bs-toggle="tooltip" data-bs-placement="left">GOTO2</span>
+            </div>
+            <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+        </div>
     </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-md-12" id="source-container">
-    <p class="description">Image source: <a id="source" href="{{ cameras[0][2] }}" >{{ cameras[0][1] }}</a>.</p>
-  </div>
-</div>
-<br />
-<div class="row">
-{% for c in cameras %}
-  <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 m-b">
-    <a class="btn list-group list-group-item thumb-panel" id="thumb-{{ c.id }}" href="#{{ c.id }}" onclick="selectCamera(this);">
-      <img src="{{ c.camera_url }}/thumb" data-url="{{ c.camera_url }}/thumb" data-camera-url="{{ c.camera_url }}"{% if (c.video_url) %} data-video-url="{{ c.video_url }}"{% endif %}{% if (c.audio_url) %} data-audio-url="{{ c.audio_url }}"{% endif %}{% if (c.light_url) %} data-light-url="{{ c.light_url }}"{% endif %}{% if (c.infrared_url) %} data-infrared-url="{{ c.infrared_url }}"{% endif %}{% if (c.source_url) %} data-source-url="{{ c.source_url }}"{% endif %} alt="{{ c.label }}" width="100%">
-      <div class="camera-label">{{ c.label }}</div>
-    </a>
-  </div>
-{% endfor %}
-</div>
+    {% if not authorised %}
+        <div class="alert alert-warning alert-dismissible text-center  mt-2 mb-0" role="alert">
+            <i class="bi-exclamation-triangle" style="margin-right:5px"></i>Log in as an authorised observer to view instrument dashboards and internal cameras.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
 
-<script src="{{ url_for('static', filename='bootstrap-slider.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/binaryjs/0.2.1/binary.min.js"></script>
-<script src="{{ url_for('static', filename='cameras.js') }}"></script>
-<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
-<script src="{{ url_for('static', filename='goto-dashboard.js') }}"></script>
-<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
-<script>
-  $(document).ready(function() {
-    pollDashboard('http://lapalma-observatory.warwick.ac.uk/data/overview');
-  });
-</script>
+    <div class="row">
+        <div id="container" class="col g-2 pb-0 pe-lg-0 mb-4">
+            <div class="list-group list-group-item h-100 p-0 rounded-0" style="max-height: {{ camera_height }}px">
+                <img id="video" src="{{ external_cameras[0].camera_url }}" width="100%" height="100%" class="bg-black object-fit-contain">
+                <div id="spinner" class="spinner-border" style="display: none; position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; width: 64px; height: 64px;" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="btn-toolbar justify-content-between p-0">
+                <div class="mt-1">
+                    <button type="button" class="d-inline-block d-lg-none btn btn-secondary dropdown-toggle" style="width:100px" data-bs-toggle="dropdown">Camera</button>
+                    <ul class="dropdown-menu">
+                        {% for c in external_cameras %}
+                            <li class="dropdown-item">
+                                <a href="#{{ c.id }}" onclick="selectCamera('{{ c.id }}');" class="nav-link">{{ c.label }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if internal_cameras %}
+                            {% for c in internal_cameras %}
+                                <li class="dropdown-item">
+                                    <a href="#{{ c.id }}" onclick="selectCamera('{{ c.id }}');" class="nav-link">{{ c.label }}</a>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                    <button type="button" class="btn btn-secondary" style="width:100px" id="video-button"><i class="bi-play-btn" style="margin-right:5px"></i><span>Video</span>
+                    </button>
+                    <div id="audio-button-container">
+                        <button type="button" class="btn btn-secondary" style="width:100px" id="audio-button"><i class="bi-volume-up" style="margin-right:5px"></i><span>Audio</span></button>
+                        <div class="d-inline-block ms-2" style="width: 100px"><input type="range" class="form-range pt-3" min="0" max="10" step="any" id="audio-volume"></div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" style="width:100px" data-bs-toggle="dropdown" id="light-button"><i class="bi-lightbulb" style="margin-right:5px"></i>LEDs</button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item" id="enable-light-button">Enable</li>
+                        <li class="dropdown-item" id="disable-light-button">Disable</li>
+                    </ul>
+                    <button type="button" class="btn btn-secondary dropdown-toggle" style="width:100px" data-bs-toggle="dropdown" id="ir-button"><i class="bi-lightbulb" style="margin-right:5px"></i>IR
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item" id="enable-irleds-button">Enable</li>
+                        <li class="dropdown-item" id="disable-irleds-button">Disable</li>
+                    </ul>
+                </div>
+                <div class="mt-1" id="source-container">
+                    <span>Image source: <a id="source" href="{{ external_cameras[0][2] }}">{{ external_cameras[0][1] }}</a>.</span>
+                </div>
+            </div>
+        </div>
+        <div class="col g-2 mb-2 pb-0 ps-2 d-none d-lg-block" style="flex: 0 0 112px">
+            {% for c in external_cameras %}
+                <div class="mb-2">
+                    <a class="btn list-group list-group-item thumb-panel" id="thumb-{{ c.id }}" href="#{{ c.id }}" onclick="selectCamera('{{ c.id }}');">
+                        <img src="{{ c.camera_url }}/thumb" class="object-fit-cover" data-url="{{ c.camera_url }}/thumb" data-camera-url="{{ c.camera_url }}"
+                            {% if (c.video_url) %}data-video-url="{{ c.video_url }}"{% endif %}{% if (c.audio_url) %} data-audio-url="{{ c.audio_url }}"{% endif %}
+                            {% if (c.light_url) %}data-light-url="{{ c.light_url }}"{% endif %}{% if (c.infrared_url) %} data-infrared-url="{{ c.infrared_url }}"{% endif %}
+                            {% if (c.source_url) %}data-source-url="{{ c.source_url }}"{% endif %} alt="{{ c.label }}" width="100%" height="100%">
+                        <div class="camera-label">{{ c.label }}</div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% if internal_cameras %}
+            <div class="col g-2 pb-0 ps-1 d-none d-lg-block" style="flex: 0 0 112px">
+                {% for c in internal_cameras %}
+                    <div class="mb-2">
+                        <a class="btn list-group list-group-item thumb-panel" id="thumb-{{ c.id }}" href="#{{ c.id }}" onclick="selectCamera('{{ c.id }}');">
+                            <img src="{{ c.camera_url }}/thumb" class="object-fit-cover" data-url="{{ c.camera_url }}/thumb" data-camera-url="{{ c.camera_url }}"
+                                {% if (c.video_url) %} data-video-url="{{ c.video_url }}"{% endif %}{% if (c.audio_url) %} data-audio-url="{{ c.audio_url }}"{% endif %}
+                                {% if (c.light_url) %} data-light-url="{{ c.light_url }}"{% endif %}{% if (c.infrared_url) %} data-infrared-url="{{ c.infrared_url }}"{% endif %}
+                                {% if (c.source_url) %} data-source-url="{{ c.source_url }}"{% endif %} alt="{{ c.label }}" width="100%" height="100%">
+                            <div class="camera-label">{{ c.label }}</div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/binaryjs/0.2.1/binary.min.js"></script>
+    <script src="{{ url_for('static', filename='cameras.js') }}"></script>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            pollDashboard('{{ url_for('overview_data') }}');
+        });
+    </script>
 {% endblock %}

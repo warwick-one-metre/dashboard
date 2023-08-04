@@ -1,165 +1,138 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="keywords" content="">
-    <meta name="author" content="">
+{% set dashboards = [
+    ('goto1-dashboard', url_for('goto1_dashboard'), 'goto', 'GOTO1'),
+    ('goto2-dashboard', url_for('goto2_dashboard'), 'goto', 'GOTO2'),
+    ('w1m-dashboard', url_for('w1m_dashboard'), 'w1m', 'W1m'),
+    ('clasp-dashboard', url_for('clasp_dashboard'), 'satellites', 'CLASP'),
+    ('superwasp-dashboard', url_for('superwasp_dashboard'), 'satellites', 'SuperWASP'),
+] %}
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <!-- Required meta tags -->
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap-icons.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
+    {% if active_page in ['site-environment', 'site-infrastructure'] %}
+        <link href="{{ url_for('static', filename='datepicker.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='environment.css') }}" rel="stylesheet">
+    {% endif %}
+    <style>
+        .data-minmax {
+            font-size: 0.7em;
+            margin-top: -5px;
+            margin-left: 5px;
+            margin-bottom: -7px;
+        }
+
+        .dashboard-stats, .small-font {
+            font-size: 75%;
+        }
+
+        .dashboard-stats .list-group-item, .dashboard-stats .table-bordered td {
+            padding: 7px 7px;
+        }
+
+        .dashboard-stats .col-md-4, .dashboard-stats .col-lg-4 {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .dashboard-stats .list-group-header {
+            font-size: 1.25em;
+            padding: 5px 7px;
+        }
+
+        .ops-tooltip {
+            --bs-tooltip-max-width: 500px;
+            --bs-tooltip-bg: var(--bs-gray-800);
+            --bs-tooltip-opacity: 1;
+            --bs-tooltip-color: var(--bs-table-color);
+            font-size: 0.8em;
+        }
+
+        .thumb-panel {
+            padding: 0;
+            height: 84px;
+            width: 112px;
+            overflow: hidden;
+            margin: auto auto;
+        }
+
+        .camera-label {
+            position: absolute;
+            font-weight: bold;
+            font-size: 0.6em;
+            top: 0;
+            left: 0;
+            padding: 2px 5px;
+            background-color: rgb(0, 0, 0, 0.6);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .text-success {
+            color: #1bc98e !important;
+        }
+
+        .text-warning {
+            color: #e4d836 !important;
+        }
+
+        .text-danger {
+            color: #e64759 !important;
+        }
+    </style>
 
     <title>{{ title|safe }}</title>
-    <!-- link rel="canonical" href="" -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
-    <link href="{{ url_for('static', filename='toolkit-inverse.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='application.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='slider.css') }}" rel="stylesheet">
-    {% if active_page in ['site-environment', 'site-infrastructure'] %}
-    <link href="{{ url_for('static', filename='environment.css') }}" rel="stylesheet">
-    {% endif %}
-    <script src="{{ url_for('static', filename='jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='common.js') }}"></script>
-
- <style>
-    .data-minmax {
-      font-size: 0.7em;
-      margin-top: -3px;
-      margin-left: 5px;
-      margin-bottom: -4px;
-    }
-    
-    .overlaybutton {
-      background: rgba(255, 255, 255, 0.2);
-    }
-    
-    a:hover .overlaybutton {
-      color: #1ca8dd;
-    }
-
-    .description {
-      font-size: 0.9em;
-      margin: 0 5px;
-    }
-
-    #log-container p {
-      margin: 0px;
-      font-size: 0.8em;
-    }
-
-    #log-container td {
-      padding: 0 2px;
-      font-size: 0.8em;
-    }
-
-    table {
-      font-size: 0.8em;
-    }
-
-    .log-date {
-      width: 100px;
-      vertical-align: top;
-    }
-
-    .log-table {
-      width: 90px;
-      vertical-align: top;
-    }
-
-    .log-message {
-      vertical-align: top;
-    }
-
-    .dashboard-stats, .small-font {
-      font-size: 80%;
-    }
-
-    .dashboard-stats .list-group-item {
-      padding: 5px 7px;
-    }
-
-    .dashboard-stats .col-md-3, .dashboard-stats .col-md-4, .dashboard-stats .col-md-5, .dashboard-stats .col-md-6, .dashboard-stats .col-md-7, .col-md-8, .dashboard-stats .col-md-12 {
-      padding-left: 5px;
-      padding-right: 5px;
-    }
-    .dashboard-stats .list-group-header {
-      font-size: 1.2em;
-      padding: 5px 7px;
-    }
-
-    .dashboard-stats .table-bordered td {
-      font-size: 1.25em;
-      padding: 5px 7px;
-    }
-
-    .dashboard-stats .table-bordered .rounded-top {
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-    }
-.user-permissions {
-  margin-top: 5px;
-  padding-left: 0;
-  list-style: none;
-  font-size: 0.8em;
-}
-
-.filename {
-  display: block;
-  width: 60%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: right;
-}
-
-.navbar-brand {
-  padding-top: 7px;
-  height: auto;
-}
-
-.sidebar-header {
-  padding-bottom: 5px;
-}
-
-div.tooltip-inner {
-  width: 235px;
-  max-width: 235px;
-}
-
-.nav li a {
-  padding: 5px 15px;
-}
-
-.nav li.nav-header {
-  margin-top: 12px;
-  margin-bottom: 0px;
-}
-
-.nav-stacked > li + li {
-  margin-top: 0;
-}
-
-.navbar-brand {
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-  </style>
-
-  </head>
-  <body>
-    <div class="container">
-      <div class="row">
-        {% if not dashboard_mode %}
-        <div class="col-sm-3 sidebar">
-          {% set active_page = active_page -%}
-          {% include "sidebar.html" %}
+</head>
+<body>
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark-subtle">
+    <div class="container-fluid">
+        <h1 class="navbar-brand">Warwick La Palma Telescopes</h1>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav me-lg-auto nav-underline">
+                <li class="nav-item">
+                    <a class="nav-link fw-normal text-nowrap{% if active_page == 'site-overview' %} active{% endif %}" href="{{ url_for('site_overview') }}"><i class="bi-activity"style="margin-right:5px"></i>Status</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-normal text-nowrap{% if active_page == 'site-environment' %} active{% endif %}" href="{{ url_for('environment') }}"><i class="bi-cloud-drizzle" style="margin-right:5px"></i>Weather DB</a>
+                </li>
+                {% if user_account != None and 'infrastructure_log' in user_account['permissions'] %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-normal text-nowrap{% if active_page == 'site-infrastructure' %} active{% endif %}" href="{{ url_for('infrastructure') }}"><i class="bi-lightning-charge" style="margin-right:5px"></i>Infra. DB</a>
+                    </li>
+                {% endif %}
+                {% if dashboards | selectattr(2, 'in', user_account['permissions']) | list | count > 0 %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-normal dropdown-toggle{% if dashboards | selectattr(0, 'equalto', active_page) | list | count > 0 %} active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi-table" style="margin-right:5px"></i>{{ dashboards | selectattr(0, 'equalto', active_page) | map(attribute=-1) | first | default('Dashboards') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for id, url, permission, label in dashboards | selectattr(2, 'in', user_account['permissions']) %}
+                                <li><a class="dropdown-item{% if active_page == id %} active{% endif %}" href="{{ url }}">{{ label }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+            <hr class="d-block d-lg-none">
+            <div class="d-lg-flex">
+                {% if user_account['username'] != None and user_account['avatar'] != None %}
+                    <img style="border-radius: 3px; margin-right: 5px; float: left;" src="{{ user_account['avatar'] }}" width="38" height="38">
+                    <a href="{{ url_for('logout') + '?next=' + request.base_url }}" class="btn btn-outline-secondary text-nowrap">Log out</a>
+                {% else %}
+                    <a id="login-button" href="{{ url_for('login') + '?next=' + request.base_url }}" class="btn btn-outline-secondary text-nowrap"><i class="bi-github" style="margin-right:5px"></i>Log&nbsp;in</a>
+                {% endif %}
+            </div>
         </div>
-        {% endif %}
-        <div class="{% if not dashboard_mode %}col-sm-9 {% endif %}content">
-          {% block body %}{% endblock %}
-        </div>
-      </div>
     </div>
-  <script src="{{ url_for('static', filename='toolkit.js') }}"></script>
-  </body>
+</nav>
+<div class="container">
+    {% block body %}{% endblock %}
+</div>
+</body>
 </html>

@@ -2,20 +2,13 @@
 {% set title = 'GOTO Dome 2 &raquo; Dashboard' -%}
 {% set active_page = 'goto2-dashboard' -%}
 {% block body %}
-<div class="dashhead m-b">
-  <div class="dashhead-titles">
-    <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
-  </div>
-</div>
 
-{% if user_account != None and 'goto' in user_account['permissions'] %}
 <div class="modal fade" id="conditionsmodal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Set Conditions Override</h4>
+        <h5 class="modal-title" id="exampleModalLabel">Set Conditions Override</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         Are you sure you want to change the conditions override flag?<br />
@@ -24,40 +17,38 @@
         It may take up to 30 seconds for the status on the dashboard to update.
       </div>
       <div class="modal-footer">
-        <button id="disable-override-button" type="button" class="btn btn-success" data-dismiss="modal">Allow Observing</button>
-        <button id="enable-override-button" type="button" class="btn btn-warning" data-dismiss="modal">Prevent Observing</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="disable-override-button" type="button" class="btn btn-success" data-bs-dismiss="modal">Allow Observing</button>
+        <button id="enable-override-button" type="button" class="btn btn-warning" data-bs-dismiss="modal">Prevent Observing</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
 </div>
-{% endif %}
 
 <div class="row dashboard-stats">
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["goto_dome2_dome", "mode"]' data-generator="domeMode">Dome Control</span>
       <span class="list-group-item" data-index='["goto_dome2_dome", "dome"]' data-generator="domeStatus">Dome Status</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
-{% if user_account != None and 'goto' in user_account['permissions'] %}
-    <div class="list-group">
-      <a id="conditions-override" class="list-group-item" data-index='["goto_dome2_conditions", "flags", "override"]' data-generator="conditionsOverride" href="#conditionsmodal" data-toggle="modal" data-target="#conditionsmodal">Override</a>
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <a id="conditions-override" class="list-group-item" data-index='["goto_dome2_conditions", "flags", "override"]' data-generator="conditionsOverride" href="#conditionsmodal" data-bs-toggle="modal" data-bs-target="#conditionsmodal">Override</a>
     </div>
-{% endif %}
+    <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
   </div>
-  <div class="col-md-4 col-sm-12 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-4 col-sm-12 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["goto_dome2_dome", "lockdown"]' data-generator="conditionsLockdown">Lockdown</span>
-      <span class="list-group-item" data-index='["goto_dome2_conditions"]' data-generator="conditionFlags" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
+      <span class="list-group-item" data-index='["goto_dome2_conditions"]' data-generator="conditionFlags" data-bs-toggle="tooltip" data-bs-placement="bottom">Environment</span>
     </div>
   </div>
 </div>
 
 <div class="row dashboard-stats">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome2_upper_ups" data-generator="powerUPS">Upper UPS</span>
       <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome2_lower_ups" data-generator="powerUPS">Lower UPS</span>
       <span class="list-group-item" data-index='["goto_dome2_power", "status_PDU1", "leds"]' data-generator="powerOffOn">Dome Lights</span>
@@ -65,8 +56,8 @@
       <span class="list-group-item" data-index='["goto_dome2_dome", "hatch"]' data-generator="hatchOpenClosed">Hatch</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["goto_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
       <span class="list-group-item" data-index='["goto_dome2_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
       <span class="list-group-item" data-index='["goto_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp</span>
@@ -74,17 +65,17 @@
       <span class="list-group-item" data-index='["goto_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["cloudwatcher", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
       <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
       <span class="list-group-item" data-index='["goto_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
       <span class="list-group-item" data-index='["goto_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
       <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="envLatestMinMax" data-units=" arcsec">Seeing (TNG)</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
       <span class="list-group-item" data-index='["tng", "solarimeter"]' data-generator="envLatestMinMax" data-units=" W/m<sup>2</sup>">Brightness (TNG)</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
@@ -93,13 +84,22 @@
     </div>
   </div>
 </div>
-{% if user_account != None and 'goto' in user_account['permissions'] %}
 <div class="row dashboard-stats">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Unit Telescopes</h5>
-      <table class="table table-bordered">
+  <div class="col-md-12 col-sm-12 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+       <table class="table table-bordered my-0">
         <tbody>
+          <tr>
+            <td></td>
+            <td class="text-center fw-bold">UT1</td>
+            <td class="text-center fw-bold">UT2</td>
+            <td class="text-center fw-bold">UT3</td>
+            <td class="text-center fw-bold">UT4</td>
+            <td class="text-center fw-bold">UT5</td>
+            <td class="text-center fw-bold">UT6</td>
+            <td class="text-center fw-bold">UT7</td>
+            <td class="text-center fw-bold">UT8</td>
+          </tr>
           <tr>
             <td>Cam. Status</td>
             <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="EAST" data-cam="1"></td>
@@ -161,9 +161,9 @@
   </div>
 </div>
 <div class="row dashboard-stats">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Telescope</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Telescope</span>
       <span class="list-group-item" data-index='["goto_dome2_mnt", "status"]' data-generator="telStatus">Mount</span>
       <span class="list-group-item" data-index='["goto_dome2_mnt"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["goto_dome2_mnt"]' data-generator="telAltAz">Alt / Az</span>
@@ -171,9 +171,9 @@
       <span class="list-group-item" data-index='["goto_dome2_cam", "latest_run_number"]' data-generator="camRunNumber">Run Number</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Dome</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Dome</span>
       <span class="list-group-item" data-index='["goto_dome2_dome", "north"]' data-generator="domeShutter">N. Shutter</span>
       <span class="list-group-item" data-index='["goto_dome2_dome", "south"]' data-generator="domeShutter">S. Shutter</span>
       <span class="list-group-item" data-index='["goto_dome2_dome", "heartbeat_enabled"]' data-generator="domeEnabledSafe">Heartbeat</span>
@@ -182,24 +182,10 @@
     </div>
   </div>
 </div>
-{% else %}
-<div class="row dashboard-stats">
-  <div class="col-md-12">
-    <div class="list-group">
-      <h5 class="list-group-header text-center">Authentication Required</h5>
-      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
-    </div>
-  </div>
-</div>
-{% endif %}
-<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='goto-dashboard.js') }}"></script>
-<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
 <script>
   $(document).ready(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-
-{% if user_account != None and 'goto' in user_account['permissions'] %}
     $('#disable-override-button').click(function() {
      $.ajax({
         type: 'GET',
@@ -213,9 +199,8 @@
         url: '/override/goto2/on',
       });
     });
-{% endif %}
 
-    pollDashboard('/data/goto2/');
+    pollDashboard('{{ url_for('goto2_dashboard_data') }}');
   });
 </script>
 {% endblock %}

@@ -2,37 +2,30 @@
 {% set title = 'W1m &raquo; Dashboard' -%}
 {% set active_page = 'w1m-dashboard' -%}
 {% block body %}
-<div class="dashhead m-b">
-  <div class="dashhead-titles">
-    <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
-  </div>
-</div>
-
     <div class="row dashboard-stats">
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
       <span class="list-group-item" data-index='["w1m_status", "dome"]' data-generator="opsHeaderDome">Dome Status</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
       <span class="list-group-item" data-index='["w1m_status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["w1m_dehumidifier", "mode"]' data-generator="opsHeaderDehumidifier">Dehumidifier Control</span>
+  <div class="col-md-4 col-sm-12 col-xs-12 g-2">
+    <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
 
 <div class="row dashboard-stats">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
       <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
       <span class="list-group-item" data-index='["w1m_power", "ats_source"]' data-generator="powerATS">ATS</span>
@@ -40,8 +33,8 @@
       <span class="list-group-item" data-index='["w1m_power", "dehumidifier"]' data-generator="powerOffOn">Dehumidifier</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
       <span class="list-group-item" data-index='["w1m_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
@@ -49,17 +42,17 @@
       <span class="list-group-item" data-index='["w1m_domealert", "truss_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Truss Temp.</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
       <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
-      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
+      <span class="list-group-item" data-index='["cloudwatcher", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["tng", "dust"]' data-generator="envLatestMinMax" data-units=" &mu;g/m<sup>3</sup>">Dust (TNG)</span>
       <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
@@ -68,11 +61,10 @@
     </div>
   </div>
 </div>
-{% if user_account != None and 'w1m' in user_account['permissions'] %}
 <div class="row dashboard-stats">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Mount</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Mount</span>
       <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telState">State</span>
       <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telAltAz">Alt / Az</span>
@@ -82,9 +74,9 @@
       <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerOnOffMixed" data-switches='["red_focus_controller", "red_focus_motor"]'>Red Foc. Power</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Dome</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Dome</span>
       <span class="list-group-item" data-index='["w1m_dome", "shutter_a"]' data-generator="domeShutter">E. Shutter</span>
       <span class="list-group-item" data-index='["w1m_dome", "shutter_b"]' data-generator="domeShutter">W. Shutter</span>
       <span class="list-group-item" data-index='["w1m_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
@@ -94,9 +86,9 @@
       <span class="list-group-item" data-index='["w1m_domealert", "hatch_closed"]' data-generator="switchClosedOpen">Side Hatch</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Blue Camera</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Blue Camera</span>
       <span class="list-group-item" data-index='[]' data-generator="camStatus" data-cam="blue">Status</span>
       <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camTemperature">Temperature</span>
       <span class="list-group-item" data-index='["w1m_blue"]' data-generator="camShutter">Shutter</span>
@@ -105,9 +97,9 @@
       <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="telFocus">Focus</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header text-center">Red Camera</h5>
+  <div class="col-md-3 col-sm-6 col-xs- g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Red Camera</span>
       <span class="list-group-item" data-index='[]' data-generator="camStatus" data-cam="red">Status</span>
       <span class="list-group-item" data-index='["w1m_red"]' data-generator="camTemperature">Temperature</span>
       <span class="list-group-item" data-index='["w1m_red"]' data-generator="camShutter">Shutter</span>
@@ -118,9 +110,9 @@
   </div>
 </div>
 <div class="row dashboard-stats">
-  <div class="col-md-5 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
+  <div class="col-md-5 col-sm-12 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Ops / Pipeline</span>
       <span class="list-group-item" data-index='["w1m_ops", "telescope"]' data-generator="opsActionName">Action</span>
       <span class="list-group-item" data-index='["w1m_ops", "telescope"]' data-generator="opsActionTask">Status</span>
       <span class="list-group-item" data-index='["w1m_pipeline"]' data-generator="pipelineObject">Object</span>
@@ -128,38 +120,24 @@
       <span class="list-group-item" data-index='["w1m_pipeline", "guide_camera_id"]' data-generator="pipelineGuiding">Guide Camera</span>
     </div>
   </div>
-  <div class="clearfix visible-sm-block visible-xs-block"></div>
-  <div class="col-md-7">
-    <div class="list-group">
-      <h5 class="list-group-header text-center">System Log</h5>
-      <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
+  <div class="col-md-7 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">System Log</span>
+      <div class="list-group-item" style="overflow-y: scroll; height: 165px;">
         <table id="log-table">
         </table>
       </div>
     </div>
   </div>
 </div>
-{% else %}
-<div class="row dashboard-stats">
-  <div class="col-md-12">
-    <div class="list-group">
-      <h5 class="list-group-header text-center">Authentication Required</h5>
-      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
-    </div>
-  </div>
-</div>
-{% endif %}
-<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='w1m-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
-<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
 <script>
   $(document).ready(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-    pollDashboard('/data/w1m');
-{% if user_account != None and 'w1m' in user_account['permissions'] %}
+    pollDashboard('{{ url_for('w1m_dashboard_data') }}');
     pollLog('{{ url_for('w1m_log') }}');
-{% endif %}
   });
 </script>
 {% endblock %}

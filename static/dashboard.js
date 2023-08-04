@@ -1,10 +1,31 @@
+
+function parseUTCDate(str) {
+  var d = str.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+).(\d+)/);
+  while (d[7] > 1000)
+    d[7] /= 10;
+
+  var utc = Date.UTC(d[1], d[2] - 1, d[3], d[4], d[5], d[6], d[7]);
+  return new Date(utc);
+}
+
+function formatUTCDate(date) {
+  var d = [date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(),
+    date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()];
+
+  for (i = 0; i < d.length; i++)
+    if (d[i] < 10)
+      d[i] = '0' + d[i];
+
+  return d[0] + '-' + d[1] + '-' + d[2] + ' ' + d[3] + ':' + d[4] + ':' + d[5];
+}
+
 function updateGroups(data) {
   $('[data-generator]').each(function() {
     // Remove old content
-    $(this).children('span.pull-right').remove();
+    $(this).children('span.float-end').remove();
 
     if (!$(this).is("td"))
-    $(this).attr('class', 'list-group-item');
+      $(this).attr('class', 'list-group-item');
 
     // Add new content
     const generator = $(this).data('generator');
@@ -17,7 +38,7 @@ function updateGroups(data) {
         break;
     }
 
-    const cell = $('<span class="pull-right">');
+    const cell = $('<span class="float-end">');
     if (fieldData === undefined) {
       cell.html('ERROR');
       cell.addClass('text-danger');
@@ -101,7 +122,7 @@ function envLatestMinMax(row, cell, data) {
     minValue.html(data['min'].toFixed(1));
     minValue.addClass(fieldLimitsColor(data, data['min']));
 
-    const maxMinValue = $('<span class="pull-right data-minmax">');
+    const maxMinValue = $('<span class="float-end data-minmax">');
     maxMinValue.append(maxValue);
     maxMinValue.append('<br>');
     maxMinValue.append(minValue);
@@ -213,15 +234,14 @@ function opsHeaderEnvironment(row, cell, data) {
     }
     tooltip += '</table>';
 
-    const tooltip_active = row.data()['bs.tooltip'].tip().hasClass('in');
-    if (tooltip_active)
-      row.tooltip('hide');
-
-    row.data('bs.tooltip', false);
-    row.tooltip({ html: true, title: tooltip });
-
-    if (tooltip_active)
-      row.tooltip('show');
+    row.tooltip({
+      title: tooltip,
+      html: true,
+      sanitize: false,
+      animation: false,
+      container: 'body',
+      customClass: 'ops-tooltip'
+    });
   } else {
     cell.html('NO DATA');
     cell.addClass('text-danger');
@@ -267,7 +287,14 @@ function opsStatus(row, cell, data) {
       tooltip += '<tr><td style="text-align: center;">NO DATA</td></tr>'
     tooltip += '</table>';
 
-    row.tooltip({ html: true, title: tooltip });
+    row.tooltip({
+      title: tooltip,
+      html: true,
+      sanitize: false,
+      animation: false,
+      container: 'body',
+      customClass: 'ops-tooltip'
+    });
   } else {
     cell.html('NO DATA');
     cell.addClass('text-danger');

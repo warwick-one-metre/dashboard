@@ -2,26 +2,21 @@
 {% set title = 'Infrastructure' -%}
 {% set active_page = 'site-infrastructure' -%}
 {% block body %}
-<div class="row">
-  <div class="dashhead-titles col-md-8 col-sm-8 col-xs-7">
-    <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h2 id="data-updated" class="dashhead-subtitle">Loading...</h2>
+<div class="row mb-2">
+  <div class="col-md-8 col-sm-12 gy-2 mt-auto text-center">
+    <span class="text-truncate" id="data-updated">Loading..</span>
   </div>
-  <div class="col-md-4 col-sm-4 col-xs-5">
+  <div class="col-md-4 col-sm-12 gy-2">
     <div class="input-group">
-      <div class="input-group-btn">
-        <button id="prev-date" class="btn btn-default-outline"><span class="icon icon-chevron-left"></span></button>
-      </div>
-      <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-clear-btn="true" data-date-start-date="2016-09-14" data-date-end-date="0d" data-date-disable-touch-keyboard="true">
-      <div class="input-group-btn">
-        <button id="next-date" class="btn btn-default-outline"><span class="icon icon-chevron-right"></span></button>
-      </div>
+      <button id="prev-date" class="btn btn-outline-secondary" type="button"><i class="bi bi-arrow-left"></i></button>
+      <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" style="cursor: pointer" readonly>
+      <button id="next-date" class="btn btn-outline-secondary" type="button"><i class="bi bi-arrow-right"></i></button>
     </div>
   </div>
 </div>
 
 <div class="row">
-  <div class="col-md-6" style="padding: 0; margin: 0">
+  <div class="col-md-6 p-0 m-0">
     <div id="ups-battery-container" class="plot-container">
       <div id="ups-battery-plot" data-linkedplots='["ups-load-plot"]' class="weather-plot" data-type='["ups_battery"]' data-axislabel='UPS Battery (%)' data-min="0" data-max="125" data-labelunits='%' data-hidetime></div>
     </div>
@@ -29,7 +24,7 @@
       <div id="ups-load-plot" data-linkedplots='["ups-battery-plot"]' class="weather-plot" data-type='["ups_load"]' data-axislabel='UPS Load (%)' data-min="0" data-max="125" data-labelunits='%'></div>
     </div>
   </div>
-  <div class="col-md-6" style="padding: 0; margin: 0" id="right-container">
+  <div class="col-md-6 p-0 m-0" id="right-container">
     <div id="network-internal-container" class="plot-container">
       <div id="network-internal-plot" class="weather-plot" data-linkedplots='["network-external-plot", "wasp-roofbattery-plot"]' data-type='internal_ping' data-axislabel='Ping (ms)' data-sidesensor="right-container" data-labelfudge="-9" data-labelunits=' ms' data-max="2.5" data-hidetime></div>
     </div>
@@ -41,27 +36,23 @@
     </div>
   </div>
 </div>
-<div class="row small-font">
+<div class="row small-font mt-2">
   <div class="col-md-12">
     <div class="list-group">
-{% if user_account != None and 'infrastructure_log' in user_account['permissions'] %}
-      <h5 class="list-group-header text-center">Infrastructure Log</h5>
       <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
         <table id="log-table">
         </table>
       </div>
-{% else %}
-      <h5 class="list-group-header text-center">Authentication Required</h5>
-      <span class="list-group-item text-center">Infrastructure logs are restricted to logged in observers.</span>
-{% endif %}
     </div>
   </div>
 </div>
 
+<script src="{{ url_for('static', filename='datepicker.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.axislabels.js') }}"></script>
+<script src="{{ url_for('static', filename='jquery.flot.errorbars.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.crosshair.min.js') }}"></script>
 <script src="{{ url_for('static', filename='environment.js') }}"></script>
 <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>

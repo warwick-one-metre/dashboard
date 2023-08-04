@@ -2,37 +2,30 @@
 {% set title = 'SuperWASP &raquo; Dashboard' -%}
 {% set active_page = 'superwasp-dashboard' -%}
 {% block body %}
-<div class="dashhead m-b">
-  <div class="dashhead-titles">
-    <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h6 class="dashhead-subtitle" id="data-updated">Loading...</h6>
-  </div>
-</div>
-
 <div class="row dashboard-stats">
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["superwasp_status", "dome_mode"]' data-generator="opsHeaderMode">Dome Control</span>
       <span class="list-group-item" data-index='["superwasp_status", "dome"]' data-generator="opsHeaderDome">Dome Status</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["superwasp_status", "tel_mode"]' data-generator="opsHeaderMode">Tel. Control</span>
       <span class="list-group-item" data-index='["superwasp_status", "tel"]' data-generator="opsHeaderTel">Tel. Status</span>
     </div>
   </div>
-  <div class="col-md-4 col-sm-12 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["superwasp_dehumidifier", "mode"]' data-generator="opsHeaderDehumidifier">Dehumidifier Control</span>
+  <div class="col-md-4 col-sm-12 col-xs-12 g-2">
+    <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["superwasp_status", "environment"]' data-generator="opsHeaderEnvironment" data-toggle="tooltip" data-placement="bottom" data-container="body" data-animation="false">Environment</span>
     </div>
   </div>
 </div>
 
 <div class="row dashboard-stats">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
       <span class="list-group-item" data-index='["superwasp_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
       <span class="list-group-item" data-index='["superwasp_power", "ats_source"]' data-generator="powerATS">ATS</span>
@@ -40,8 +33,8 @@
       <span class="list-group-item" data-index='["superwasp_power", "dehumidifier"]' data-generator="powerOffOn">Dehumidifier</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_vaisala", "relative_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Ext. Humidity</span>
       <span class="list-group-item" data-index='["clasp_domealert", "superwasp_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Ext. Temp.</span>
@@ -49,8 +42,8 @@
       <span class="list-group-item" data-index='["w1m_vaisala", "dew_point_delta"]' data-generator="envLatestMinMax" data-units=" &deg;C">T > Dew Pt.</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
       <span class="list-group-item" data-index='["w1m_vaisala", "wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Peak Wind</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "median_wind_speed"]' data-generator="envLatestMinMax" data-units=" km/h">Median Wind</span>
       <span class="list-group-item" data-index='["w1m_vaisala", "pressure"]' data-generator="envLatestMinMax" data-units=" hPa">Pressure</span>
@@ -58,9 +51,9 @@
       <span class="list-group-item" data-index='["tng", "seeing"]' data-generator="seeingIfAvailable" data-units=" arcsec">Seeing (TNG)</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <span class="list-group-item" data-index='["superwasp_aurora", "clarity"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Clarity.</span>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["cloudwatcher", "sky_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Sky Temp.</span>
       <span class="list-group-item" data-index='["rain", "unsafe_boards"]' data-generator="envLatestMinMax" data-units=" / 3" data-precision="0">Rain Detectors</span>
       <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
       <span class="list-group-item" data-index='["ephem", "moon_percent_illumination"]' data-generator="envLatestMinMax" data-units="%">Moon Illumination</span>
@@ -68,11 +61,10 @@
     </div>
   </div>
 </div>
-{% if user_account != None and 'satellites' in user_account['permissions'] %}
 <div class="row dashboard-stats">
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Mount</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Mount</span>
       <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="telState">State</span>
       <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="telRADec">RA / Dec</span>
       <span class="list-group-item" data-index='["superwasp_telescope"]' data-generator="telAltAz">Alt / Az</span>
@@ -81,9 +73,9 @@
       <span class="list-group-item" data-index='["superwasp_power", "lensheaters"]' data-generator="powerOnOff">Lens Heaters</span>
     </div>
   </div>
-  <div class="col-md-3 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Dome</h5>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Dome</span>
       <span class="list-group-item" data-index='["superwasp_dome", "shutter_a"]' data-generator="domeShutter">N. Shutter</span>
       <span class="list-group-item" data-index='["superwasp_dome", "shutter_b"]' data-generator="domeShutter">S. Shutter</span>
       <span class="list-group-item" data-index='["superwasp_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
@@ -91,11 +83,17 @@
       <span class="list-group-item" data-index='["superwasp_ops", "dome", "requested_close_date"]' data-generator="domeTime">Sched. Close</span>
     </div>
   </div>
-  <div class="col-md-6 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Cameras</h5>
-      <table class="table table-bordered">
+  <div class="col-md-6 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+       <table class="table table-bordered my-0">
         <tbody>
+          <tr>
+            <td></td>
+            <td class="text-center fw-bold">CAM1 (B)</td>
+            <td class="text-center fw-bold">CAM2 (G)</td>
+            <td class="text-center fw-bold">CAM3 (R)</td>
+            <td class="text-center fw-bold">CAM4 (i)</td>
+          </tr>
           <tr>
             <td>Status</td>
             <td data-index='[]' data-generator="camStatus" data-cam="1"></td>
@@ -144,46 +142,33 @@
   </div>
 </div>
 <div class="row dashboard-stats">
-  <div class="col-md-4 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header" style="text-align: center">Ops / Pipeline</h5>
+  <div class="col-md-4 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">Ops / Pipeline</span>
       <span class="list-group-item" data-index='["superwasp_ops", "telescope"]' data-generator="opsActionName">Action</span>
       <span class="list-group-item" data-index='["superwasp_ops", "telescope"]' data-generator="opsActionTask">Status</span>
       <span class="list-group-item" data-index='["superwasp_pipeline"]' data-generator="pipelineObject">Object</span>
       <span class="list-group-item" data-index='["superwasp_pipeline", "frame_prefix"]' data-generator="pipelinePrefix">Prefix</span>
     </div>
   </div>
-  <div class="col-md-8 col-sm-6 col-xs-12">
-    <div class="list-group">
-      <h5 class="list-group-header text-center">System Log</h5>
-      <div class="list-group-item" style="overflow-y: scroll; height: 140px;">
+  <div class="col-md-8 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item text-center fw-bold">System Log</span>
+      <div class="list-group-item" style="overflow-y: scroll; height: 132px;">
         <table id="log-table">
         </table>
       </div>
     </div>
   </div>
 </div>
-{% else %}
-<div class="row dashboard-stats">
-  <div class="col-md-12">
-    <div class="list-group">
-      <h5 class="list-group-header text-center">Authentication Required</h5>
-      <span class="list-group-item text-center">Observation details are restricted to logged in observers.</span>
-    </div>
-  </div>
-</div>
-{% endif %}
-<script src="{{ url_for('static', filename='common-dashboard.js') }}"></script>
+
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='superwasp-dashboard.js') }}"></script>
 <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
-<script src="{{ url_for('static', filename='bootstrap-tooltip.js') }}"></script>
 <script>
   $(document).ready(function() {
-    $('[data-toggle="tooltip"]').tooltip();
-    pollDashboard('/data/superwasp');
-{% if user_account != None and 'satellites' in user_account['permissions'] %}
+    pollDashboard('{{ url_for('superwasp_dashboard_data') }}');
     pollLog('{{ url_for('superwasp_log') }}');
-{% endif %}
   });
 </script>
 {% endblock %}

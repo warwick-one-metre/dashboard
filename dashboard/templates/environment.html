@@ -3,27 +3,20 @@
 {% set active_page = 'site-environment' -%}
 {% block body %}
 
-{% if not dashboard_mode %}
-<div class="row">
-  <div class="dashhead-titles col-md-8 col-sm-8 col-xs-7">
-    <h2 class="dashhead-title">{{ title|safe }}</h2>
-    <h2 id="data-updated" class="dashhead-subtitle">Loading...</h2>
+<div class="row mb-2">
+  <div class="col-md-8 col-sm-12 gy-2 mt-auto text-center">
+    <span class="text-truncate" id="data-updated">Loading..</span>
   </div>
-  <div class="col-md-4 col-sm-4 col-xs-5">
+  <div class="col-md-4 col-sm-12 gy-2">
     <div class="input-group">
-      <div class="input-group-btn">
-        <button id="prev-date" class="btn btn-default-outline"><span class="icon icon-chevron-left"></span></button>
-      </div>
-      <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-date-clear-btn="true" data-date-start-date="2016-09-14" data-date-end-date="0d" data-date-disable-touch-keyboard="true">
-      <div class="input-group-btn">
-        <button id="next-date" class="btn btn-default-outline"><span class="icon icon-chevron-right"></span></button>
-      </div>
+      <button id="prev-date" class="btn btn-outline-secondary" type="button"><i class="bi bi-arrow-left"></i></button>
+      <input id="datepicker" type="text" placeholder="Live Data" class="form-control" data-provide="datepicker" style="cursor: pointer" readonly>
+      <button id="next-date" class="btn btn-outline-secondary" type="button"><i class="bi bi-arrow-right"></i></button>
     </div>
   </div>
 </div>
-{% endif %}
 <div class="row">
-  <div class="col-md-6" style="padding: 0; margin: 0">
+  <div class="col-md-6 p-0 m-0">
     <div id="ext-temperature-container" class="plot-container">
       <div id="ext-temperature-plot" data-linkedplots='["int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skyclarity-plot"]' class="weather-plot" data-type='external_temperature' data-axislabel='Ext. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
@@ -31,19 +24,19 @@
       <div id="int-temperature-plot" data-linkedplots='["ext-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot", "skyclarity-plot"]' class="weather-plot" data-type='internal_temperature' data-axislabel='Int. Temp. (&deg;C)' data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="ext-humidity-container" class="plot-container">
-      <div id="ext-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "int-humidity-plot", "dew-plot", "skyclarity-plot"]' class="weather-plot" data-type='external_humidity' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Ext. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
+      <div id="ext-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "int-humidity-plot", "dew-plot", "skyclarity-plot"]' class="weather-plot" data-type='external_humidity' data-axislabel='Ext. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="int-humidity-container" class="plot-container">
-      <div id="int-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "dew-plot", "skyclarity-plot"]' class="weather-plot" data-type='internal_humidity' data-sidesensor="humidity-container" data-labelcontainer="humidity-labels" data-axislabel='Int. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
+      <div id="int-humidity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "dew-plot", "skyclarity-plot"]' class="weather-plot" data-type='internal_humidity' data-axislabel='Int. Humidity (%)' data-min="0" data-max="125" data-labelfudge="-7" data-labelunits='%' data-hidetime></div>
     </div>
     <div id="dew-container" class="plot-container">
-      <div id="dew-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "skyclarity-plot"]' class="weather-plot" data-type='external_dewpt' data-sidesensor="dew-container" data-axislabel='T. &gt; Dew Pt. (&deg;C)' data-min="0" data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
+      <div id="dew-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "skyclarity-plot"]' class="weather-plot" data-type='external_dewpt' data-axislabel='T. &gt; Dew Pt. (&deg;C)' data-min="0" data-labelfudge="-7" data-labelunits='&deg;C' data-hidetime></div>
     </div>
     <div id="skyclarity-container" class="plot-container">
       <div id="skyclarity-plot" data-linkedplots='["ext-temperature-plot", "int-temperature-plot", "ext-humidity-plot", "int-humidity-plot", "dew-plot"]' class="weather-plot" data-type='skytemp' data-axislabel='Sky Temp. (&deg;C)' data-labelunits='&deg;C' data-min="-35" data-max="5" data-labelfudge="-7"></div>
     </div>
   </div>
-  <div class="col-md-6" style="padding: 0; margin: 0" id="right-container">
+  <div class="col-md-6 p-0 m-0" id="right-container">
     <div id="wind-container" class="plot-container">
       <div id="wind-plot" class="weather-plot wind-plot" data-sidesensor="right-container" data-type='wind' data-axislabel='Wind (km/h)' data-labelunits='&nbsp;km/h' data-hidetime></div>
     </div>
@@ -63,6 +56,7 @@
     </div>
   </div>
 </div>
+<script src="{{ url_for('static', filename='datepicker.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.resize.min.js') }}"></script>
 <script src="{{ url_for('static', filename='jquery.flot.time.min.js') }}"></script>
