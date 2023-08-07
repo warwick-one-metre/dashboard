@@ -1,0 +1,157 @@
+{% extends "layout.html" %}
+{% set title = 'CLASP &raquo; Dashboard' -%}
+{% set active_page = 'clasp-dashboard' -%}
+{% set preview_cameras = ['cam1', 'cam2'] %}
+{% block body %}
+    <div class="row dashboard-stats">
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["clasp_ops", "environment"]' data-generator="opsConditions" data-bs-toggle="tooltip" data-bs-placement="right">Environment</span>
+                <span class="list-group-item" data-index='["clasp_domealert", "internal_temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+                <span class="list-group-item" data-index='["clasp_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+                <span class="list-group-item" data-mode-index='["clasp_dehumidifier", "mode"]' data-power-index='["clasp_power", "dehumidifier"]' data-generator="dehumidifierState">Dehumidifier</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
+                <span class="list-group-item" data-index='["clasp_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
+                <span class="list-group-item" data-index='["clasp_power", "ats_source"]' data-generator="powerATS">ATS</span>
+                <span class="list-group-item" data-index='["clasp_power", "light"]' data-generator="powerOffOn">Dome Light</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-mount-index='["clasp_mount"]' data-power-index='["clasp_power", "mount"]' data-generator="mountState">Mount</span>
+                <span class="list-group-item" data-index='["clasp_mount"]' data-generator="mountRADec">RA / Dec</span>
+                <span class="list-group-item" data-index='["clasp_mount"]' data-generator="mountAltAz">Alt / Az</span>
+                <span class="list-group-item" data-index='["clasp_mount"]' data-generator="mountSunMoon">Sun / Moon Sep.</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["clasp_dome", "shutter_a"]' data-generator="domeShutter">N. Shutter</span>
+                <span class="list-group-item" data-index='["clasp_dome", "shutter_b"]' data-generator="domeShutter">S. Shutter</span>
+                <span class="list-group-item" data-index='["clasp_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
+            </div>
+        </div>
+    </div>
+    <div class="row dashboard-stats">
+        <div class="col-lg-6 col-md-12">
+            <div class="row">
+                <div class="col-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item text-center fw-bold">Action Queue</span>
+                        <div class="list-group-item overflow-y-scroll" style="height: 123px" data-index='["clasp_ops", "telescope"]' data-notify="opsActionsQueue">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["clasp_ops", "dome"]' data-type="open" data-generator="opsDomeTime">Dome Open</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["clasp_ops", "dome"]' data-type="close" data-generator="opsDomeTime">Dome Close</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 g-2">
+            <div class="list-group rounded-0">
+                <table class="table table-bordered my-0">
+                    <tbody>
+                    <tr>
+                        <td></td>
+                        <td class="text-center fw-bold">CAM1 (VIS)</td>
+                        <td class="text-center fw-bold">CAM2 (SWIR)</td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        <td data-cam-index='["clasp_cam1","state"]' data-power-index='["clasp_power", "cam1"]' data-generator="qhyState"></td>
+                        <td data-cam-index='["clasp_cam2","state"]' data-power-index='["clasp_power", "cam2"]' data-generator="swirState"></td>
+                    </tr>
+                    <tr>
+                        <td>Exposure</td>
+                        <td data-index='["clasp_cam1"]' data-generator="qhyExposure"></td>
+                        <td data-index='["clasp_cam2"]' data-generator="swirExposure"></td>
+                    </tr>
+                    <tr>
+                        <td>Temperature</td>
+                        <td data-index='["clasp_cam1"]' data-generator="qhyTemperature"></td>
+                        <td data-index='["clasp_cam2"]' data-generator="swirTemperature"></td>
+                    </tr>
+                    <tr>
+                        <td>Disk Space</td>
+                        <td data-index='["clasp_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB"></td>
+                        <td data-index='["clasp_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB"></td>
+                    </tr>
+                    <tr>
+                        <td>Focus</td>
+                        <td data-focuser-index='["clasp_focus"]' data-power-index='["clasp_power", "focuser"]' data-temperature-index='["clasp_focus", "temperature", "rasa1"]' data-focuser="1" data-generator="focusState"></td>
+                        <td data-focuser-index='["clasp_focus"]' data-power-index='["clasp_power", "focuser"]' data-temperature-index='["clasp_focus", "temperature", "rasa2"]' data-focuser="2" data-generator="focusState"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="preview-container" class="row dashboard-stats">
+        <div id="container" class="col-lg-6 col-md-12 g-2">
+            <div class="list-group list-group-item h-100 p-0 rounded-0" style="max-height: 375px">
+                <img id="preview-image" src="/data/clasp/{{ preview_cameras[0] }}/thumb" data-url="/data/clasp/{{ preview_cameras[0] }}/thumb" data-notify="previewImage" data-cam="{{ preview_cameras[0] }}" width="100%" height="100%" class="bg-black object-fit-contain">
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 g-2 pb-0 ps-1">
+            <div class="row">
+                <div class="col-auto pe-0">
+                    {% for c in preview_cameras %}
+                        <div class="mb-2">
+                            <a class="btn list-group list-group-item clasp-thumb-panel" href="#{{ c }}" onclick="selectPreview('{{ c }}')">
+                                <img id="thumb-{{ c }}" src="/data/clasp/{{ c }}/thumb" class="object-fit-contain" data-url="/data/clasp/{{ c }}/thumb" data-notify="previewRefresh" data-cam="{{ c }}" width="100%" height="100%">
+                                <div class="camera-label">{{ c | upper }}</div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col ps-2">
+                    <div id="preview-info" class="list-group rounded-0">
+                        <span class="list-group-item fw-bold text-center" data-notify="previewHeader" data-cam="cam1">Preview: CAM1</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewTimestamp" data-cam="cam1" data-gps="['cam1']">Exposure started</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewExposure" data-cam="cam1">Exposure length</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewType" data-cam="cam1">Type</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewOverheads" data-cam="cam1">Overheads</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewFilename" data-cam="cam1">Saved as</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="list-group rounded-0">
+                        <div class="list-group-item overflow-y-scroll" style="height: 167px">
+                            <table id="log-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='rockit-dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            const initial_camera = $(location).attr('hash').substr(1);
+            if ($("#thumb-" + initial_camera).length > 0)
+                selectPreview(initial_camera);
+
+            pollDashboard('{{ url_for('clasp_dashboard_data') }}');
+            pollLog('{{ url_for('clasp_log') }}');
+        });
+    </script>
+{% endblock %}

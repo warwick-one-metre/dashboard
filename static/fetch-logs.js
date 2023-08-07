@@ -9,9 +9,9 @@ function updateLog(messages) {
          row.addClass('text-warning');
       if (message[2] == 'error')
          row.addClass('text-danger');
-      row.append($('<td class="log-date">').html(formatUTCDate(parseUTCDate(message[1]+'.0')) + '<span class="visible-xs">' + message[3] + '</span>'));
-      row.append($('<td class="log-table hidden-xs">').html(message[3]));
-      row.append($('<td class="log-message">').html(message[4]));
+      row.append($('<td class="log-date pe-2">').html(formatUTCDate(parseUTCDate(message[1]+'.0')) + '<span class="d-xl-none">' + message[3] + '</span>'));
+      row.append($('<td class="log-table d-none d-xl-table-cell pe-2">').html(message[3]));
+      row.append($('<td class="log-message text-wrap">').html(message[4]));
       $('#log-table').prepend(row);
       lastLogMessageId = message[0];
     }

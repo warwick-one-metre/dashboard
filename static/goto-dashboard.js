@@ -1,25 +1,3 @@
-function sexagesimal(angle) {
-  let negative = angle < 0
-  angle = Math.abs(angle)
-
-  let degrees = Math.floor(angle)
-  angle = (angle - degrees) * 60
-  let minutes = Math.floor(angle)
-  let seconds = ((angle - minutes) * 60).toFixed(1)
-
-  if (degrees < 10)
-    degrees = '0' + degrees
-  if (minutes < 10)
-    minutes = '0' + minutes
-  if (seconds < 10)
-    seconds = '0' + seconds
-
-  if (negative)
-    degrees = '-' + degrees
-
-  return degrees + ':' + minutes + ':' + seconds
-}
-
 function domeMode(row, cell, data) {
   if (data == 'robotic') {
     cell.html('ROBOTIC');

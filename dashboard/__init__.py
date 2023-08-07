@@ -42,7 +42,10 @@ from werkzeug.exceptions import NotFound
 DATABASE_DB = 'ops'
 DATABASE_USER = 'ops'
 
-GENERATED_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'generated')
+GENERATED_DATA_DIR = '/srv/dashboard/generated'
+if not os.path.exists(GENERATED_DATA_DIR):
+    GENERATED_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'generated')
+
 W1M_GENERATED_DATA = {
     'blue': 'dashboard-BLUE.json',
     'blue/image': 'dashboard-BLUE-thumb.jpg',
@@ -239,16 +242,7 @@ def clasp_dashboard():
     if 'satellites' not in account['permissions']:
         return redirect(url_for('site_overview'))
 
-    return render_template('clasp/dashboard.html', user_account=get_user_account())
-
-
-@app.route('/clasp/live/')
-def clasp_live():
-    account = get_user_account()
-    if 'satellites' not in account['permissions']:
-        abort(404)
-
-    return render_template('clasp/live.html', user_account=account)
+    return render_template('clasp.html', user_account=get_user_account())
 
 
 @app.route('/data/clasp/<path:path>')
@@ -632,55 +626,17 @@ def infrastructure_data():
 
 @app.route('/data/clasp/')
 def clasp_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/clasp-public.json'))
-
-    # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/clasp-private.json'))
-
     account = get_user_account()
-    if 'satellites' in account['permissions']:
-        data.update(private)
+    if 'satellites' not in account['permissions']:
+        abort(404)
 
-    # Extract safe public info from private daemons
-    private_ops = private.get('clasp_ops', {})
-    private_dome = private.get('clasp_dome', {})
-    private_telescope = private.get('clasp_mount', {})
+    data = json.load(open(GENERATED_DATA_DIR + '/clasp-public.json'))
+    private = json.load(open(GENERATED_DATA_DIR + '/clasp-private.json'))
+    data.update(private)
 
-    # Tel status:
-    #   0: error
-    #   1: offline
-    #   2: online
-    tel_status = 0
-    if 'state' in private_telescope:
-        tel_status = 1 if private_telescope['state'] == 0 else 2
-
-    # Dome status:
-    #   0: error
-    #   1: closed
-    #   2: open
-    dome_status = 0
-    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
-        if private_dome['heartbeat_status'] not in [2, 3]:
-            dome_status = 1 if private_dome['closed'] else 2
-
-    dome_mode = 0
-    if 'dome' in private_ops and 'mode' in private_ops['dome']:
-        dome_mode = private_ops['dome']['mode']
-
-    tel_mode = 0
-    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
-        tel_mode = private_ops['telescope']['mode']
-
-    env = {}
-    if 'environment' in private_ops:
-        env = private_ops['environment']
-
-    data['clasp_status'] = {
-        'tel': tel_status,
-        'dome': dome_status,
-        'tel_mode': tel_mode,
-        'dome_mode': dome_mode,
-        'environment': env
+    data['previews'] = {
+        'cam1': json.load(open(GENERATED_DATA_DIR + '/dashboard-CAM1.json')),
+        'cam2': json.load(open(GENERATED_DATA_DIR + '/dashboard-CAM2.json'))
     }
 
     response = jsonify(**data)
