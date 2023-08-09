@@ -561,6 +561,15 @@ function swirTemperature(row, cell, data) {
   cell.addClass(style);
 }
 
+function lensTemperature(row, cell, data) {
+  if (data === undefined) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else {
+    cell.html(data.toFixed(0) + ' &deg;C');
+  }
+}
+
 function previewHeader(row, data) {
   row.html('Preview: ' + row.data('cam').toUpperCase());
 }

@@ -63,18 +63,18 @@ CLASP_GENERATED_DATA = {
 }
 
 SUPERWASP_GENERATED_DATA = {
-    '1': 'dashboard-1.json',
-    '1/thumb': 'dashboard-1-thumb.jpg',
-    '1/clip': 'dashboard-1-clip.jpg',
-    '2': 'dashboard-2.json',
-    '2/thumb': 'dashboard-2-thumb.jpg',
-    '2/clip': 'dashboard-2-clip.jpg',
-    '3': 'dashboard-3.json',
-    '3/thumb': 'dashboard-3-thumb.jpg',
-    '3/clip': 'dashboard-3-clip.jpg',
-    '4': 'dashboard-4.json',
-    '4/thumb': 'dashboard-4-thumb.jpg',
-    '4/clip': 'dashboard-4-clip.jpg',
+    'cam1': 'dashboard-1.json',
+    'cam1/thumb': 'dashboard-1-thumb.jpg',
+    'cam1/clip': 'dashboard-1-clip.jpg',
+    'cam2': 'dashboard-2.json',
+    'cam2/thumb': 'dashboard-2-thumb.jpg',
+    'cam2/clip': 'dashboard-2-clip.jpg',
+    'cam3': 'dashboard-3.json',
+    'cam3/thumb': 'dashboard-3-thumb.jpg',
+    'cam3/clip': 'dashboard-3-clip.jpg',
+    'cam4': 'dashboard-4.json',
+    'cam4/thumb': 'dashboard-4-thumb.jpg',
+    'cam4/clip': 'dashboard-4-clip.jpg',
 }
 
 EUMETSAT_GENERATED_DATA = {
@@ -259,16 +259,7 @@ def superwasp_dashboard():
     if 'satellites' not in account['permissions']:
         return redirect(url_for('site_overview'))
 
-    return render_template('superwasp/dashboard.html', user_account=get_user_account())
-
-
-@app.route('/superwasp/live/')
-def superwasp_live():
-    account = get_user_account()
-    if 'satellites' not in account['permissions']:
-        abort(404)
-
-    return render_template('superwasp/live.html', user_account=account)
+    return render_template('superwasp.html', user_account=get_user_account())
 
 
 @app.route('/data/superwasp/<path:path>')
@@ -776,55 +767,19 @@ def goto2_dashboard_data():
 
 @app.route('/data/superwasp/')
 def superwasp_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/superwasp-public.json'))
-
-    # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/superwasp-private.json'))
-
     account = get_user_account()
-    if 'satellites' in account['permissions']:
-        data.update(private)
+    if 'satellites' not in account['permissions']:
+        abort(404)
 
-    # Extract safe public info from private daemons
-    private_ops = private.get('superwasp_ops', {})
-    private_telescope = private.get('superwasp_telescope', {})
-    private_dome = private.get('superwasp_dome', {})
+    data = json.load(open(GENERATED_DATA_DIR + '/superwasp-public.json'))
+    private = json.load(open(GENERATED_DATA_DIR + '/superwasp-private.json'))
+    data.update(private)
 
-    # Tel status:
-    #   0: error
-    #   1: offline
-    #   2: online
-    tel_status = 0
-    if 'state' in private_telescope:
-        tel_status = 1 if private_telescope['state'] == 0 else 2
-
-    # Dome status:
-    #   0: error
-    #   1: closed
-    #   2: open
-    dome_status = 0
-    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
-        if private_dome['heartbeat_status'] not in [2, 3]:
-            dome_status = 1 if private_dome['closed'] else 2
-
-    dome_mode = 0
-    if 'dome' in private_ops and 'mode' in private_ops['dome']:
-        dome_mode = private_ops['dome']['mode']
-
-    tel_mode = 0
-    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
-        tel_mode = private_ops['telescope']['mode']
-
-    env = {}
-    if 'environment' in private_ops:
-        env = private_ops['environment']
-
-    data['superwasp_status'] = {
-        'tel': tel_status,
-        'dome': dome_status,
-        'tel_mode': tel_mode,
-        'dome_mode': dome_mode,
-        'environment': env
+    data['previews'] = {
+        'cam1': json.load(open(GENERATED_DATA_DIR + '/dashboard-1.json')),
+        'cam2': json.load(open(GENERATED_DATA_DIR + '/dashboard-2.json')),
+        'cam3': json.load(open(GENERATED_DATA_DIR + '/dashboard-3.json')),
+        'cam4': json.load(open(GENERATED_DATA_DIR + '/dashboard-4.json'))
     }
 
     response = jsonify(**data)
