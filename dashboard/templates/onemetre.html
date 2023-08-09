@@ -1,0 +1,161 @@
+{% extends "layout.html" %}
+{% set title = 'W1m &raquo; Dashboard' -%}
+{% set active_page = 'w1m-dashboard' -%}
+{% set preview_cameras = ['blue', 'red'] %}
+{% block body %}
+    <div class="row dashboard-stats">
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["w1m_ops", "environment"]' data-generator="opsConditions" data-bs-toggle="tooltip" data-bs-placement="right">Environment</span>
+                <span class="list-group-item" data-index='["w1m_domealert", "truss_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Truss Temp.</span>
+                <span class="list-group-item" data-index='["w1m_domealert", "internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+                <span class="list-group-item" data-index='["w1m_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+                <span class="list-group-item" data-mode-index='["w1m_dehumidifier", "mode"]' data-power-index='["w1m_power", "dehumidifier"]' data-generator="dehumidifierState">Dehumidifier</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
+                <span class="list-group-item" data-index='["w1m_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
+                <span class="list-group-item" data-index='["w1m_power", "ats_source"]' data-generator="powerATS">ATS</span>
+                <span class="list-group-item" data-index='["w1m_power", "light"]' data-generator="powerOffOn">Dome Light</span>
+                <span class="list-group-item" data-index='["w1m_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">Disk Space</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-mount-index='["w1m_telescope"]' data-power-index='["w1m_power", "mount"]' data-generator="onemetreState">Mount</span>
+                <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="onemetreRADec">RA / Dec</span>
+                <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="onemetreAltAz">Alt / Az</span>
+                <span class="list-group-item" data-index='["w1m_telescope"]' data-generator="onemetreSunMoon">Sun / Moon Sep.</span>
+                <span class="list-group-item" data-index='["w1m_domealert", "trap_closed"]' data-generator="switchClosedOpen">Trap Door</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["w1m_dome", "shutter_a"]' data-generator="domeShutter">E. Shutter</span>
+                <span class="list-group-item" data-index='["w1m_dome", "shutter_b"]' data-generator="domeShutter">W. Shutter</span>
+                <span class="list-group-item" data-index='["w1m_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
+                <span class="list-group-item" data-index='["w1m_domealert", "hatch_closed"]' data-generator="switchClosedOpen">Side Hatch</span>
+            </div>
+        </div>
+    </div>
+    <div class="row dashboard-stats">
+        <div class="col-lg-6 col-md-12">
+            <div class="row">
+                <div class="col-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item text-center fw-bold">Action Queue</span>
+                        <div class="list-group-item overflow-y-scroll" style="height: 123px" data-index='["w1m_ops", "telescope"]' data-notify="opsActionsQueue">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["w1m_ops", "dome"]' data-type="open" data-generator="opsDomeTime">Dome Open</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["w1m_ops", "dome"]' data-type="close" data-generator="opsDomeTime">Dome Close</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 g-2">
+            <div class="list-group rounded-0">
+                <table class="table table-bordered my-0">
+                    <tbody>
+                    <tr>
+                        <td></td>
+                        <td class="text-center fw-bold">BLUE</td>
+                        <td class="text-center fw-bold">RED</td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        <td data-cam-index='["w1m_blue","state"]' data-power-index='["w1m_power", "blue_camera"]' data-generator="andorState"></td>
+                        <td data-cam-index='["w1m_red","state"]' data-power-index='["w1m_power", "red_camera"]' data-generator="andorState"></td>
+                    </tr>
+                    <tr>
+                        <td>Exposure</td>
+                        <td data-index='["w1m_blue"]' data-generator="andorExposure"></td>
+                        <td data-index='["w1m_red"]' data-generator="andorExposure"></td>
+                    </tr>
+                    <tr>
+                        <td>Cooling</td>
+                        <td data-index='["w1m_blue"]' data-generator="andorCooling"></td>
+                        <td data-index='["w1m_red"]' data-generator="andorCooling"></td>
+                    </tr>
+                    <tr>
+                        <td>Shutter</td>
+                        <td data-index='["w1m_blue"]' data-generator="andorShutter"></td>
+                        <td data-index='["w1m_red"]' data-generator="andorShutter"></td>
+                    </tr>
+                    <tr>
+                        <td>Focus</td>
+                        <td data-focuser-index='["w1m_telescope"]' data-generator="onemetreFocus"></td>
+                        <td data-focuser-index='["w1m_telescope"]' data-generator="onemetreRedFocus"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="preview-container" class="row dashboard-stats">
+        <div id="container" class="col-lg-6 col-md-12 g-2">
+            <div class="list-group list-group-item h-100 p-0 rounded-0" style="max-height: 375px">
+                <img id="preview-image" src="/data/w1m/{{ preview_cameras[0] }}/thumb" data-url="/data/w1m/{{ preview_cameras[0] }}/thumb" data-notify="previewImage" data-cam="{{ preview_cameras[0] }}" width="100%" height="100%" class="bg-black object-fit-contain">
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 g-2 pb-0 ps-1">
+            <div class="row">
+                <div class="col-auto pe-0">
+                    {% for c in preview_cameras %}
+                        <div class="mb-2">
+                            <a class="btn list-group list-group-item onemetre-thumb-panel" href="#{{ c }}" onclick="selectPreview('{{ c }}')">
+                                <img id="thumb-{{ c }}" src="/data/w1m/{{ c }}/thumb" class="object-fit-contain" data-url="/data/w1m/{{ c }}/thumb" data-notify="previewRefresh" data-cam="{{ c }}" width="100%" height="100%">
+                                <div class="camera-label">{{ c | upper }}</div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col ps-2">
+                    <div id="preview-info" class="list-group rounded-0">
+                        <span class="list-group-item fw-bold text-center" data-notify="previewHeader" data-cam="blue">Preview: BLUE</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewTimestamp" data-cam="blue">Exposure started</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewExposure" data-cam="blue">Exposure length</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewType" data-cam="blue">Type</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewOverheads" data-cam="blue">Overheads</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewFilename" data-cam="blue">Saved as</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="list-group rounded-0">
+                        <div class="list-group-item overflow-y-scroll pt-0" style="height: 167px">
+                            <table id="log-table" class="w-100"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='rockit-dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            const initial_camera = $(location).attr('hash').substr(1);
+            if ($("#thumb-" + initial_camera).length > 0)
+                selectPreview(initial_camera);
+
+            pollDashboard('{{ url_for('w1m_dashboard_data') }}');
+            pollLog('{{ url_for('w1m_log') }}');
+        });
+    </script>
+{% endblock %}

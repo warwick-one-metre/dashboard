@@ -561,6 +561,102 @@ function swirTemperature(row, cell, data) {
   cell.addClass(style);
 }
 
+function andorState(row, cell, data) {
+  const cam_state = getData(data, row.data('cam-index'));
+  const powered = getData(data, row.data('power-index'));
+
+  const state = [
+    ['OFFLINE', 'text-danger'],
+    ['INITIALIZING', 'text-danger'],
+    ['IDLE'],
+    ['EXPOSING', 'text-success'],
+    ['READING', 'text-warning'],
+    ['ABORTING', 'text-danger']
+  ];
+
+  let label, style;
+  if (cam_state === undefined || powered === undefined) {
+    label = 'ERROR';
+    style = 'text-danger';
+  } else if (powered === 0) {
+    label = 'POWER OFF';
+    style = 'text-danger';
+  } else {
+    label = state[cam_state][0];
+    style = state[cam_state][1];
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function andorCooling(row, cell, data) {
+  console.log('here');
+  const state = getData(data, ["state"]);
+  const temperature = getData(data, ["temperature"]);
+  const temperature_locked = getData(data, ["temperature_locked"]);
+  const cooler_enabled = getData(data, ["cooler_enabled"]);
+
+  let label = 'ERROR';
+  let style = 'text-danger';
+  if (state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cooler_enabled !== undefined && temperature !== undefined && temperature_locked !== undefined) {
+    let cooler_label = !cooler_enabled ? 'OFF' :
+      temperature_locked ? 'LOCKED' : 'LOCKING';
+    let cooler_style = !cooler_enabled ? 'text-danger' :
+      temperature_locked ? 'text-success' : 'text-info';
+
+    label = '<span class="' + cooler_style + '">' + cooler_label + '</span>'
+    label += ' (' + temperature.toFixed(0) + '&nbsp;&deg;C)';
+    style = '';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function andorShutter(row, cell, data) {
+  const cam_state = getData(data, ["state"]);
+  const cam_shutter = getData(data, ["shutter_enabled"]);
+
+  let label, style;
+  if (cam_state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cam_shutter === undefined) {
+    label = 'ERROR';
+    style = 'text-danger';
+  } else {
+    label = cam_shutter ? 'AUTO' : 'DARK';
+    style = cam_shutter ? 'text-success' : 'text-danger';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function andorExposure(row, cell, data) {
+  const cam_state = getData(data, ["state"]);
+  const cam_exposure = getData(data, ["exposure_time"]);
+
+  let label, style;
+  if (cam_state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cam_exposure === undefined) {
+    label = 'ERROR';
+    style = 'text-danger';
+  } else {
+    label = cam_exposure.toFixed(3) + ' s'
+    style = '';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
 function lensTemperature(row, cell, data) {
   if (data === undefined) {
     cell.html('ERROR');
@@ -568,6 +664,93 @@ function lensTemperature(row, cell, data) {
   } else {
     cell.html(data.toFixed(0) + ' &deg;C');
   }
+}
+
+function onemetreState(row, cell, data) {
+  const state = [
+    ['DISABLED', 'text-danger'],
+    ['STOPPED', 'text-danger'],
+    ['HUNTING', 'text-warning'],
+    ['TRACKING', 'text-success'],
+    ['SLEWING', 'text-warning'],
+    ['HOMING', 'text-warning'],
+    ['LIMITING', 'text-warning'],
+  ];
+
+  if (data && 'state' in data) {
+    if ('axes_homed' in data && !data['axes_homed']) {
+      cell.html('NOT HOMED');
+      cell.addClass('text-danger');
+    } else {
+      cell.html(state[data['state']][0]);
+      cell.addClass(state[data['state']][1]);
+    }
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  }
+}
+
+function onemetreRADec(row, cell, data) {
+  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
+    cell.html('N/A')
+  else if (!data || !('ra' in data) || !('dec' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html(sexagesimal(data['ra'] / 15) + '&nbsp;/&nbsp;' + sexagesimal(data['dec']));
+}
+
+function onemetreAltAz(row, cell, data) {
+  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
+    cell.html('N/A')
+  else if (!data || !('alt' in data) || !('az' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html((data['alt']).toFixed(1) + '&deg;&nbsp;/&nbsp;' + (data['az']).toFixed(1) + '&deg;');
+}
+
+function onemetreSunMoon(row, cell, data) {
+  if (data && (('state' in data && (data['state'] < 1 || data['state'] > 3)) || ('axes_homed' in data && !data['axes_homed'])))
+    cell.html('N/A')
+  else if (!data || !('sun_separation' in data) || !('moon_separation' in data)) {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  } else
+    cell.html((data['sun_separation']).toFixed(1) + '&deg;&nbsp;/&nbsp;' + (data['moon_separation']).toFixed(1) + '&deg;');
+}
+
+function onemetreFocus(row, cell, data) {
+  const state = [
+    ['ABSENT', 'text-danger'],
+    ['NOT HOMED', 'text-danger'],
+    ['HOMING', 'text-warning'],
+    ['LIMITING', 'text-warning'],
+    ['READY', 'text-success']
+  ];
+
+  const tel_state = getData(data, ["state"]);
+  const focus_state = getData(data, ["telescope_focus_state"]);
+  const focus = getData(data, ["telescope_focus_um"]);
+
+  let label, style;
+  if (tel_state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (focus_state !== undefined && focus_state !== 4) {
+    cell.html(state[data['telescope_focus_state']][0]);
+    cell.addClass(state[data['telescope_focus_state']][1]);
+  } else if (focus !== undefined) {
+    cell.html(focus.toFixed(1) + ' um');
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function onemetreRedFocus(row, cell, data) {
+  cell.html('N/A');
 }
 
 function previewHeader(row, data) {
@@ -578,14 +761,14 @@ function previewTimestamp(row, cell, data) {
   const cam = row.data('cam');
   const date = getData(data, [cam, 'date']);
   const src = getData(data, [cam, 'src']);
-  const has_gps = row.data('gps').includes(cam);
+  const gps = row.data('gps');
 
   if (date === undefined) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else {
     let label = date;
-    if (src && has_gps) {
+    if (src && gps && gps.includes(cam)) {
       label += ' (<span class="' + (src === 'GPS' ? 'text-success' : 'text-danger') + '">' + src + '</span>)';
     }
     cell.html(label);

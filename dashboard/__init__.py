@@ -48,9 +48,11 @@ if not os.path.exists(GENERATED_DATA_DIR):
 
 W1M_GENERATED_DATA = {
     'blue': 'dashboard-BLUE.json',
-    'blue/image': 'dashboard-BLUE-thumb.jpg',
+    'blue/thumb': 'dashboard-BLUE-thumb.jpg',
+    'blue/clip': 'dashboard-BLUE-clip.jpg',
     'red': 'dashboard-RED.json',
-    'red/image': 'dashboard-RED-thumb.jpg',
+    'red/thumb': 'dashboard-RED-thumb.jpg',
+    'red/clip': 'dashboard-RED-clip.jpg',
 }
 
 CLASP_GENERATED_DATA = {
@@ -224,16 +226,7 @@ def w1m_dashboard():
     if 'w1m' not in account['permissions']:
         return redirect(url_for('site_overview'))
 
-    return render_template('w1m/dashboard.html', user_account=get_user_account())
-
-
-@app.route('/w1m/live/')
-def w1m_live():
-    account = get_user_account()
-    if 'w1m' not in account['permissions']:
-        abort(404)
-
-    return render_template('w1m/live.html', user_account=account)
+    return render_template('onemetre.html', user_account=get_user_account())
 
 
 @app.route('/clasp/')
@@ -633,60 +626,23 @@ def clasp_dashboard_data():
 
 @app.route('/data/w1m/')
 def w1m_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
-
-    # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json'))
-
     account = get_user_account()
-    if 'w1m' in account['permissions']:
-        data.update(private)
+    if 'w1m' not in account['permissions']:
+        abort(404)
 
-    # Extract safe public info from private daemons
-    private_ops = private.get('w1m_ops', {})
-    private_dome = private.get('w1m_dome', {})
-    private_telescope = private.get('w1m_telescope', {})
+    data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
+    private = json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json'))
+    data.update(private)
 
-    # Tel status:
-    #   0: error
-    #   1: offline
-    #   2: online
-    tel_status = 0
-    if 'state' in private_telescope:
-        tel_status = 1 if private_telescope['state'] == 0 else 2
-
-    # Dome status:
-    #   0: error
-    #   1: closed
-    #   2: open
-    dome_status = 0
-    if 'closed' in private_dome and 'heartbeat_status' in private_dome:
-        if private_dome['heartbeat_status'] not in [2, 3]:
-            dome_status = 1 if private_dome['closed'] else 2
-
-    dome_mode = 0
-    if 'dome' in private_ops and 'mode' in private_ops['dome']:
-        dome_mode = private_ops['dome']['mode']
-
-    tel_mode = 0
-    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
-        tel_mode = private_ops['telescope']['mode']
-
-    env = {}
-    if 'environment' in private_ops:
-        env = private_ops['environment']
-
-    data['w1m_status'] = {
-        'tel': tel_status,
-        'dome': dome_status,
-        'tel_mode': tel_mode,
-        'dome_mode': dome_mode,
-        'environment': env
+    data['previews'] = {
+        'blue': json.load(open(GENERATED_DATA_DIR + '/dashboard-BLUE.json')),
+        'red': json.load(open(GENERATED_DATA_DIR + '/dashboard-RED.json'))
     }
 
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
+
 
 @app.route('/data/w1m/<path:path>')
 def w1m_generated_data(path):
