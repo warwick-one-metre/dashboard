@@ -440,132 +440,128 @@ def set_override(telescope, state):
     abort(404)
 
 
-# Dynamically generated JSON
-@app.route('/data/w1m/log')
-def w1m_log():
-    account = get_user_account()
-    if 'w1m' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('powerd', 'domed', 'opsd', 'red_camd', 'blue_camd', 'diskspaced', 'pipelined', 'teld')"
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
+def fetch_log_messages(sources):
+    db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
+    try:
+        # Returns latest 250 log messages.
+        # If 'from' argument is present, returns latest 100 log messages with a greater id
+        with db.cursor() as cur:
+            args = list(sources.keys())
+            in_list = ','.join(['%s'] * len(args))
+            query = f'SELECT id, date, type, source, message from obslog WHERE source IN ({in_list})'
+            if 'from' in request.args:
+                query += ' AND id > %s'
+                args.append(request.args['from'])
 
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                response = jsonify(messages=messages)
-                response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
-        finally:
-            db.close()
-    abort(404)
-
-
-@app.route('/data/superwasp/log')
-def superwasp_log():
-    account = get_user_account()
-    if 'satellites' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('powerd@superwasp', 'lmountd@superwasp', 'domed@superwasp', 'opsd@superwasp', 'qhy_camd@swasp-cam1', 'qhy_camd@swasp-cam2', 'qhy_camd@swasp-cam3', 'qhy_camd@swasp-cam4', 'diskspaced@superwasp_cam1', 'diskspaced@superwasp_cam2', 'diskspaced@superwasp_cam3', 'diskspaced@superwasp_cam4', 'pipelined@superwasp')"
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
-
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                return jsonify(messages=messages)
-        finally:
-            db.close()
-    abort(404)
-
-
-@app.route('/data/halfmetre/log')
-def halfmetre_log():
-    account = get_user_account()
-    if 'satellites' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('powerd@halfmetre', 'lmountd@halfmetre', 'opsd@halfmetre')"
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
-
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                response = jsonify(messages=messages)
-                response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
-        finally:
-            db.close()
-    abort(404)
+            query += ' ORDER BY id DESC LIMIT 250;'
+            cur.execute(query, args)
+            messages = [(x[0], x[1].isoformat(), x[2], sources[x[3]], x[4]) for x in cur]
+            return jsonify(messages=messages)
+    finally:
+        db.close()
 
 
 @app.route('/data/clasp/log')
 def clasp_log():
     account = get_user_account()
-    if 'satellites' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('powerd@clasp', 'lmountd@clasp', 'domed@clasp', 'opsd@clasp', 'dehumidifierd@clasp', 'fli_camd@fli1', 'qhy_camd@cam1', 'qhy_camd@cam2', 'diskspaced@clasp', 'pipelined@clasp')"
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
+    if 'satellites' not in account['permissions']:
+        abort(404)
 
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                response = jsonify(messages=messages)
-                response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
-        finally:
-            db.close()
-    abort(404)
+    return fetch_log_messages({
+        'powerd@clasp': 'power',
+        'lmountd@clasp': 'mount',
+        'dome@clasp': 'dome',
+        'opsd@clasp': 'ops',
+        'focusd@clasp': 'focuser',
+        'pipelined@clasp': 'pipeline',
+        'qhy_camd@cam1': 'cam1',
+        'raptor_camd@cam2': 'cam2',
+        'diskspaced@clasp': 'diskspace',
+        'dehumidifierd@clasp': 'dehumidifier'
+    })
+
+
+@app.route('/data/halfmetre/log')
+def halfmetre_log():
+    account = get_user_account()
+    if 'satellites' not in account['permissions']:
+        abort(404)
+
+    return fetch_log_messages({
+        'powerd@halfmetre': 'power',
+        'lmountd@halfmetre': 'mount',
+        'halfmetre_roof': 'roof',
+        'opsd@halfmetre': 'ops',
+        'pipelined@halfmetre': 'pipeline',
+        'qhy_camd@halfmetre': 'cam',
+        'diskspaced@halfmetre': 'diskspace',
+    })
+
+
+@app.route('/data/superwasp/log')
+def superwasp_log():
+    account = get_user_account()
+    if 'satellites' not in account['permissions']:
+        abort(404)
+
+    return fetch_log_messages({
+        'powerd@superwasp': 'power',
+        'lmountd@superwasp': 'mount',
+        'superwasp_dome': 'dome',
+        'opsd@superwasp': 'ops',
+        'pipelined@superwasp': 'pipeline',
+        'qhy_camd@swasp-cam1': 'cam1',
+        'qhy_camd@swasp-cam2': 'cam2',
+        'qhy_camd@swasp-cam3': 'cam3',
+        'qhy_camd@swasp-cam4': 'cam4',
+        'diskspaced@superwasp_cam1': 'disk_das1',
+        'diskspaced@superwasp_cam2': 'disk_das2',
+        'diskspaced@superwasp_cam3': 'disk_das3',
+        'diskspaced@superwasp_cam4': 'disk_das4',
+        'dehumidifierd@superwasp': 'dehumidifier',
+        'lensheaterd': 'lensheater'
+    })
+
+
+@app.route('/data/w1m/log')
+def w1m_log():
+    account = get_user_account()
+    if 'w1m' not in account['permissions']:
+        abort(404)
+
+    return fetch_log_messages({
+        'powerd': 'power',
+        'teld': 'mount',
+        'focusd@onemetre': 'focuser',
+        'onemetre_dome': 'dome',
+        'opsd@onemetre': 'ops',
+        'pipelined': 'pipeline',
+        'andor_camd@blue': 'cam_blue',
+        'andor_camd@red': 'cam_red',
+        'diskspaced': 'diskspace',
+        'dehumidifierd@onemetre': 'dehumidifier'
+    })
 
 
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
     account = get_user_account()
-    if 'infrastructure_log' in account['permissions']:
-        db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
-        try:
-            # Returns latest 250 log messages.
-            # If 'from' argument is present, returns latest 100 log messages with a greater id
-            with db.cursor() as cur:
-                query = 'SELECT id, date, type, source, message from obslog'
-                query += " WHERE source IN ('environmentd', 'dashboardd', 'tngd', 'netpingd', 'raind', 'vaisalad', " \
-                    "'goto_vaisalad', 'onemetre_roomalertd', 'nites_roomalertd', 'goto_roomalertd', 'superwaspd', " \
-                    "'iropacityd', 'gotoupsd', 'waspupsd', 'robodimmd', 'wasp_roofbatteryd', 'aircond')"
+    if 'infrastructure_log' not in account['permissions']:
+        abort(404)
 
-                if 'from' in request.args:
-                    query += ' AND id > ' + db.escape(request.args['from'])
-
-                query += ' ORDER BY id DESC LIMIT 250;'
-                cur.execute(query)
-                messages = [(x[0], x[1].isoformat(), x[2], x[3], x[4]) for x in cur]
-                response = jsonify(messages=messages)
-                response.headers['Access-Control-Allow-Origin'] = '*'
-                return response
-
-        finally:
-            db.close()
-    abort(404)
+    return fetch_log_messages({
+        'environmentd': 'Environment',
+        'dashboardd': 'Dashboard',
+        'tngd': 'TNG',
+        'netpingd': 'Network',
+        'vaisalad': 'W1m Vaiala',
+        'goto_vaisalad': 'GOTO Vaisala',
+        'vaisalad@halfmetre': '0.5m Vaisala',
+        'cloudwatcherd@halfmetre': '0.5m Cloud Watcher',
+        'powerd@gotoupsmon': 'GOTO UPS',
+        'aircond': 'Server Rm. Aircon',
+        'weatherlogd': 'Weather DB'
+    })
 
 
 def environment_json(base):

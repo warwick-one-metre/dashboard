@@ -39,9 +39,8 @@
 <div class="row small-font mt-2">
   <div class="col-md-12">
     <div class="list-group">
-      <div class="list-group-item" style="overflow-y: scroll; height: 160px;">
-        <table id="log-table">
-        </table>
+      <div class="list-group-item overflow-y-scroll pt-0" style="height: 200px;">
+        <table id="log-table" class="w-100"></table>
       </div>
     </div>
   </div>
@@ -60,9 +59,7 @@
   const dataURL = '{{ url_for('infrastructure_data') }}';
   $(document).ready(function() {
     setup();
-{% if user_account != None and 'infrastructure_log' in user_account['permissions'] %}
     pollLog('{{ url_for('infrastructure_log') }}');
-{% endif %}
   });
 </script>
 {% endblock %}
