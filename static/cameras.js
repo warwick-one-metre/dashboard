@@ -67,7 +67,7 @@ function selectCamera(name) {
 
 function reloadImages() {
   $('img').each(function() {
-    // Only refresh images tagged with data-ural
+    // Only refresh images tagged with data-url
     const url = $(this).data('url');
     if (url)
       $(this).attr('src', url + '?' + Date.now());
@@ -128,14 +128,18 @@ function setAudioStreamVolume(gain) {
 
 $(document).ready(function () {
   $('#video-button').click(function() {
+    const display = $('#video');
+
     if (videoPlaying) {
       $('#video-button span').text('Video');
-      $('#video').attr('src', cameraUrl + '?' + Date.now());
+      display.attr('src', cameraUrl + '?' + Date.now());
+      display.data('url', cameraUrl);
       videoPlaying = false;
     } else {
       $('#spinner').show();
       $('#video-button span').text('Stop');
-      $('#video').attr('src', videoUrl + '?' + Date.now());
+      display.attr('src', videoUrl + '?' + Date.now());
+      display.removeData('url');
       videoPlaying = true;
     }
   });
