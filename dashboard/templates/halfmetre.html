@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% set title = '0.5m &raquo; Dashboard' -%}
+{% set active_page = 'halfmetre-dashboard' -%}
+{% block body %}
+    <div class="row dashboard-stats">
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["halfmetre_ops", "environment"]' data-generator="opsConditions" data-bs-toggle="tooltip" data-bs-placement="right">Environment</span>
+                <span class="list-group-item" data-index='["halfmetre_domealert", "tel_room_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Tel. Rm. Temp.</span>
+                <span class="list-group-item" data-index='["halfmetre_domealert", "tel_room_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Tel. Rm. Humidity</span>
+                <span class="list-group-item" data-index='["halfmetre_aircon", "instrument_room"]' data-generator="powerInstrAircon">Tel. Rm. Aircon</span>
+                <span class="list-group-item" data-index='["halfmetre_domealert", "comp_room_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Comp Room Temp.</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["halfmetre_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
+                <span class="list-group-item" data-index='["halfmetre_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
+                <span class="list-group-item" data-index='["halfmetre_power", "ats_source"]' data-generator="powerATS">ATS</span>
+                <span class="list-group-item" data-index='["halfmetre_power", "clight"]' data-generator="powerOffOn">Comp. Rm. Light</span>
+                <span class="list-group-item" data-index='["halfmetre_power", "ilight"]' data-generator="powerOffOn">Tel. Rm. Light</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-mount-index='["halfmetre_telescope"]' data-power-index='["halfmetre_power", "mount"]' data-generator="mountState">Mount</span>
+                <span class="list-group-item" data-index='["halfmetre_telescope"]' data-generator="mountRADec">RA / Dec</span>
+                <span class="list-group-item" data-index='["halfmetre_telescope"]' data-generator="mountAltAz">Alt / Az</span>
+                <span class="list-group-item" data-index='["halfmetre_telescope"]' data-generator="mountSunMoon">Sun / Moon Sep.</span>
+                <span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-generator="halfmetreMirrorTemperature">Mirrors Temp.</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["halfmetre_roof", "status"]' data-generator="roofState">Roof</span>
+                <span class="list-group-item" data-index='["halfmetre_roof"]' data-generator="roofHeartbeat">Heartbeat</span>
+                <span class="list-group-item" data-index='["halfmetre_power", "roofcharger"]' data-generator="powerOnOff">Roof Charger</span>
+                <span class="list-group-item" data-index='["halfmetre_roof", "battery_voltage_mean"]' data-generator="roofBattery" data-units=" V">Roof Battery</span>
+            </div>
+        </div>
+    </div>
+    <div class="row dashboard-stats">
+        <div class="col-lg-8 col-md-12">
+            <div class="row">
+                <div class="col-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item text-center fw-bold">Action Queue</span>
+                        <div class="list-group-item overflow-y-scroll" style="height: 123px" data-index='["halfmetre_ops", "telescope"]' data-notify="opsActionsQueue">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["halfmetre_ops", "dome"]' data-type="open" data-generator="opsDomeTime">Dome Open</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["halfmetre_ops", "dome"]' data-type="close" data-generator="opsDomeTime">Dome Close</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-cam-index='["halfmetre_cam","state"]' data-power-index='["halfmetre_power", "camera"]'  data-generator="qhyState">Camera</span>
+                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyExposure">Exposure</span>
+                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyTemperature">Temperature</span>
+                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyFilter">Filter</span>
+                <span class="list-group-item" data-index='["halfmetre_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">Disk Space</span>
+                <span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-focuser="1" data-generator="focusState">Focus</span>
+            </div>
+        </div>
+    </div>
+    <div id="preview-container" class="row dashboard-stats">
+        <div id="container" class="col-lg-8 col-md-12 g-2">
+            <div class="list-group list-group-item h-100 p-0 rounded-0" style="max-height: 502px">
+                <img id="preview-image" src="/data/halfmetre/thumb" data-url="/data/halfmetre/thumb" data-notify="previewImage" data-cam="halfmetre" width="100%" height="100%" class="bg-black object-fit-contain">
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12 g-2">
+            <div class="row">
+                <div class="col mb-2">
+                    <div id="preview-info" class="list-group rounded-0">
+                        <span class="list-group-item fw-bold text-center" data-notify="previewHeader" data-cam="halfmetre">Preview</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewTimestamp" data-cam="halfmetre">Exposure started</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewExposure" data-cam="halfmetre">Exposure length</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewType" data-cam="halfmetre">Type</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewOverheads" data-cam="halfmetre">Overheads</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewFilename" data-cam="halfmetre">Saved as</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="list-group rounded-0">
+                        <div class="list-group-item overflow-y-scroll pt-0" style="height: 295px">
+                            <table id="log-table" class="w-100"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='rockit-dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            const initial_camera = $(location).attr('hash').substr(1);
+            if ($("#thumb-" + initial_camera).length > 0)
+                selectPreview(initial_camera);
+
+            pollDashboard('{{ url_for('halfmetre_dashboard_data') }}');
+            pollLog('{{ url_for('halfmetre_log') }}');
+        });
+    </script>
+{% endblock %}

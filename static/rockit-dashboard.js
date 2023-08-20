@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 function diskSpaceGB(row, cell, data) {
   if (data && 'latest' in data) {
     let display = +(data['latest'] / 1073741824).toFixed(1);
@@ -7,66 +9,6 @@ function diskSpaceGB(row, cell, data) {
     cell.html(display);
     cell.addClass(fieldLimitsColor(data, data['latest']));
   }
-}
-
-// Header generators
-function opsHeaderTel(row, cell, data) {
-  let label = 'ERROR';
-  let style = 'text-danger';
-  let row_style = 'list-group-item-danger';
-
-  if (data === 1) {
-    label = 'OFFLINE';
-  } else if (data === 2) {
-    label = 'ONLINE';
-    style = 'text-success';
-    row_style = 'list-group-item-success';
-  }
-
-  cell.html(label);
-  cell.addClass(style);
-  row.addClass(row_style);
-}
-
-function opsHeaderDome(row, cell, data) {
-  let label = 'ERROR';
-  let style = 'text-danger';
-  let row_style = 'list-group-item-danger';
-
-  if (data === 1) {
-    label = 'CLOSED';
-  } else if (data === 2) {
-    label = 'OPEN';
-    style = 'text-success';
-    row_style = 'list-group-item-success';
-  }
-
-  cell.html(label);
-  cell.addClass(style);
-  row.addClass(row_style);
-}
-
-function opsHeaderMode(row, cell, data) {
-  const modes = [
-    ['ERROR', 'list-group-item-danger'],
-    ['AUTO', 'list-group-item-success'],
-    ['MANUAL', 'list-group-item-warning'],
-  ];
-
-  const mode = data in modes ? modes[data] : mode[0];
-  cell.html(mode[0]);
-  row.addClass(mode[1]);
-}
-
-function opsHeaderDehumidifier(row, cell, data) {
-  const modes = [
-    ['MANUAL', 'list-group-item-warning'],
-    ['AUTO', 'list-group-item-success'],
-  ];
-
-  const mode = data in modes ? modes[data] : modes[0];
-  cell.html(mode[0]);
-  row.addClass(mode[1]);
 }
 
 function opsConditions(row, cell, data) {
@@ -524,6 +466,21 @@ function qhyTemperature(row, cell, data) {
   cell.addClass(style);
 }
 
+function qhyFilter(row, cell, data) {
+  const state = getData(data, ["state"]);
+  let label = getData(data, ["filter"]);
+  let style = '';
+  if (state === 0) {
+    label = 'N/A';
+  } else if (label === undefined) {
+    label = 'ERROR';
+    style = 'text-danger';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
 function swirState(row, cell, data) {
   // SWIR uses the same state dictionary as QHY
   qhyState(row, cell, data);
@@ -663,6 +620,122 @@ function lensTemperature(row, cell, data) {
     cell.addClass('text-danger');
   } else {
     cell.html(data.toFixed(0) + ' &deg;C');
+  }
+}
+
+function roofBattery(row, cell, data) {
+  if (data != null) {
+    let display = data.toFixed(2);
+    const units = row.data('units');
+    if (units)
+      display += units;
+    cell.html(display);
+  } else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
+function roofState(row, cell, data) {
+  const state = [
+    ['PARTIALLY OPEN', 'text-info'],
+    ['CLOSED', 'text-danger'],
+    ['OPEN', 'text-success'],
+    ['CLOSING', 'text-warning'],
+    ['OPENING', 'text-warning'],
+  ];
+
+  if (data >= 0 && data < state.length) {
+    cell.html(state[data][0]);
+    cell.addClass(state[data][1]);
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
+  }
+}
+
+function roofHeartbeat(row, cell, data) {
+  const state = [
+    ['DISABLED', 'text-warning'],
+    ['ENABLED', 'text-success'],
+    ['TRIPPED', 'text-danger'],
+  ];
+
+  let status = 'ERROR';
+  let style = 'text-danger';
+
+  if ('heartbeat_status' in data && 'heartbeat_remaining' in data) {
+    if (data['heartbeat_status'] === 1) {
+      status = data['heartbeat_remaining'] + 's remaining';
+      if (data['heartbeat_remaining'] < 10)
+        style = 'text-danger'
+      else if (data['heartbeat_remaining'] < 30)
+        style = 'text-warning';
+      else
+        style = 'text-success';
+    } else {
+      status = state[data['heartbeat_status']][0];
+      style = state[data['heartbeat_status']][1];
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerInstrAircon(row, cell, data) {
+  let status = 'ERROR';
+  let style = 'text-danger';
+
+  if (data && 'enabled' in data) {
+    if (data['enabled']) {
+      status = 'AUTO';
+      style = 'text-success';
+    }
+    else {
+      status = 'DISABLED';
+      style = 'text-warning';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function powerCompAircon(row, cell, data) {
+  let status = 'ERROR';
+  let style = 'text-danger';
+
+  if (data && 'active' in data) {
+    if (data['active'] === 1) {
+      status = 'ACTIVE';
+      style = 'text-success';
+    }
+    else {
+      status = 'INACTIVE';
+      style = 'text-warning';
+    }
+  }
+
+  cell.html(status);
+  cell.addClass(style);
+}
+
+function halfmetreMirrorTemperature(row, cell, data) {
+  const focuser_data = getData(data, row.data('focuser-index'));
+  const powered = getData(data, row.data('power-index'));
+  const status = getData(focuser_data, ['status']);
+  const pri_temp = getData(focuser_data, ['temperature', 'primary_mirror']);
+  const sec_temp = getData(focuser_data, ['temperature', 'secondary_mirror']);
+
+  let label, style;
+  if (powered === 0 || status === 0) {
+    cell.html('N/A');
+  } else if (pri_temp !== undefined && sec_temp !== undefined) {
+    cell.html(pri_temp.toFixed(1) + ' &deg;C&nbsp;/&nbsp;' + sec_temp.toFixed(1)+ ' &deg;C');
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
   }
 }
 
@@ -808,6 +881,8 @@ function previewOverheads(row, cell, data) {
     cell.addClass('text-danger');
   } else {
     cell.html(time.toFixed(1) + ' s (' + steps.join(', ') + ')');
+    cell.addClass('d-inline-block text-truncate');
+    cell.css('max-width', '230px');
   }
 }
 

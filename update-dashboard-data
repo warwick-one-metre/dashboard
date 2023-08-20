@@ -361,6 +361,7 @@ generate_json(BASE_OUTPUT_DIR + '/halfmetre-private.json', [
     (daemons.halfmetre_roof, 'halfmetre_roof', lambda d: d.status()),
     (daemons.halfmetre_pipeline, 'halfmetre_pipeline', lambda d: d.report_status()),
     (daemons.halfmetre_cam, 'halfmetre_cam', lambda d: d.report_status()),
+    (daemons.halfmetre_focuser, 'halfmetre_focus', lambda d: d.report_status()),
 ])
 
 # Raw data for GOTO operations

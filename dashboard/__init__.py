@@ -47,34 +47,31 @@ if not os.path.exists(GENERATED_DATA_DIR):
     GENERATED_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'generated')
 
 W1M_GENERATED_DATA = {
-    'blue': 'dashboard-BLUE.json',
     'blue/thumb': 'dashboard-BLUE-thumb.jpg',
     'blue/clip': 'dashboard-BLUE-clip.jpg',
-    'red': 'dashboard-RED.json',
     'red/thumb': 'dashboard-RED-thumb.jpg',
     'red/clip': 'dashboard-RED-clip.jpg',
 }
 
 CLASP_GENERATED_DATA = {
-    'cam1': 'dashboard-CAM1.json',
     'cam1/thumb': 'dashboard-CAM1-thumb.jpg',
     'cam1/clip': 'dashboard-CAM1-clip.jpg',
-    'cam2': 'dashboard-CAM2.json',
     'cam2/thumb': 'dashboard-CAM2-thumb.jpg',
     'cam2/clip': 'dashboard-CAM2-clip.jpg',
 }
 
+HALFMETRE_GENERATED_DATA = {
+    'thumb': 'dashboard-HALFMETRE-thumb.jpg',
+    'clip': 'ddashboard-HALFMETRE-clip.jpg',
+}
+
 SUPERWASP_GENERATED_DATA = {
-    'cam1': 'dashboard-1.json',
     'cam1/thumb': 'dashboard-1-thumb.jpg',
     'cam1/clip': 'dashboard-1-clip.jpg',
-    'cam2': 'dashboard-2.json',
     'cam2/thumb': 'dashboard-2-thumb.jpg',
     'cam2/clip': 'dashboard-2-clip.jpg',
-    'cam3': 'dashboard-3.json',
     'cam3/thumb': 'dashboard-3-thumb.jpg',
     'cam3/clip': 'dashboard-3-clip.jpg',
-    'cam4': 'dashboard-4.json',
     'cam4/thumb': 'dashboard-4-thumb.jpg',
     'cam4/clip': 'dashboard-4-clip.jpg',
 }
@@ -151,7 +148,7 @@ def get_user_account():
 
                 # https://github.com/orgs/warwick-one-metre/teams/observers
                 if is_github_team_member(user, 2128810):
-                    permissions.update(['w1m', 'infrastructure_log', 'satellites'])
+                    permissions.update(['w1m', 'halfmetre', 'infrastructure_log', 'satellites'])
 
                 # https://github.com/orgs/GOTO-OBS/teams/ops-team/
                 if is_github_team_member(user, 2308649):
@@ -263,6 +260,23 @@ def superwasp_generated_data(path):
     abort(404)
 
 
+@app.route('/halfmetre/')
+def halfmetre_dashboard():
+    account = get_user_account()
+    if 'halfmetre' not in account['permissions']:
+        return redirect(url_for('site_overview'))
+
+    return render_template('halfmetre.html', user_account=get_user_account())
+
+
+@app.route('/data/halfmetre/<path:path>')
+def halfmetre_generated_data(path):
+    account = get_user_account()
+    if 'halfmetre' in account['permissions'] and path in HALFMETRE_GENERATED_DATA:
+        print(HALFMETRE_GENERATED_DATA[path])
+        return send_from_directory(GENERATED_DATA_DIR, HALFMETRE_GENERATED_DATA[path])
+    abort(404)
+
 @app.route('/goto1/')
 def goto1_dashboard():
     account = get_user_account()
@@ -314,6 +328,7 @@ def site_overview():
     authorised_goto = user_account is not None and 'goto' in user_account['permissions']
     authorised_satellites = user_account is not None and 'satellites' in user_account['permissions']
     authorised_onemetre = user_account is not None and 'w1m' in user_account['permissions']
+    authorised_halfmetre = user_account is not None and 'halfmetre' in user_account['permissions']
     authorised_extcams = authorised_goto or authorised_satellites
 
     authorised = len(user_account['permissions']) > 0
@@ -334,7 +349,7 @@ def site_overview():
         internal_cameras = [
             SiteCamera('goto1', 'GOTO 1', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
             SiteCamera('goto2', 'GOTO 2', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
-            SiteCamera('halfmetre', 'Half Metre', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('halfmetre', 'Half Metre', authorised=authorised_halfmetre, video=True, audio=True, light=True, infrared=True),
             SiteCamera('w1m', 'W1m', authorised=authorised_onemetre, video=True, audio=True, light=True, infrared=True),
             SiteCamera('superwasp', 'SuperWASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
             SiteCamera('clasp', 'CLASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True)
@@ -477,7 +492,7 @@ def clasp_log():
 @app.route('/data/halfmetre/log')
 def halfmetre_log():
     account = get_user_account()
-    if 'satellites' not in account['permissions']:
+    if 'halfmetre' not in account['permissions']:
         abort(404)
 
     return fetch_log_messages({
@@ -488,6 +503,7 @@ def halfmetre_log():
         'pipelined@halfmetre': 'pipeline',
         'qhy_camd@halfmetre': 'cam',
         'diskspaced@halfmetre': 'diskspace',
+        'focusd@halfmetre': 'focus'
     })
 
 
@@ -741,55 +757,16 @@ def superwasp_dashboard_data():
 
 @app.route('/data/halfmetre/')
 def halfmetre_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/halfmetre-public.json'))
-
-    # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/halfmetre-private.json'))
-
     account = get_user_account()
-    if 'satellites' in account['permissions']:
-        data.update(private)
+    if 'halfmetre' not in account['permissions']:
+        abort(404)
 
-    # Extract safe public info from private daemons
-    private_ops = private.get('superwasp_ops', {})
-    private_telescope = private.get('superwasp_telescope', {})
-    private_roof = private.get('superwasp_roof', {})
+    data = json.load(open(GENERATED_DATA_DIR + '/halfmetre-public.json'))
+    private = json.load(open(GENERATED_DATA_DIR + '/halfmetre-private.json'))
+    data.update(private)
 
-    # Tel status:
-    #   0: error
-    #   1: offline
-    #   2: online
-    tel_status = 0
-    if 'state' in private_telescope:
-        tel_status = 1 if private_telescope['state'] == 0 else 2
-
-    # Roof status:
-    #   0: error
-    #   1: closed
-    #   2: open
-    roof_status = 0
-    if 'status' in private_roof and 'heartbeat_status' in private_roof:
-        if private_roof['heartbeat_status'] != 2:
-            roof_status = 1 if private_roof['status'] == 1 else 2
-
-    roof_mode = 0
-    if 'dome' in private_ops and 'mode' in private_ops['dome']:
-        roof_mode = private_ops['dome']['mode']
-
-    tel_mode = 0
-    if 'telescope' in private_ops and 'mode' in private_ops['telescope']:
-        tel_mode = private_ops['telescope']['mode']
-
-    env = {}
-    if 'environment' in private_ops:
-        env = private_ops['environment']
-
-    data['wasp_status'] = {
-        'tel': tel_status,
-        'roof': roof_status,
-        'tel_mode': tel_mode,
-        'roof_mode': roof_mode,
-        'environment': env
+    data['previews'] = {
+        'halfmetre': json.load(open(GENERATED_DATA_DIR + '/dashboard-HALFMETRE.json'))
     }
 
     response = jsonify(**data)
