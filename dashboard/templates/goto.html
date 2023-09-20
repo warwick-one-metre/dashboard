@@ -1,0 +1,311 @@
+{% extends "layout.html" %}
+{% set title = 'GOTO &raquo; Dashboard' -%}
+{% set active_page = 'goto-dashboard' -%}
+{% block body %}
+
+    <div class="modal fade" id="goto1-override-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Set GOTO1 Conditions Override</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to change the conditions override flag?<br />
+        This may cause the dome to immediately open or close.<br />
+        <br />
+        It may take up to 30 seconds for the status on the dashboard to update.
+      </div>
+      <div class="modal-footer">
+        <button id="disable-goto1-override-button" type="button" class="btn btn-success" data-bs-dismiss="modal">Allow Observing</button>
+        <button id="enable-goto1-override-button" type="button" class="btn btn-warning" data-bs-dismiss="modal">Prevent Observing</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="goto2-override-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Set GOTO2 Conditions Override</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to change the conditions override flag?<br />
+        This may cause the dome to immediately open or close.<br />
+        <br />
+        It may take up to 30 seconds for the status on the dashboard to update.
+      </div>
+      <div class="modal-footer">
+        <button id="disable-goto2-override-button" type="button" class="btn btn-success" data-bs-dismiss="modal">Allow Observing</button>
+        <button id="enable-goto2-override-button" type="button" class="btn btn-warning" data-bs-dismiss="modal">Prevent Observing</button>
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+<h3 class="mt-2">GOTO 1</h3>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_dome1_conditions"]' data-generator="conditionFlags" data-bs-toggle="tooltip" data-bs-placement="bottom">Environment</span>
+      <span class="list-group-item" data-index='["goto_dome1_dome", "lockdown"]' data-generator="conditionsLockdown">Lockdown</span>
+      <a id="conditions-override" class="list-group-item" data-index='["goto_dome1_conditions", "flags", "override"]' data-generator="conditionsOverride" href="#goto1-override-modal" data-bs-toggle="modal" data-bs-target="#goto1-override-modal">Override</a>
+      <span class="list-group-item" data-index='["goto_dome1_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["goto_dome1_domealert", "internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome1_upper_ups" data-generator="powerUPS">Upper UPS</span>
+      <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome1_lower_ups" data-generator="powerUPS">Lower UPS</span>
+      <span class="list-group-item" data-index='["goto_dome1_power"]' data-generator="ledsOnOff">Dome Lights</span>
+      <span class="list-group-item" data-index='["goto_dome1_dome", "dehumidifier_on"]' data-generator="powerOffOn">Dehumidifier</span>
+      <span class="list-group-item" data-index='["goto_dome1_dome", "hatch"]' data-generator="hatchOpenClosed">Hatch</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_dome1_mnt", "status"]' data-generator="telStatus">Mount</span>
+      <span class="list-group-item" data-index='["goto_dome1_mnt"]' data-generator="telRADec">RA / Dec</span>
+      <span class="list-group-item" data-index='["goto_dome1_mnt"]' data-generator="telAltAz">Alt / Az</span>
+      <span class="list-group-item" data-index='[]' data-dome="1" data-generator="exqCamExposure">Exposure</span>
+      <span class="list-group-item" data-index='["goto_dome1_cam", "latest_run_number"]' data-generator="camRunNumber">Run Number</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <span class="m-0 text-center list-group-item" id="data-updated">Loading...</span>
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_dome1_dome", "a_side"]' data-generator="domeShutter">N. Shutter</span>
+      <span class="list-group-item" data-index='["goto_dome1_dome", "b_side"]' data-generator="domeShutter">S. Shutter</span>
+      <span class="list-group-item" data-index='["goto_dome1_dome", "heartbeat_enabled"]' data-generator="domeEnabledSafe">Heartbeat</span>
+      <span class="list-group-item" data-index='["goto_dome1_dome", "windshield_enabled"]' data-generator="domeWindshield">Windshielding</span>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-12 col-sm-12 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+       <table class="table table-bordered my-0">
+        <tbody>
+          <tr>
+            <td></td>
+            <td class="text-center fw-bold">UT1</td>
+            <td class="text-center fw-bold">UT2</td>
+            <td class="text-center fw-bold">UT3</td>
+            <td class="text-center fw-bold">UT4</td>
+            <td class="text-center fw-bold">UT5</td>
+            <td class="text-center fw-bold">UT6</td>
+            <td class="text-center fw-bold">UT7</td>
+            <td class="text-center fw-bold">UT8</td>
+          </tr>
+          <tr>
+            <td>Cam. Status</td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="EAST" data-cam="1"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="EAST" data-cam="2"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="WEST" data-cam="3"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="WEST" data-cam="4"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="EAST" data-cam="5"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="EAST" data-cam="6"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="WEST" data-cam="7"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="1" data-power="WEST" data-cam="8"></td>
+          </tr>
+          <tr>
+            <td>Cam. Temperature</td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="EAST" data-cam="1"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="EAST" data-cam="2"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="WEST" data-cam="3"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="WEST" data-cam="4"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="EAST" data-cam="5"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="EAST" data-cam="6"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="WEST" data-cam="7"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="1" data-power="WEST" data-cam="8"></td>
+          </tr>
+          <tr>
+            <td>Focus</td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="1"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="2"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="3"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="4"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="5"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="6"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="7"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="1" data-foc="8"></td>
+          </tr>
+          <tr>
+            <td>Filter</td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="EAST" data-filt="1"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="EAST" data-filt="2"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="WEST" data-filt="3"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="WEST" data-filt="4"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="EAST" data-filt="5"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="EAST" data-filt="6"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="WEST" data-filt="7"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="1" data-power="WEST" data-filt="8"></td>
+          </tr>
+          <tr>
+            <td>Covers</td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="1"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="2"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="3"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="4"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="5"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="6"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="7"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="1" data-cover="8"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="row dashboard-stats">
+<h3 class="mt-2">GOTO 2</h3>
+</div>
+
+<div class="row dashboard-stats">
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_dome2_conditions"]' data-generator="conditionFlags" data-bs-toggle="tooltip" data-bs-placement="bottom">Environment</span>
+      <span class="list-group-item" data-index='["goto_dome2_dome", "lockdown"]' data-generator="conditionsLockdown">Lockdown</span>
+      <a id="conditions-override" class="list-group-item" data-index='["goto_dome2_conditions", "flags", "override"]' data-generator="conditionsOverride" href="#goto2-override-modal" data-bs-toggle="modal" data-bs-target="#goto2-override-modal">Override</a>
+      <span class="list-group-item" data-index='["goto_dome2_domealert", "internal_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+      <span class="list-group-item" data-index='["goto_dome2_domealert", "internal_temp"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome2_upper_ups" data-generator="powerUPS">Upper UPS</span>
+      <span class="list-group-item" data-index='["goto_ups"]' data-ups="dome2_lower_ups" data-generator="powerUPS">Lower UPS</span>
+      <span class="list-group-item" data-index='["goto_dome2_power", "status_PDU1", "leds"]' data-generator="powerOffOn">Dome Lights</span>
+      <span class="list-group-item" data-index='["goto_dome2_dome", "dehumidifier_on"]' data-generator="powerOffOn">Dehumidifier</span>
+      <span class="list-group-item" data-index='["goto_dome2_dome", "hatch"]' data-generator="hatchOpenClosed">Hatch</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_dome2_mnt", "status"]' data-generator="telStatus">Mount</span>
+      <span class="list-group-item" data-index='["goto_dome2_mnt"]' data-generator="telRADec">RA / Dec</span>
+      <span class="list-group-item" data-index='["goto_dome2_mnt"]' data-generator="telAltAz">Alt / Az</span>
+      <span class="list-group-item" data-index='[]' data-dome="2" data-generator="exqCamExposure">Exposure</span>
+      <span class="list-group-item" data-index='["goto_dome2_cam", "latest_run_number"]' data-generator="camRunNumber">Run Number</span>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6 col-xs-12 g-2">
+    <span class="m-0 text-center list-group-item">&nbsp;</span>
+    <div class="list-group rounded-0">
+      <span class="list-group-item" data-index='["goto_dome2_dome", "a_side"]' data-generator="domeShutter">N. Shutter</span>
+      <span class="list-group-item" data-index='["goto_dome2_dome", "b_side"]' data-generator="domeShutter">S. Shutter</span>
+      <span class="list-group-item" data-index='["goto_dome2_dome", "heartbeat_enabled"]' data-generator="domeEnabledSafe">Heartbeat</span>
+      <span class="list-group-item" data-index='["goto_dome2_dome", "windshield_enabled"]' data-generator="domeWindshield">Windshielding</span>
+    </div>
+  </div>
+</div>
+<div class="row dashboard-stats">
+  <div class="col-md-12 col-sm-12 col-xs-12 g-2">
+    <div class="list-group rounded-0">
+       <table class="table table-bordered my-0">
+        <tbody>
+          <tr>
+            <td></td>
+            <td class="text-center fw-bold">UT1</td>
+            <td class="text-center fw-bold">UT2</td>
+            <td class="text-center fw-bold">UT3</td>
+            <td class="text-center fw-bold">UT4</td>
+            <td class="text-center fw-bold">UT5</td>
+            <td class="text-center fw-bold">UT6</td>
+            <td class="text-center fw-bold">UT7</td>
+            <td class="text-center fw-bold">UT8</td>
+          </tr>
+          <tr>
+            <td>Cam. Status</td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="EAST" data-cam="1"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="EAST" data-cam="2"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="WEST" data-cam="3"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="WEST" data-cam="4"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="EAST" data-cam="5"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="EAST" data-cam="6"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="WEST" data-cam="7"></td>
+            <td data-index='[]' data-generator="camStatus" data-dome="2" data-power="WEST" data-cam="8"></td>
+          </tr>
+          <tr>
+            <td>Cam. Temperature</td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="EAST" data-cam="1"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="EAST" data-cam="2"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="WEST" data-cam="3"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="WEST" data-cam="4"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="EAST" data-cam="5"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="EAST" data-cam="6"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="WEST" data-cam="7"></td>
+            <td data-index='[]' data-generator="camTemp" data-dome="2" data-power="WEST" data-cam="8"></td>
+          </tr>
+          <tr>
+            <td>Focus</td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="1"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="2"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="3"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="4"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="5"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="6"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="7"></td>
+            <td data-index='[]' data-generator="telFoc" data-dome="2" data-foc="8"></td>
+          </tr>
+          <tr>
+            <td>Filter</td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="EAST" data-filt="1"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="EAST" data-filt="2"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="WEST" data-filt="3"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="WEST" data-filt="4"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="EAST" data-filt="5"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="EAST" data-filt="6"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="WEST" data-filt="7"></td>
+            <td data-index='[]' data-generator="telFilt" data-dome="2" data-power="WEST" data-filt="8"></td>
+          </tr>
+          <tr>
+            <td>Covers</td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="1"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="2"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="3"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="4"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="5"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="6"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="7"></td>
+            <td data-index='[]' data-generator="telCovers" data-dome="2" data-cover="8"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='goto-dashboard.js') }}"></script>
+<script>
+  $(document).ready(function() {
+    $('#disable-goto1-override-button').click(function() {
+     $.ajax({ type: 'GET', url: '/override/goto1/off' });
+    });
+
+    $('#enable-goto1-override-button').click(function() {
+     $.ajax({ type: 'GET', url: '/override/goto1/on' });
+    });
+
+    $('#disable-goto2-override-button').click(function() {
+     $.ajax({ type: 'GET', url: '/override/goto2/off' });
+    });
+
+    $('#enable-goto2-override-button').click(function() {
+     $.ajax({ type: 'GET', url: '/override/goto2/on' });
+    });
+
+    pollDashboard('{{ url_for('goto_dashboard_data') }}');
+  });
+</script>
+{% endblock %}

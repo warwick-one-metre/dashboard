@@ -357,6 +357,7 @@ function focusState(row, cell, data) {
   const current_steps = getData(focuser_data, ['current_steps_' + focuser]);
   const moving = getData(focuser_data, ['moving_' + focuser]);
 
+  console.log('powered', powered);
   let label, style;
   if (powered === 0) {
     label = 'POWER OFF';

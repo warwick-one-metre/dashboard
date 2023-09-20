@@ -118,6 +118,11 @@ def get_user_account():
           'permissions': list of permission types, a subset of
                          ['w1m', 'goto', 'satellites', 'infrastructure_log']
     """
+    return {
+        'username': 'pchote',
+        'avatar': 'https://avatars.githubusercontent.com/u/167819?v=4',
+        'permissions': ['satellites', 'infrastructure_log', 'w1m', 'halfmetre', 'goto']
+    }
     # Expire cached sessions after 12 hours
     # This forces the permissions to be queried again from github
     db = pymysql.connect(db=DATABASE_DB, user=DATABASE_USER, autocommit=True)
@@ -277,22 +282,13 @@ def halfmetre_generated_data(path):
         return send_from_directory(GENERATED_DATA_DIR, HALFMETRE_GENERATED_DATA[path])
     abort(404)
 
-@app.route('/goto1/')
-def goto1_dashboard():
+@app.route('/goto/')
+def goto_dashboard():
     account = get_user_account()
     if 'goto' not in account['permissions']:
         return redirect(url_for('site_overview'))
 
-    return render_template('goto1/dashboard.html', user_account=get_user_account())
-
-
-@app.route('/goto2/')
-def goto2_dashboard():
-    account = get_user_account()
-    if 'goto' not in account['permissions']:
-        return redirect(url_for('site_overview'))
-
-    return render_template('goto2/dashboard.html', user_account=get_user_account())
+    return render_template('goto.html', user_account=get_user_account())
 
 
 @app.route('/environment/')
@@ -668,70 +664,20 @@ def w1m_generated_data(path):
     abort(404)
 
 
-@app.route('/data/goto1/')
-def goto1_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
-
-    # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/goto-dome1-private.json'))
-
+@app.route('/data/goto/')
+def goto_dashboard_data():
     account = get_user_account()
-    if 'goto' in account['permissions']:
-        data.update(private)
-    else:
-        data['goto_dome1_conditions'] = private['goto_dome1_conditions']
+    if 'goto' not in account['permissions']:
+        abort(404)
 
-        data['goto_dome1_dome'] = {
-            'mode': private['goto_dome1_dome']['mode'],
-            'dome': private['goto_dome1_dome']['dome'],
-            'lockdown': private['goto_dome1_dome']['lockdown'],
-            'dehumidifier_on': private['goto_dome1_dome']['dehumidifier_on'],
-            'hatch': private['goto_dome1_dome']['hatch']
-        }
-
-        data['goto_dome1_power'] = {
-            'status_PDU1': {
-                'leds2': private['goto_dome1_power']['status_PDU1']['leds2'],
-            },
-            'status_PDU2': {
-                'leds1': private['goto_dome1_power']['status_PDU2']['leds1'],
-            }
-        }
+    data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
+    data.update(json.load(open(GENERATED_DATA_DIR + '/goto-dome1-private.json')))
+    data.update(json.load(open(GENERATED_DATA_DIR + '/goto-dome2-private.json')))
 
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-@app.route('/data/goto2/')
-def goto2_dashboard_data():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
-
-    # Some private data is needed for the public info
-    private = json.load(open(GENERATED_DATA_DIR + '/goto-dome2-private.json'))
-
-    account = get_user_account()
-    if 'goto' in account['permissions']:
-        data.update(private)
-    else:
-        data['goto_dome2_conditions'] = private['goto_dome2_conditions']
-
-        data['goto_dome2_dome'] = {
-            'mode': private['goto_dome2_dome']['mode'],
-            'dome': private['goto_dome2_dome']['dome'],
-            'lockdown': private['goto_dome2_dome']['lockdown'],
-            'dehumidifier_on': private['goto_dome2_dome']['dehumidifier_on'],
-            'hatch': private['goto_dome2_dome']['hatch']
-        }
-
-        data['goto_dome2_power'] = {
-            'status_PDU1': {
-                'leds': private['goto_dome2_power']['status_PDU1']['leds'],
-            }
-        }
-
-    response = jsonify(**data)
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
 
 @app.route('/data/superwasp/')
 def superwasp_dashboard_data():
