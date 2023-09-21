@@ -116,7 +116,7 @@
                 selectPreview(initial_camera);
 
             pollDashboard('{{ url_for('dashboard_data', name='halfmetre') }}');
-            pollLog('{{ url_for('halfmetre_log') }}');
+            pollLog('{{ url_for('dashboard_data', name='halfmetre', type='log') }}');
         });
     </script>
 {% endblock %}

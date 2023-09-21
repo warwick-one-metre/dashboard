@@ -159,7 +159,7 @@
                 selectPreview(initial_camera);
 
             pollDashboard('{{ url_for('dashboard_data', name='superwasp') }}');
-            pollLog('{{ url_for('superwasp_log') }}');
+            pollLog('{{ url_for('dashboard_data', name='superwasp', type='log') }}');
         });
     </script>
 {% endblock %}

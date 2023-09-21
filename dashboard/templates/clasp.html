@@ -151,7 +151,7 @@
                 selectPreview(initial_camera);
 
             pollDashboard('{{ url_for('dashboard_data', name='clasp') }}');
-            pollLog('{{ url_for('clasp_log') }}');
+            pollLog('{{ url_for('dashboard_data', name='clasp', type='log') }}');
         });
     </script>
 {% endblock %}

@@ -466,89 +466,6 @@ def fetch_log_messages(sources):
         db.close()
 
 
-@app.route('/data/clasp/log')
-def clasp_log():
-    account = get_user_account()
-    if 'satellites' not in account['permissions']:
-        abort(404)
-
-    return fetch_log_messages({
-        'powerd@clasp': 'power',
-        'lmountd@clasp': 'mount',
-        'dome@clasp': 'dome',
-        'opsd@clasp': 'ops',
-        'focusd@clasp': 'focuser',
-        'pipelined@clasp': 'pipeline',
-        'qhy_camd@cam1': 'cam1',
-        'raptor_camd@cam2': 'cam2',
-        'diskspaced@clasp': 'diskspace',
-        'dehumidifierd@clasp': 'dehumidifier'
-    })
-
-
-@app.route('/data/halfmetre/log')
-def halfmetre_log():
-    account = get_user_account()
-    if 'halfmetre' not in account['permissions']:
-        abort(404)
-
-    return fetch_log_messages({
-        'powerd@halfmetre': 'power',
-        'lmountd@halfmetre': 'mount',
-        'halfmetre_roof': 'roof',
-        'opsd@halfmetre': 'ops',
-        'pipelined@halfmetre': 'pipeline',
-        'qhy_camd@halfmetre': 'cam',
-        'diskspaced@halfmetre': 'diskspace',
-        'focusd@halfmetre': 'focus'
-    })
-
-
-@app.route('/data/superwasp/log')
-def superwasp_log():
-    account = get_user_account()
-    if 'satellites' not in account['permissions']:
-        abort(404)
-
-    return fetch_log_messages({
-        'powerd@superwasp': 'power',
-        'lmountd@superwasp': 'mount',
-        'superwasp_dome': 'dome',
-        'opsd@superwasp': 'ops',
-        'pipelined@superwasp': 'pipeline',
-        'qhy_camd@swasp-cam1': 'cam1',
-        'qhy_camd@swasp-cam2': 'cam2',
-        'qhy_camd@swasp-cam3': 'cam3',
-        'qhy_camd@swasp-cam4': 'cam4',
-        'diskspaced@superwasp_cam1': 'disk_das1',
-        'diskspaced@superwasp_cam2': 'disk_das2',
-        'diskspaced@superwasp_cam3': 'disk_das3',
-        'diskspaced@superwasp_cam4': 'disk_das4',
-        'dehumidifierd@superwasp': 'dehumidifier',
-        'lensheaterd': 'lensheater'
-    })
-
-
-@app.route('/data/w1m/log')
-def w1m_log():
-    account = get_user_account()
-    if 'w1m' not in account['permissions']:
-        abort(404)
-
-    return fetch_log_messages({
-        'powerd': 'power',
-        'teld': 'mount',
-        'focusd@onemetre': 'focuser',
-        'onemetre_dome': 'dome',
-        'opsd@onemetre': 'ops',
-        'pipelined': 'pipeline',
-        'andor_camd@blue': 'cam_blue',
-        'andor_camd@red': 'cam_red',
-        'diskspaced': 'diskspace',
-        'dehumidifierd@onemetre': 'dehumidifier'
-    })
-
-
 @app.route('/data/infrastructure/log')
 def infrastructure_log():
     account = get_user_account()
@@ -618,7 +535,8 @@ def infrastructure_data():
 
 
 @app.route('/data/<name>/')
-def dashboard_data(name):
+@app.route('/data/<name>/<type>')
+def dashboard_data(name, type=None):
     info = DASHBOARD_DATA_FILES.get(name, None)
     if info is None:
         abort(404)
@@ -626,6 +544,65 @@ def dashboard_data(name):
     account = get_user_account()
     if info[0] not in account['permissions']:
         abort(404)
+
+    if name == 'w1m' and type == 'log':
+        return fetch_log_messages({
+            'powerd': 'power',
+            'teld': 'mount',
+            'focusd@onemetre': 'focuser',
+            'onemetre_dome': 'dome',
+            'opsd@onemetre': 'ops',
+            'pipelined': 'pipeline',
+            'andor_camd@blue': 'cam_blue',
+            'andor_camd@red': 'cam_red',
+            'diskspaced': 'diskspace',
+            'dehumidifierd@onemetre': 'dehumidifier'
+        })
+
+    if name == 'clasp' and type == 'log':
+        return fetch_log_messages({
+            'powerd@clasp': 'power',
+            'lmountd@clasp': 'mount',
+            'dome@clasp': 'dome',
+            'opsd@clasp': 'ops',
+            'focusd@clasp': 'focuser',
+            'pipelined@clasp': 'pipeline',
+            'qhy_camd@cam1': 'cam1',
+            'raptor_camd@cam2': 'cam2',
+            'diskspaced@clasp': 'diskspace',
+            'dehumidifierd@clasp': 'dehumidifier'
+        })
+
+    if name == 'superwasp' and type == 'log':
+        return fetch_log_messages({
+            'powerd@superwasp': 'power',
+            'lmountd@superwasp': 'mount',
+            'superwasp_dome': 'dome',
+            'opsd@superwasp': 'ops',
+            'pipelined@superwasp': 'pipeline',
+            'qhy_camd@swasp-cam1': 'cam1',
+            'qhy_camd@swasp-cam2': 'cam2',
+            'qhy_camd@swasp-cam3': 'cam3',
+            'qhy_camd@swasp-cam4': 'cam4',
+            'diskspaced@superwasp_cam1': 'disk_das1',
+            'diskspaced@superwasp_cam2': 'disk_das2',
+            'diskspaced@superwasp_cam3': 'disk_das3',
+            'diskspaced@superwasp_cam4': 'disk_das4',
+            'dehumidifierd@superwasp': 'dehumidifier',
+            'lensheaterd': 'lensheater'
+        })
+
+    if name == 'halfmetre' and type == 'log':
+        return fetch_log_messages({
+            'powerd@halfmetre': 'power',
+            'lmountd@halfmetre': 'mount',
+            'halfmetre_roof': 'roof',
+            'opsd@halfmetre': 'ops',
+            'pipelined@halfmetre': 'pipeline',
+            'qhy_camd@halfmetre': 'cam',
+            'diskspaced@halfmetre': 'diskspace',
+            'focusd@halfmetre': 'focus'
+        })
 
     response = send_from_directory(GENERATED_DATA_DIR, info[1])
     response.headers['Access-Control-Allow-Origin'] = '*'
