@@ -154,7 +154,7 @@
             if ($("#thumb-" + initial_camera).length > 0)
                 selectPreview(initial_camera);
 
-            pollDashboard('{{ url_for('w1m_dashboard_data') }}');
+            pollDashboard('{{ url_for('dashboard_data', name='w1m') }}');
             pollLog('{{ url_for('w1m_log') }}');
         });
     </script>

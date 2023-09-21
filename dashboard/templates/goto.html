@@ -305,7 +305,7 @@
      $.ajax({ type: 'GET', url: '/override/goto2/on' });
     });
 
-    pollDashboard('{{ url_for('goto_dashboard_data') }}');
+    pollDashboard('{{ url_for('dashboard_data', name='goto') }}');
   });
 </script>
 {% endblock %}
