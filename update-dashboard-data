@@ -22,7 +22,7 @@
 
 import datetime
 import json
-from warwick.observatory.common import daemons, log
+from rockit.common import daemons, log
 
 # This directory must be shared with the TCS via NFS
 BASE_OUTPUT_DIR = '/srv/dashboard/generated'
@@ -126,7 +126,6 @@ def generate_goto_json(output_path, date, environment):
                 'dome2_lower_ups_status', 'dome2_lower_ups_battery_remaining', 'dome2_lower_ups_battery_healthy',
             ],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
@@ -157,7 +156,6 @@ def generate_onemetre_json(output_path, date, environment):
             ],
             'w1m_diskspace': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
@@ -189,10 +187,8 @@ def generate_superwasp_json(output_path, date, environment):
             ],
             'rain': ['unsafe_boards'],
             'clasp_domealert': ['superwasp_temperature', 'superwasp_humidity'],
-            'superwasp_diskspace_cam1': ['data_fs_available_bytes'],
-            'superwasp_diskspace_cam2': ['data_fs_available_bytes'],
-            'superwasp_diskspace_cam3': ['data_fs_available_bytes'],
-            'superwasp_diskspace_cam4': ['data_fs_available_bytes'],
+            'superwasp_diskspace_das1': ['data_fs_available_bytes'],
+            'superwasp_diskspace_das2': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
@@ -259,9 +255,9 @@ def generate_clasp_json(output_path, date, environment):
             'clasp_domealert': [
                 'internal_humidity', 'internal_temperature'
             ],
-            'clasp_diskspace': ['data_fs_available_bytes'],
+            'clasp_diskspace_cam1': ['data_fs_available_bytes'],
+            'clasp_diskspace_cam2': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
-            'superwasp_aurora': ['clarity'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
