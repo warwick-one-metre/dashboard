@@ -402,7 +402,7 @@ def switch_light(light, state):
             return _toggle_leds(daemons.superwasp_power, 'light', account, state)
 
         if (light in ['halfmetre', 'serverroom']) and 'satellites' in account['permissions']:
-            return _toggle_leds(daemons.halfmetre_power, 'ilight' if light == 'wasp1' else 'clight', account, state)
+            return _toggle_leds(daemons.halfmetre_power, 'ilight' if light == 'halfmetre' else 'clight', account, state)
 
         if light == 'clasp' and 'satellites' in account['permissions']:
             return _toggle_leds(daemons.clasp_power, 'light', account, state)
