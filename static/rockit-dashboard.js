@@ -437,6 +437,24 @@ function qhyExposure(row, cell, data) {
 function qhyTemperature(row, cell, data) {
   const state = getData(data, ["state"]);
   const temperature = getData(data, ["cooler_temperature"]);
+  const humidity = getData(data, ["cooler_humidity"]);
+
+  let label = 'ERROR';
+  let style = 'text-danger';
+  if (state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (temperature !== undefined && humidity !== undefined) {
+    label = temperature.toFixed(1) + '&nbsp;&deg;C&nbsp;/&nbsp;' + humidity.toFixed(1) + '%';
+    style = '';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function qhyCooling(row, cell, data) {
+  const state = getData(data, ["state"]);
   const cooler_power = getData(data, ["cooler_pwm"]);
   const cooler_mode = getData(data, ["cooler_mode"]);
 
@@ -454,12 +472,10 @@ function qhyTemperature(row, cell, data) {
   if (state === 0) {
     label = 'N/A';
     style = '';
-  } else if (cooler_power !== undefined && cooler_mode !== undefined && temperature !== undefined) {
-    label = '<span class="' + cooler_labels[cooler_mode][1] + '">' + cooler_labels[cooler_mode][0] + '</span>'
-    label += ' (' + temperature.toFixed(0) + '&nbsp;&deg;C';
+  } else if (cooler_power !== undefined && cooler_mode !== undefined) {
+    label = '<span class="' + cooler_labels[cooler_mode][1] + ' d-inline-block text-truncate">' + cooler_labels[cooler_mode][0] + '</span>'
     if (cooler_mode !== 1)
-      label += '&nbsp;/&nbsp;' + cooler_power.toFixed(0) + '%';
-    label += ')';
+      label += '<span class="d-none d-xl-inline">&nbsp;(' + cooler_power.toFixed(0) + '%)</span>';
     style = '';
   }
 
