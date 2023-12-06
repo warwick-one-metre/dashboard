@@ -35,7 +35,13 @@ function selectCamera(name) {
     $('#video-button').hide();
   }
 
+  $('#audio-button span').text('Audio');
+  $('#video-button span').text('Video');
+
   stopAudioStream();
+  audioPlaying = false;
+  videoPlaying = false;
+
   if (audioUrl) {
     $('#audio-button-container').css('display', 'inline-block');
   } else {
