@@ -15,7 +15,7 @@ function opsConditions(row, cell, data) {
   if ('safe' in data && 'conditions' in data) {
     cell.html(data['safe'] ? 'SAFE' : 'NOT SAFE');
     cell.addClass(data['safe'] ? 'text-success' : 'text-danger');
-    opsConditionsTooltip(row, data);
+    rockitConditionsTooltip(row, data);
   } else {
     cell.html('NO DATA');
     cell.addClass('text-danger');

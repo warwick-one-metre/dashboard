@@ -68,12 +68,12 @@ function conditionFlags(row, cell, data) {
       'ice': 'Ice',
       'dew_point': 'Dew&nbsp;Point',
       'rain': 'Rain',
+      'sky_temp': 'Sky&nbsp;Temp',
       'ups': 'UPS&nbsp;Status',
       'diskspace': 'Disk&nbsp;Space',
       'link': 'Network',
       'hatch': 'Dome&nbsp;Hatch',
       'override': 'Override',
-      'clouds': 'Clouds',
       'dark': 'Dark',
       'dust': 'Dust'
     }
@@ -84,24 +84,27 @@ function conditionFlags(row, cell, data) {
     let safe = true;
     let tooltip = '<table style="margin: 15px">';
     let i = 0;
+    let	info_flags = Object.values(data['info_flags']);
     for (let c in data['flags']) {
-        if (i++ === 0)
-          tooltip += '<tr>';
+      if (c === 'clouds')
+        continue;
 
-        tooltip += '<td style="text-align: right;">' + (c in labels ? labels[c] : c) + ':</td>';
-        if (c in data['critical_flags']) {
-          if (data['flags'][c] === 1)
-            safe = false;
+      if (i++ === 0)
+        tooltip += '<tr>';
 
-          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data['flags'][c]] + '">' + (data['flags'][c] === 0 ? 'SAFE' : 'UNSAFE') + '</td>';
-        } else {
-          tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data['flags'][c]] + '">' + (data['flags'][c] === 0 ? 'SAFE' : 'WARN') + '</td>';
-        }
+      tooltip += '<td style="text-align: right;">' + (c in labels ? labels[c] : c) + ':</td>';
+      if (data['ignored_flags'].includes(c) || info_flags.includes(c)) {
+        tooltip += '<td style="padding: 0 5px; text-align: left" class="' + info_status_classes[data['flags'][c]] + '">' + (data['flags'][c] === 0 ? 'SAFE' : 'WARN') + '</td>';
+      } else {
+        if (data['flags'][c] === 1)
+          safe = false;
+        tooltip += '<td style="padding: 0 5px; text-align: left" class="' + status_classes[data['flags'][c]] + '">' + (data['flags'][c] === 0 ? 'SAFE' : 'UNSAFE') + '</td>';
+      }
 
-        if (i === 2) {
-          tooltip += '</tr>';
-          i = 0;
-        }
+      if (i === 2) {
+        tooltip += '</tr>';
+        i = 0;
+      }
     }
 
     tooltip += '</table>';

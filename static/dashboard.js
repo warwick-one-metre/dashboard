@@ -172,14 +172,11 @@ function seeingIfAvailable(row, cell, data) {
   }
 }
 
-function opsConditionsTooltip(row, data) {
+function rockitConditionsTooltip(row, data) {
   const status_classes = ['', 'text-success', 'text-warning', 'text-danger'];
   let tooltip = '<table style="margin: 5px">';
   let rows = 0;
   for (let c in data['conditions']) {
-    if (!(c in data['conditions']))
-      continue;
-
     tooltip += '<tr><td style="text-align: right;">' + c + ':</td>';
     const params = data['conditions'][c];
     for (let p in params)
@@ -203,7 +200,48 @@ function opsConditionsTooltip(row, data) {
   });
 }
 
-function opsStatus(row, cell, data) {
+function gotoConditionsTooltip(row, data) {
+  const status_classes = ['', 'text-success', 'text-warning', 'text-danger'];
+  const status_labels = ['UNKNOWN', 'SAFE', 'WARN', 'UNSAFE'];
+
+  let tooltip = '<table style="margin: 5px">';
+  let i = 0;
+  let rows = 0;
+  for (let c in data['conditions']) {
+    if (i++ === 0)
+      tooltip += '<tr>';
+
+    const p = data['conditions'][c];
+    tooltip += '<td style="text-align: right;">' + c + ':</td>';
+    tooltip += '<td style="padding: 0 5px" class="' + status_classes[p] + '">' + status_labels[p] + '</td>';
+
+    if (i === 2) {
+      tooltip += '</tr>';
+      rows += 1;
+      i = 0;
+    }
+  }
+
+  if (i !== 0) {
+    tooltip += '</tr>';
+    rows += 1;
+  }
+
+  if (rows === 0)
+    tooltip += '<tr><td style="text-align: center;">NO DATA</td></tr>'
+  tooltip += '</table>';
+
+  row.tooltip({
+    title: tooltip,
+    html: true,
+    sanitize: false,
+    animation: false,
+    container: 'body',
+    customClass: 'ops-tooltip'
+  });
+}
+
+function opsStatus(row, cell, data, makeTooltip) {
   if ('safe' in data && 'conditions' in data && 'dome_closed' in data && 'dome_auto' in data) {
     const mode_class = data['dome_auto'] ? 'text-success' : 'text-warning';
     const mode_label = data['dome_auto'] ? 'AUTO' : 'MANUAL';
@@ -215,9 +253,17 @@ function opsStatus(row, cell, data) {
       label += '&nbsp;(<span class="text-danger">ENV</span>)';
 
     cell.html(label);
-    opsConditionsTooltip(row, data);
+    makeTooltip(row, data);
   } else {
     cell.html('NO DATA');
     cell.addClass('text-danger');
   }
+}
+
+function rockitStatus(row, cell, data) {
+  opsStatus(row, cell, data, rockitConditionsTooltip)
+}
+
+function gotoStatus(row, cell, data) {
+    opsStatus(row, cell, data, gotoConditionsTooltip)
 }

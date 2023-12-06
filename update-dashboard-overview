@@ -143,11 +143,11 @@ def generate_json(output_path, date):
       'ice': 'Ice',
       'dew_point': 'Dew&nbsp;Point',
       'rain': 'Rain',
+      'sky_temp': 'Sky&nbsp;Temp',
       'ups': 'UPS&nbsp;Status',
       'diskspace': 'Disk&nbsp;Space',
       'link': 'Network',
       'override': 'Override',
-      'clouds': 'Clouds',
       'dark': 'Dark',
       'dust': 'Dust'
     }
@@ -159,16 +159,24 @@ def generate_json(output_path, date):
             'dome_closed': dome_data.get('dome', None) == 'closed',
             'dome_auto': dome_data.get('mode') == 'robotic',
             'safe': not dome_data.get('conditions_bad', True),
-            'observable': not dome_data.get('conditions_bad', True) and conditions_data.get('flags', {}).get('dark', 1) == 0,
+            'observable': not dome_data.get('lockdown', True),
             'conditions': {}
         }
+
+        info = conditions_data.get('info_flags', [])
         ignored = conditions_data.get('ignored_flags', [])
         for flag, value in conditions_data.get('flags', {}).items():
-            safe = 1 if value == 0 else 3
-            if flag in ignored:
-                safe = 0
+            if flag == 'clouds':
+                continue
 
-            output[f'{key}_ops']['conditions'][goto_flags.get(flag, flag)] = {'SAFE': safe}
+            if value == 0:
+                safe = 1
+            elif flag in ignored or flag in info:
+                safe = 2
+            else:
+                safe = 3
+
+            output[f'{key}_ops']['conditions'][goto_flags.get(flag, flag)] = safe
     try:
         with gzip.open(output_path + '.tmp', 'w') as output_file:
             output_file.write(json.dumps(output or {}).encode('utf-8'))
