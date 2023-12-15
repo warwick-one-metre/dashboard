@@ -331,7 +331,7 @@ function telFilt(row, cell, data) {
     style = 'text-danger';
     const filters = ['L', 'R', 'G', 'B'];
     if (filt_data && 'current_filter_num' in filt_data && filt_data['current_filter_num'] < 4) {
-      if (data['homed']) {
+      if (filt_data['homed']) {
         status = filters[filt_data['current_filter_num']];
         style = '';
       } else if (filt_data['status'] === 'Moving') {
