@@ -22,14 +22,14 @@ rm -rf %{buildroot}/srv/dashboard/dashboard/__pycache__
 
 mkdir -p %{buildroot}%{_bindir}
 %{__install} %{_sourcedir}/update-dashboard-data %{buildroot}%{_bindir}
+%{__install} %{_sourcedir}/update-dashboard-overview %{buildroot}%{_bindir}
 %{__install} %{_sourcedir}/update-dashboard-webcams %{buildroot}%{_bindir}
 
 mkdir -p %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/dashboard.service %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/update-dashboard-data.service %{buildroot}%{_unitdir}
-%{__install} %{_sourcedir}/update-dashboard-data.timer %{buildroot}%{_unitdir}
+%{__install} %{_sourcedir}/update-dashboard-overview.service %{buildroot}%{_unitdir}
 %{__install} %{_sourcedir}/update-dashboard-webcams.service %{buildroot}%{_unitdir}
-%{__install} %{_sourcedir}/update-dashboard-webcams.timer %{buildroot}%{_unitdir}
 
 mkdir -p %{buildroot}/etc/nginx/conf.d/
 %{__install} %{_sourcedir}/dashboard.conf %{buildroot}/etc/nginx/conf.d/dashboard.conf
@@ -37,17 +37,15 @@ mkdir -p %{buildroot}/etc/nginx/conf.d/
 %files
 %defattr(0744,nginx,nginx,0755)
 /srv/dashboard
-
-%defattr(0744,nfsnobody,nfsnobody,0755)
 /srv/dashboard/generated
 
 %defattr(-,root,root,-)
 %{_unitdir}/dashboard.service
 %{_unitdir}/update-dashboard-data.service
-%{_unitdir}/update-dashboard-data.timer
+%{_unitdir}/update-dashboard-overview.service
 %{_unitdir}/update-dashboard-webcams.service
-%{_unitdir}/update-dashboard-webcams.timer
 %{_bindir}/update-dashboard-data
+%{_bindir}/update-dashboard-overview
 %{_bindir}/update-dashboard-webcams
 /etc/nginx/conf.d/dashboard.conf
 
