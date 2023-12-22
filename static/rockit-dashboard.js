@@ -511,6 +511,24 @@ function swirExposure(row, cell, data) {
 function swirTemperature(row, cell, data) {
   const state = getData(data, ["state"]);
   const temperature = getData(data, ["sensor_temperature"]);
+
+  let label = 'ERROR';
+  let style = 'text-danger';
+  if (state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (temperature !== undefined) {
+    label = temperature.toFixed(0) + '&nbsp;&deg;C';
+    style = '';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function swirCooling(row, cell, data) {
+  const state = getData(data, ["state"]);
+  const temperature = getData(data, ["sensor_temperature"]);
   const cooler_mode = getData(data, ["cooler_mode"]);
 
   const cooler_labels = [
@@ -525,9 +543,8 @@ function swirTemperature(row, cell, data) {
   if (state === 0) {
     label = 'N/A';
     style = '';
-  } else if (cooler_mode !== undefined && temperature !== undefined) {
+  } else if (cooler_mode !== undefined) {
     label = '<span class="' + cooler_labels[cooler_mode][1] + '">' + cooler_labels[cooler_mode][0] + '</span>'
-    label += ' (' + temperature.toFixed(0) + '&nbsp;&deg;C)';
     style = '';
   }
 
