@@ -137,7 +137,7 @@ function dehumidifierState(row, cell, data) {
     const mode_class = mode === 1 ? 'text-success' : 'text-warning';
     const mode_label = mode === 1 ? 'AUTO' : 'MANUAL';
     const power_class = powered === 1 ? 'text-danger' : 'text-success';
-    const power_label = powered === 1 ? 'ON' : 'OFF';
+    const power_label = powered === 1 ? 'ENABLED' : 'DISABLED';
     let label = '<span class="' + mode_class + '">' + mode_label + '</span>&nbsp;/&nbsp;<span class="' + power_class + '">' + power_label + '</span>';
     cell.html(label);
   }
