@@ -387,6 +387,7 @@ function focusState(row, cell, data) {
 
 function qhyState(row, cell, data) {
   const cam_state = getData(data, row.data('cam-index'));
+  const vm_active = getData(data, row.data('camvirt-index'));
   const powered = getData(data, row.data('power-index'));
 
   const state = [
@@ -402,6 +403,9 @@ function qhyState(row, cell, data) {
   let label, style;
   if (cam_state === undefined || powered === undefined) {
     label = 'ERROR';
+    style = 'text-danger';
+  } else if (vm_active === false) {
+    label = 'VM OFFLINE';
     style = 'text-danger';
   } else if (powered === 0) {
     label = 'POWER OFF';

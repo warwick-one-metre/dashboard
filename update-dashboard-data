@@ -328,10 +328,10 @@ generate_json(BASE_OUTPUT_DIR + '/superwasp-private.json', [
     (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
     (daemons.superwasp_dome, 'superwasp_dome', lambda d: d.status()),
     (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
-    (daemons.superwasp_cam1, 'superwasp_cam_1', lambda d: d.report_status()),
-    (daemons.superwasp_cam2, 'superwasp_cam_2', lambda d: d.report_status()),
-    (daemons.superwasp_cam3, 'superwasp_cam_3', lambda d: d.report_status()),
-    (daemons.superwasp_cam4, 'superwasp_cam_4', lambda d: d.report_status()),
+    (daemons.superwasp_camvirt_das1, 'superwasp_cam_1', lambda d: d.report_camera_status('cam1')),
+    (daemons.superwasp_camvirt_das1, 'superwasp_cam_2', lambda d: d.report_camera_status('cam2')),
+    (daemons.superwasp_camvirt_das2, 'superwasp_cam_3', lambda d: d.report_camera_status('cam3')),
+    (daemons.superwasp_camvirt_das2, 'superwasp_cam_4', lambda d: d.report_camera_status('cam4')),
     (daemons.superwasp_lensheater, 'superwasp_lensheater', lambda d: d.report_status())
 ])
 
@@ -344,7 +344,7 @@ generate_json(BASE_OUTPUT_DIR + '/clasp-private.json', [
     (daemons.clasp_focus, 'clasp_focus', lambda d: d.report_status()),
     (daemons.clasp_dome, 'clasp_dome', lambda d: d.status()),
     (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
-    (daemons.clasp_camera_1, 'clasp_cam1', lambda d: d.report_status()),
+    (daemons.clasp_camvirt_1, 'clasp_cam1', lambda d: d.report_camera_status('cam1')),
     (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
 ])
 
