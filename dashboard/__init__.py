@@ -226,6 +226,14 @@ def w1m_dashboard():
     return render_template('onemetre.html', user_account=get_user_account())
 
 
+@app.route('/data/w1m/<path:path>')
+def w1m_generated_data(path):
+    account = get_user_account()
+    if 'w1m' in account['permissions'] and path in W1M_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, W1M_GENERATED_DATA[path])
+    abort(404)
+
+
 @app.route('/clasp/')
 def clasp_dashboard():
     account = get_user_account()
@@ -276,6 +284,7 @@ def halfmetre_generated_data(path):
         print(HALFMETRE_GENERATED_DATA[path])
         return send_from_directory(GENERATED_DATA_DIR, HALFMETRE_GENERATED_DATA[path])
     abort(404)
+
 
 @app.route('/goto/')
 def goto_dashboard():
@@ -617,15 +626,7 @@ def clasp_dashboard_data():
     if 'satellites' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/clasp-public.json'))
-    private = json.load(open(GENERATED_DATA_DIR + '/clasp-private.json'))
-    data.update(private)
-
-    data['previews'] = {
-        'cam1': json.load(open(GENERATED_DATA_DIR + '/dashboard-CAM1.json')),
-        'cam2': json.load(open(GENERATED_DATA_DIR + '/dashboard-CAM2.json'))
-    }
-
+    data = json.load(open(GENERATED_DATA_DIR + '/clasp.json'))
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
@@ -637,26 +638,10 @@ def w1m_dashboard_data():
     if 'w1m' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/onemetre-public.json'))
-    private = json.load(open(GENERATED_DATA_DIR + '/onemetre-private.json'))
-    data.update(private)
-
-    data['previews'] = {
-        'blue': json.load(open(GENERATED_DATA_DIR + '/dashboard-BLUE.json')),
-        'red': json.load(open(GENERATED_DATA_DIR + '/dashboard-RED.json'))
-    }
-
+    data = json.load(open(GENERATED_DATA_DIR + '/onemetre.json'))
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
-
-
-@app.route('/data/w1m/<path:path>')
-def w1m_generated_data(path):
-    account = get_user_account()
-    if 'w1m' in account['permissions'] and path in W1M_GENERATED_DATA:
-        return send_from_directory(GENERATED_DATA_DIR, W1M_GENERATED_DATA[path])
-    abort(404)
 
 
 @app.route('/data/goto/')
@@ -665,10 +650,7 @@ def goto_dashboard_data():
     if 'goto' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-public.json'))
-    data.update(json.load(open(GENERATED_DATA_DIR + '/goto-dome1-private.json')))
-    data.update(json.load(open(GENERATED_DATA_DIR + '/goto-dome2-private.json')))
-
+    data = json.load(open(GENERATED_DATA_DIR + '/goto.json'))
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
@@ -680,17 +662,7 @@ def superwasp_dashboard_data():
     if 'satellites' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/superwasp-public.json'))
-    private = json.load(open(GENERATED_DATA_DIR + '/superwasp-private.json'))
-    data.update(private)
-
-    data['previews'] = {
-        'cam1': json.load(open(GENERATED_DATA_DIR + '/dashboard-1.json')),
-        'cam2': json.load(open(GENERATED_DATA_DIR + '/dashboard-2.json')),
-        'cam3': json.load(open(GENERATED_DATA_DIR + '/dashboard-3.json')),
-        'cam4': json.load(open(GENERATED_DATA_DIR + '/dashboard-4.json'))
-    }
-
+    data = json.load(open(GENERATED_DATA_DIR + '/superwasp.json'))
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
@@ -702,33 +674,7 @@ def halfmetre_dashboard_data():
     if 'halfmetre' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/halfmetre-public.json'))
-    private = json.load(open(GENERATED_DATA_DIR + '/halfmetre-private.json'))
-    data.update(private)
-
-    data['previews'] = {
-        'halfmetre': json.load(open(GENERATED_DATA_DIR + '/dashboard-HALFMETRE.json'))
-    }
-
+    data = json.load(open(GENERATED_DATA_DIR + '/halfmetre.json'))
     response = jsonify(**data)
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
-
-
-# Raw sensor data for GOTO ops
-@app.route('/data/raw/w1m-vaisala')
-def raw_w1m_vaisala():
-    data = json.load(open(GENERATED_DATA_DIR + '/onemetre-vaisala.json'))
-    return jsonify(**data)
-
-
-@app.route('/data/raw/goto-vaisala')
-def raw_goto_vaisala():
-    data = json.load(open(GENERATED_DATA_DIR + '/goto-vaisala.json'))
-    return jsonify(**data)
-
-
-@app.route('/data/raw/netping')
-def raw_netping():
-    data = json.load(open(GENERATED_DATA_DIR + '/netping.json'))
-    return jsonify(**data)

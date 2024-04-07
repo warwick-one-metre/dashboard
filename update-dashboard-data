@@ -22,20 +22,14 @@
 
 import datetime
 import json
+import os.path
 from rockit.common import daemons, log
 
 # This directory must be shared with the TCS via NFS
-BASE_OUTPUT_DIR = '/srv/dashboard/generated'
-STATUS_FILE = BASE_OUTPUT_DIR + '/update-dashboard-data.json'
-
-try:
-    with open(STATUS_FILE, 'r') as infile:
-        status = json.load(infile)
-except Exception:
-    status = {}
+GENERATED_DATA_DIR = '/srv/dashboard/generated'
 
 
-def query_daemon(daemon, key, query):
+def query_daemon(daemon, key, query, status):
     """Query status data from a daemon setting / clearing error flags on failure"""
     try:
         with daemon.connect() as d:
@@ -61,27 +55,6 @@ def query_daemon(daemon, key, query):
     return None
 
 
-def generate_json(output_path, data, force_key=False):
-    """Queries a set of daemons and stores the save a json file to the specified path"""
-    output = {'date': datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')}
-    for daemon, key, query in data:
-        response = query_daemon(daemon, key, query)
-        if response:
-            if len(data) == 1 and not force_key:
-                output = response
-            else:
-                output[key] = response
-    try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
-
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
-
-
 def extract_environment_data(data, data_map):
     """Extract weather data from the observatory_environment response
        data_map defines a dictionary of daemons and sensors that are requested
@@ -105,7 +78,40 @@ def extract_environment_data(data, data_map):
         return {}
 
 
-def generate_goto_json(output_path, date, environment):
+def extract_daemon_data(daemon_map, status):
+    output = {}
+    for daemon, key, query in daemon_map:
+        try:
+            response = query_daemon(daemon, key, query, status)
+            if response:
+                if len(daemon_map) == 1:
+                    output = response
+                else:
+                    output[key] = response
+        except:
+            continue
+    return output
+
+
+def extract_preview_data(preview_map):
+    output = {}
+    for camera_id, filename in preview_map.items():
+        with open(os.path.join(GENERATED_DATA_DIR, filename), encoding='utf-8') as f:
+            output[camera_id] = json.load(f)
+
+    return {'previews': output}
+
+
+def write_output(output, output_path):
+    try:
+        with open(os.path.join(GENERATED_DATA_DIR, output_path), 'w', encoding='utf-8') as f:
+            json.dump(output or {}, f)
+    except Exception as e:
+        print('failed to write json with error: ' + str(e))
+        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+
+
+def generate_goto_json(output_path, date, environment, status):
     """Queries the observatory environment daemon and saves as json
        the data useful for the GOTO dashboard page
     """
@@ -129,18 +135,34 @@ def generate_goto_json(output_path, date, environment):
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
-    try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
+    output.update(extract_daemon_data([
+        (daemons.goto_dome1_gtecs_power, 'goto_dome1_power', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_mnt, 'goto_dome1_mnt', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_dome, 'goto_dome1_dome', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_filt, 'goto_dome1_filt', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_foc, 'goto_dome1_foc', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_cam, 'goto_dome1_cam', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_exq, 'goto_dome1_exq', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_ota, 'goto_dome1_ota', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome1_gtecs_conditions, 'goto_dome1_conditions', lambda d: d.get_info(force_update=False))
+    ], status))
 
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+    output.update(extract_daemon_data([
+        (daemons.goto_dome2_gtecs_power, 'goto_dome2_power', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_mnt, 'goto_dome2_mnt', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_dome, 'goto_dome2_dome', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_filt, 'goto_dome2_filt', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_foc, 'goto_dome2_foc', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_cam, 'goto_dome2_cam', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_exq, 'goto_dome2_exq', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_ota, 'goto_dome2_ota', lambda d: d.get_info(force_update=False)),
+        (daemons.goto_dome2_gtecs_conditions, 'goto_dome2_conditions', lambda d: d.get_info(force_update=False))
+    ], status))
+
+    write_output(output, output_path)
 
 
-def generate_onemetre_json(output_path, date, environment):
+def generate_onemetre_json(output_path, date, environment, status):
     """Queries daemons to generate the public data for the W1m dashboard page"""
     output = {'date': date}
     if environment:
@@ -159,24 +181,26 @@ def generate_onemetre_json(output_path, date, environment):
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
-    output['w1m_power'] = query_daemon(daemons.onemetre_power, 'w1m_power',
-                                       lambda d: d.last_measurement())
+    output.update(extract_daemon_data([
+        (daemons.onemetre_operations, 'w1m_ops', lambda d: d.status()),
+        (daemons.onemetre_telescope, 'w1m_telescope', lambda d: d.report_status()),
+        (daemons.onemetre_dome, 'w1m_dome', lambda d: d.status()),
+        (daemons.onemetre_pipeline, 'w1m_pipeline', lambda d: d.report_status()),
+        (daemons.onemetre_blue_camera, 'w1m_blue', lambda d: d.report_status()),
+        (daemons.onemetre_red_camera, 'w1m_red', lambda d: d.report_status()),
+        (daemons.onemetre_power, 'w1m_power', lambda d: d.last_measurement()),
+        (daemons.onemetre_dehumidifier, 'w1m_dehumidifier', lambda d: d.status())
+    ], status))
 
-    output['w1m_dehumidifier'] = query_daemon(daemons.onemetre_dehumidifier, 'w1m_dehumidifier',
-                                              lambda d: d.status())
+    output.update(extract_preview_data({
+        'blue': 'dashboard-BLUE.json',
+        'red': 'dashboard-RED.json'
+    }))
 
-    try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
-
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+    write_output(output, output_path)
 
 
-def generate_superwasp_json(output_path, date, environment):
+def generate_superwasp_json(output_path, date, environment, status):
     """Queries daemons to generate the public data for the SuperWASP dashboard page"""
     output = {'date': date}
     if environment:
@@ -193,22 +217,31 @@ def generate_superwasp_json(output_path, date, environment):
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
-    output['superwasp_power'] = query_daemon(daemons.superwasp_power, 'superwasp_power',
-                                             lambda d: d.last_measurement())
-    output['superwasp_dehumidifier'] = query_daemon(daemons.superwasp_dehumidifier, 'superwasp_dehumidifier',
-                                                    lambda d: d.status())
-    try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
+    output.update(extract_daemon_data([
+        (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
+        (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
+        (daemons.superwasp_dome, 'superwasp_dome', lambda d: d.status()),
+        (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
+        (daemons.superwasp_camvirt_das1, 'superwasp_cam_1', lambda d: d.report_camera_status('cam1')),
+        (daemons.superwasp_camvirt_das1, 'superwasp_cam_2', lambda d: d.report_camera_status('cam2')),
+        (daemons.superwasp_camvirt_das2, 'superwasp_cam_3', lambda d: d.report_camera_status('cam3')),
+        (daemons.superwasp_camvirt_das2, 'superwasp_cam_4', lambda d: d.report_camera_status('cam4')),
+        (daemons.superwasp_lensheater, 'superwasp_lensheater', lambda d: d.report_status()),
+        (daemons.superwasp_power, 'superwasp_power', lambda d: d.last_measurement()),
+        (daemons.superwasp_dehumidifier, 'superwasp_dehumidifier', lambda d: d.status())
+    ], status))
 
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+    output.update(extract_preview_data({
+        'cam1': 'dashboard-1.json',
+        'cam2': 'dashboard-2.json',
+        'cam3': 'dashboard-3.json',
+        'cam4': 'dashboard-4.json',
+    }))
+
+    write_output(output, output_path)
 
 
-def generate_halfmetre_json(output_path, date, environment):
+def generate_halfmetre_json(output_path, date, environment, status):
     """Queries daemons to generate the public data for the half metre dashboard page"""
     output = {'date': date}
     if environment:
@@ -226,23 +259,25 @@ def generate_halfmetre_json(output_path, date, environment):
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
-    output['halfmetre_power'] = query_daemon(daemons.halfmetre_power, 'halfmetre_power',
-                                             lambda d: d.last_measurement())
-    output['halfmetre_aircon'] = query_daemon(daemons.halfmetre_aircon, 'halfmetre_aircon',
-                                              lambda d: d.last_measurement())
+    output.update(extract_daemon_data([
+        (daemons.halfmetre_operations, 'halfmetre_ops', lambda d: d.status()),
+        (daemons.halfmetre_telescope, 'halfmetre_telescope', lambda d: d.report_status()),
+        (daemons.halfmetre_roof, 'halfmetre_roof', lambda d: d.status()),
+        (daemons.halfmetre_pipeline, 'halfmetre_pipeline', lambda d: d.report_status()),
+        (daemons.halfmetre_cam, 'halfmetre_cam', lambda d: d.report_status()),
+        (daemons.halfmetre_focuser, 'halfmetre_focus', lambda d: d.report_status()),
+        (daemons.halfmetre_power, 'halfmetre_power', lambda d: d.last_measurement()),
+        (daemons.halfmetre_aircon, 'halfmetre_aircon', lambda d: d.last_measurement())
+    ], status))
 
-    try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
+    output.update(extract_preview_data({
+        'halfmetre': 'dashboard-HALFMETRE.json'
+    }))
 
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+    write_output(output, output_path)
 
 
-def generate_clasp_json(output_path, date, environment):
+def generate_clasp_json(output_path, date, environment, status):
     """Queries daemons to generate the public data for the CLASP dashboard page"""
     output = {'date': date}
     if environment:
@@ -261,114 +296,46 @@ def generate_clasp_json(output_path, date, environment):
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
-    output['clasp_power'] = query_daemon(daemons.clasp_power, 'clasp_power',
-                                       lambda d: d.last_measurement())
-    output['clasp_dehumidifier'] = query_daemon(daemons.clasp_dehumidifier, 'clasp_dehumidifier',
-                                                lambda d: d.status())
+    output.update(extract_daemon_data([
+        (daemons.clasp_operations, 'clasp_ops', lambda d: d.status()),
+        (daemons.clasp_telescope, 'clasp_mount', lambda d: d.report_status()),
+        (daemons.clasp_focus, 'clasp_focus', lambda d: d.report_status()),
+        (daemons.clasp_dome, 'clasp_dome', lambda d: d.status()),
+        (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
+        (daemons.clasp_camvirt_1, 'clasp_cam1', lambda d: d.report_camera_status('cam1')),
+        (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
+        (daemons.clasp_power, 'clasp_power', lambda d: d.last_measurement()),
+        (daemons.clasp_dehumidifier, 'clasp_dehumidifier', lambda d: d.status())
+    ], status))
 
+    output.update(extract_preview_data({
+        'cam1': 'dashboard-CAM1.json',
+        'cam2': 'dashboard-CAM2.json'
+    }))
+
+    write_output(output, output_path)
+
+
+def generate_data():
+    status_file_path = os.path.join(GENERATED_DATA_DIR, 'update-dashboard-data.json')
     try:
-        with open(output_path, 'w') as output_file:
-            json.dump(output or {}, output_file)
+        with open(status_file_path, 'r', encoding='utf-8') as f:
+            status = json.load(f)
+    except Exception:
+        status = {}
 
-        with open(STATUS_FILE, 'w') as output_file:
-            json.dump(status, output_file)
-    except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+    date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
+    environment = query_daemon(daemons.observatory_environment, 'observatory_environment', lambda d: d.status(), status)
+
+    generate_onemetre_json('onemetre.json', date, environment, status)
+    generate_goto_json('goto.json', date, environment, status)
+    generate_superwasp_json('superwasp.json', date, environment, status)
+    generate_clasp_json('clasp.json', date, environment, status)
+    generate_halfmetre_json('halfmetre.json', date, environment, status)
+
+    with open(status_file_path, 'w', encoding='utf-8') as f:
+        json.dump(status, f)
 
 
-date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
-environment = query_daemon(daemons.observatory_environment, 'observatory_environment',
-                           lambda d: d.status())
-
-# One metre dashboard pages
-generate_onemetre_json(BASE_OUTPUT_DIR + '/onemetre-public.json', date, environment)
-
-generate_json(BASE_OUTPUT_DIR + '/onemetre-private.json', [
-    (daemons.onemetre_operations, 'w1m_ops', lambda d: d.status()),
-    (daemons.onemetre_telescope, 'w1m_telescope', lambda d: d.report_status()),
-    (daemons.onemetre_dome, 'w1m_dome', lambda d: d.status()),
-    (daemons.onemetre_pipeline, 'w1m_pipeline', lambda d: d.report_status()),
-    (daemons.onemetre_blue_camera, 'w1m_blue', lambda d: d.report_status()),
-    (daemons.onemetre_red_camera, 'w1m_red', lambda d: d.report_status())
-])
-
-# GOTO dashboard pages
-generate_goto_json(BASE_OUTPUT_DIR + '/goto-public.json', date, environment)
-
-generate_json(BASE_OUTPUT_DIR + '/goto-dome1-private.json', [
-    (daemons.goto_dome1_gtecs_power, 'goto_dome1_power', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_mnt, 'goto_dome1_mnt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_dome, 'goto_dome1_dome', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_filt, 'goto_dome1_filt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_foc, 'goto_dome1_foc', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_cam, 'goto_dome1_cam', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_exq, 'goto_dome1_exq', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_ota, 'goto_dome1_ota', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome1_gtecs_conditions, 'goto_dome1_conditions', lambda d: d.get_info(force_update=False))
-])
-
-generate_json(BASE_OUTPUT_DIR + '/goto-dome2-private.json', [
-    (daemons.goto_dome2_gtecs_power, 'goto_dome2_power', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_mnt, 'goto_dome2_mnt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_dome, 'goto_dome2_dome', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_filt, 'goto_dome2_filt', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_foc, 'goto_dome2_foc', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_cam, 'goto_dome2_cam', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_exq, 'goto_dome2_exq', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_ota, 'goto_dome2_ota', lambda d: d.get_info(force_update=False)),
-    (daemons.goto_dome2_gtecs_conditions, 'goto_dome2_conditions', lambda d: d.get_info(force_update=False))
-])
-
-# SuperWASP dashboard pages
-generate_superwasp_json(BASE_OUTPUT_DIR + '/superwasp-public.json', date, environment)
-
-generate_json(BASE_OUTPUT_DIR + '/superwasp-private.json', [
-    (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
-    (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
-    (daemons.superwasp_dome, 'superwasp_dome', lambda d: d.status()),
-    (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
-    (daemons.superwasp_camvirt_das1, 'superwasp_cam_1', lambda d: d.report_camera_status('cam1')),
-    (daemons.superwasp_camvirt_das1, 'superwasp_cam_2', lambda d: d.report_camera_status('cam2')),
-    (daemons.superwasp_camvirt_das2, 'superwasp_cam_3', lambda d: d.report_camera_status('cam3')),
-    (daemons.superwasp_camvirt_das2, 'superwasp_cam_4', lambda d: d.report_camera_status('cam4')),
-    (daemons.superwasp_lensheater, 'superwasp_lensheater', lambda d: d.report_status())
-])
-
-# CLASP dashboard pages
-generate_clasp_json(BASE_OUTPUT_DIR + '/clasp-public.json', date, environment)
-
-generate_json(BASE_OUTPUT_DIR + '/clasp-private.json', [
-    (daemons.clasp_operations, 'clasp_ops', lambda d: d.status()),
-    (daemons.clasp_telescope, 'clasp_mount', lambda d: d.report_status()),
-    (daemons.clasp_focus, 'clasp_focus', lambda d: d.report_status()),
-    (daemons.clasp_dome, 'clasp_dome', lambda d: d.status()),
-    (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
-    (daemons.clasp_camvirt_1, 'clasp_cam1', lambda d: d.report_camera_status('cam1')),
-    (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
-])
-
-# Half metre dashboard pages
-generate_halfmetre_json(BASE_OUTPUT_DIR + '/halfmetre-public.json', date, environment)
-
-generate_json(BASE_OUTPUT_DIR + '/halfmetre-private.json', [
-    (daemons.halfmetre_operations, 'halfmetre_ops', lambda d: d.status()),
-    (daemons.halfmetre_telescope, 'halfmetre_telescope', lambda d: d.report_status()),
-    (daemons.halfmetre_roof, 'halfmetre_roof', lambda d: d.status()),
-    (daemons.halfmetre_pipeline, 'halfmetre_pipeline', lambda d: d.report_status()),
-    (daemons.halfmetre_cam, 'halfmetre_cam', lambda d: d.report_status()),
-    (daemons.halfmetre_focuser, 'halfmetre_focus', lambda d: d.report_status()),
-])
-
-# Raw data for GOTO operations
-generate_json(BASE_OUTPUT_DIR + '/onemetre-vaisala.json', [
-    (daemons.onemetre_vaisala, 'vaisala', lambda d: d.last_measurement())
-])
-
-generate_json(BASE_OUTPUT_DIR + '/goto-vaisala.json', [
-    (daemons.goto_vaisala, 'goto-vaisala', lambda d: d.last_measurement())
-])
-
-generate_json(BASE_OUTPUT_DIR + '/netping.json', [
-    (daemons.observatory_network_ping, 'netping', lambda d: d.last_measurement())
-])
+if __name__ == '__main__':
+    generate_data()
