@@ -33,9 +33,8 @@ from PIL import Image
 import astropy.units as u
 
 BASE_OUTPUT_DIR = '/srv/dashboard/generated/cameras/'
-GTCSKY_URL = 'http://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg'
+GTCSKY_URL = 'https://www.gtc.iac.es/multimedia/netcam/camaraAllSky.jpg'
 EUMETSAT_URL = 'https://eumetview.eumetsat.int/static-images/MSG/IMAGERY/IR108/BW/WESTERNAFRICA/'
-SKYCAM_PATH = '/srv/dashboard/generated/allsky-last-image.jpg'
 TIME_UNKNOWN = Time('2000-01-01T12:00:00')
 WEBCAMS = {
     'w1m': 'http://10.2.6.208/axis-cgi/jpg/image.cgi?resolution=1280x960',
@@ -49,10 +48,6 @@ WEBCAMS = {
     'ext2': 'http://10.2.6.207/axis-cgi/jpg/image.cgi?resolution=1280x720'
 }
 
-# TESTING
-if False:
-    BASE_OUTPUT_DIR = 'generated'
-    WEBCAMS = {name: f'http://lapalma-observatory.warwick.ac.uk/webcam/{name}/static' for name in WEBCAMS}
 
 def fetch_webcam_image(url, timeout=5):
     """
@@ -69,7 +64,7 @@ def fetch_webcam_image(url, timeout=5):
 
         return Image.open(BytesIO(r.content))
     except Exception:
-        print('Failed to fetch image `{0}` with exception:'.format(GTCSKY_URL))
+        print('Failed to fetch image `{0}` with exception:'.format(url))
         traceback.print_exc(file=sys.stdout)
         return None
 
@@ -81,7 +76,7 @@ def fetch_gtcsky_image(timeout=5):
         :return PIL Image or None on error
     """
     try:
-        r = requests.get(GTCSKY_URL, timeout=timeout)
+        r = requests.get(GTCSKY_URL, timeout=timeout, verify=False)
         if r.status_code != 200:
             print('Failed to fetch image `{0}` (HTTP {1})'.format(GTCSKY_URL, r.status_code))
             return None
@@ -216,19 +211,6 @@ for name, url in WEBCAMS.items():
         webcam_image.thumbnail((190, 190))
         webcam_image.save(os.path.join(BASE_OUTPUT_DIR, name + '_thumb.jpg'), 'JPEG', quality=80,
                           optimize=True, progressive=True, clobber=True)
-
-try:
-    skycam_image = Image.open(SKYCAM_PATH)
-    skycam_image.thumbnail((1280, 1280))
-    skycam_image.save(os.path.join(BASE_OUTPUT_DIR, 'allsky.jpg'), 'JPEG', quality=80,
-                      optimize=True, progressive=True, clobber=True)
-
-    skycam_image.thumbnail((190, 190))
-    skycam_image.save(os.path.join(BASE_OUTPUT_DIR, 'allsky_thumb.jpg'), 'JPEG', quality=80,
-                      optimize=True, progressive=True, clobber=True)
-except Exception:
-    print('Failed to fetch image `{0}` with exception:'.format(GTCSKY_URL))
-    traceback.print_exc(file=sys.stdout)
 
 with open(os.path.join(BASE_OUTPUT_DIR, 'metadata.json'), 'w', encoding='utf-8') as outfile:
     json.dump({
