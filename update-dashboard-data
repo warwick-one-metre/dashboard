@@ -21,8 +21,10 @@
 """Run from a systemd timer to generate status json that is served by the web dashboard"""
 
 import datetime
+import gzip
 import json
 import os.path
+import shutil
 from rockit.common import daemons, log
 
 # This directory must be shared with the TCS via NFS
@@ -102,10 +104,13 @@ def extract_preview_data(preview_map):
     return {'previews': output}
 
 
-def write_output(output, output_path):
+def write_output(output, output_filename):
     try:
-        with open(os.path.join(GENERATED_DATA_DIR, output_path), 'w', encoding='utf-8') as f:
-            json.dump(output or {}, f)
+        output_path = os.path.join(GENERATED_DATA_DIR, output_filename)
+        with gzip.open(output_path + '.tmp', 'w') as f:
+            f.write(json.dumps(output or {}).encode('utf-8'))
+
+        shutil.move(output_path + '.tmp', output_path)
     except Exception as e:
         print('failed to write json with error: ' + str(e))
         log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
@@ -331,11 +336,11 @@ def generate_data():
     date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
     environment = query_daemon(daemons.observatory_environment, 'observatory_environment', lambda d: d.status(), status)
 
-    generate_onemetre_json('onemetre.json', date, environment, status)
-    generate_goto_json('goto.json', date, environment, status)
-    generate_superwasp_json('superwasp.json', date, environment, status)
-    generate_clasp_json('clasp.json', date, environment, status)
-    generate_halfmetre_json('halfmetre.json', date, environment, status)
+    generate_onemetre_json('onemetre.json.gz', date, environment, status)
+    generate_goto_json('goto.json.gz', date, environment, status)
+    generate_superwasp_json('superwasp.json.gz', date, environment, status)
+    generate_clasp_json('clasp.json.gz', date, environment, status)
+    generate_halfmetre_json('halfmetre.json.gz', date, environment, status)
 
     with open(status_file_path, 'w', encoding='utf-8') as f:
         json.dump(status, f)

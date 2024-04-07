@@ -626,9 +626,9 @@ def clasp_dashboard_data():
     if 'satellites' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/clasp.json'))
-    response = jsonify(**data)
+    response = send_from_directory(GENERATED_DATA_DIR, 'clasp.json.gz')
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
     return response
 
 
@@ -638,9 +638,9 @@ def w1m_dashboard_data():
     if 'w1m' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/onemetre.json'))
-    response = jsonify(**data)
+    response = send_from_directory(GENERATED_DATA_DIR, 'onemetre.json.gz')
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
     return response
 
 
@@ -650,9 +650,9 @@ def goto_dashboard_data():
     if 'goto' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/goto.json'))
-    response = jsonify(**data)
+    response = send_from_directory(GENERATED_DATA_DIR, 'goto.json.gz')
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
     return response
 
 
@@ -662,9 +662,9 @@ def superwasp_dashboard_data():
     if 'satellites' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/superwasp.json'))
-    response = jsonify(**data)
+    response = send_from_directory(GENERATED_DATA_DIR, 'superwasp.json.gz')
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
     return response
 
 
@@ -674,7 +674,7 @@ def halfmetre_dashboard_data():
     if 'halfmetre' not in account['permissions']:
         abort(404)
 
-    data = json.load(open(GENERATED_DATA_DIR + '/halfmetre.json'))
-    response = jsonify(**data)
+    response = send_from_directory(GENERATED_DATA_DIR, 'halfmetre.json.gz')
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Content-Encoding'] = 'gzip'
     return response
