@@ -43,7 +43,7 @@
                 <div class="col-12 g-2">
                     <div class="list-group rounded-0">
                         <span class="list-group-item text-center fw-bold">Action Queue</span>
-                        <div class="list-group-item overflow-y-scroll" style="height: 156px" data-index='["clasp_ops", "telescope"]' data-notify="opsActionsQueue">
+                        <div class="list-group-item overflow-y-scroll" style="height: 189px" data-index='["clasp_ops", "telescope"]' data-notify="opsActionsQueue">
                         </div>
                     </div>
                 </div>
@@ -99,6 +99,10 @@
                         <td>Focus</td>
                         <td data-focuser-index='["clasp_focus"]' data-power-index='["clasp_power", "focuser"]' data-temperature-index='["clasp_focus", "temperature", "rasa1"]' data-focuser="1" data-generator="focusState"></td>
                         <td data-focuser-index='["clasp_focus"]' data-power-index='["clasp_power", "focuser"]' data-temperature-index='["clasp_focus", "temperature", "rasa2"]' data-focuser="2" data-generator="focusState"></td>
+                    </tr>
+                    <tr>
+                        <td>Chiller</td>
+                        <td colspan="2" data-index='["clasp_chiller"]' data-generator="chillerState"></td>
                     </tr>
                     </tbody>
                 </table>

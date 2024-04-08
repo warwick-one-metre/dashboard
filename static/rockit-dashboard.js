@@ -357,7 +357,6 @@ function focusState(row, cell, data) {
   const current_steps = getData(focuser_data, ['current_steps_' + focuser]);
   const moving = getData(focuser_data, ['moving_' + focuser]);
 
-  console.log('powered', powered);
   let label, style;
   if (powered === 0) {
     label = 'POWER OFF';
@@ -659,6 +658,37 @@ function lensTemperature(row, cell, data) {
   } else {
     cell.html(data.toFixed(0) + ' &deg;C');
   }
+}
+
+function chillerState(row, cell, data) {
+  const mode = getData(data, ["mode"]);
+  const status = getData(data, ["status"]);
+  const tec_power = getData(data, ["tec_power"]);
+  const water_temp = getData(data, ["water_temp"]);
+
+  let mode_label;
+  if (mode === 1) {
+    mode_label = '<span class="text-success">AUTO</span>';
+  } else {
+    mode_label = '<span class="text-warning">MANUAL</span>';
+  }
+
+  let status_label;
+  if (status === 1) {
+    status_label = '<span>IDLE</span>';
+  } else if (status === 2) {
+    status_label = '<span class="text-info">COOLING</span>&nbsp;(' + tec_power.toFixed(0) + '%)';
+  } else if (status === 3) {
+    status_label = '<span class="text-warning">HEATING</span>&nbsp;(' + tec_power.toFixed(0) + '%)';
+  } else {
+    status_label = '<span class="text-danger">OFFLINE</span>';
+  }
+
+  let label = mode_label + '&nbsp;/&nbsp;' + status_label;
+  if (water_temp !== undefined)
+    label += '&nbsp;/&nbsp;' + water_temp.toFixed(1) + '&deg;C';
+
+  cell.html(label);
 }
 
 function roofBattery(row, cell, data) {

@@ -314,7 +314,8 @@ def generate_clasp_json(output_path, date, environment, status):
         (daemons.clasp_camvirt_1, 'clasp_cam1', lambda d: d.report_camera_status('cam1')),
         (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
         (daemons.clasp_power, 'clasp_power', lambda d: d.last_measurement()),
-        (daemons.clasp_dehumidifier, 'clasp_dehumidifier', lambda d: d.status())
+        (daemons.clasp_dehumidifier, 'clasp_dehumidifier', lambda d: d.status()),
+        (daemons.clasp_chiller, 'clasp_chiller', lambda d: d.report_status())
     ], status))
 
     output.update(extract_preview_data({
