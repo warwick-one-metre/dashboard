@@ -65,7 +65,7 @@ HALFMETRE_GENERATED_DATA = {
     'clip': 'ddashboard-HALFMETRE-clip.jpg',
 }
 
-SUPERWASP_GENERATED_DATA = {
+STING_GENERATED_DATA = {
     'cam1/thumb': 'dashboard-1-thumb.jpg',
     'cam1/clip': 'dashboard-1-clip.jpg',
     'cam2/thumb': 'dashboard-2-thumb.jpg',
@@ -251,20 +251,20 @@ def clasp_generated_data(path):
     abort(404)
 
 
-@app.route('/superwasp/')
-def superwasp_dashboard():
+@app.route('/sting/')
+def sting_dashboard():
     account = get_user_account()
     if 'satellites' not in account['permissions']:
         return redirect(url_for('site_overview'))
 
-    return render_template('superwasp.html', user_account=get_user_account())
+    return render_template('sting.html', user_account=get_user_account())
 
 
-@app.route('/data/superwasp/<path:path>')
-def superwasp_generated_data(path):
+@app.route('/data/sting/<path:path>')
+def sting_generated_data(path):
     account = get_user_account()
-    if 'satellites' in account['permissions'] and path in SUPERWASP_GENERATED_DATA:
-        return send_from_directory(GENERATED_DATA_DIR, SUPERWASP_GENERATED_DATA[path])
+    if 'satellites' in account['permissions'] and path in STING_GENERATED_DATA:
+        return send_from_directory(GENERATED_DATA_DIR, STING_GENERATED_DATA[path])
     abort(404)
 
 
@@ -351,7 +351,7 @@ def site_overview():
             SiteCamera('goto2', 'GOTO 2', authorised=authorised_goto, video=True, audio=True, light=True, infrared=True),
             SiteCamera('halfmetre', 'Half Metre', authorised=authorised_halfmetre, video=True, audio=True, light=True, infrared=True),
             SiteCamera('w1m', 'W1m', authorised=authorised_onemetre, video=True, audio=True, light=True, infrared=True),
-            SiteCamera('superwasp', 'SuperWASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
+            SiteCamera('sting', 'STING', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True),
             SiteCamera('clasp', 'CLASP', authorised=authorised_satellites, video=True, audio=True, light=True, infrared=True)
         ]
 
@@ -363,7 +363,7 @@ def site_overview():
 @app.route('/camera/<path:camera>')
 def camera_image(camera):
     authorised = len(get_user_account()['permissions']) > 0
-    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat'] or (authorised and camera in ['serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']):
+    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat'] or (authorised and camera in ['serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'sting', 'clasp']):
         return send_from_directory(os.path.join(GENERATED_DATA_DIR, 'cameras'), camera + '.jpg')
     abort(404)
 
@@ -371,7 +371,7 @@ def camera_image(camera):
 @app.route('/camera/<path:camera>/thumb')
 def camera_thumb(camera):
     authorised = len(get_user_account()['permissions']) > 0
-    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat'] or (authorised and camera in ['serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'superwasp', 'clasp']):
+    if camera in ['ext1', 'ext2', 'allsky', 'gtcsky', 'eumetsat'] or (authorised and camera in ['serverroom', 'goto1', 'goto2', 'halfmetre', 'w1m', 'sting', 'clasp']):
         return send_from_directory(os.path.join(GENERATED_DATA_DIR, 'cameras'), camera + '_thumb.jpg')
     abort(404)
 
@@ -407,7 +407,7 @@ def switch_light(light, state):
         if light == 'goto2' and 'goto' in account['permissions']:
             return _toggle_leds(daemons.goto_dome2_gtecs_power, 'leds', account, state)
 
-        if light == 'superwasp' and 'satellites' in account['permissions']:
+        if light == 'sting' and 'satellites' in account['permissions']:
             return _toggle_leds(daemons.superwasp_power, 'light', account, state)
 
         if (light in ['halfmetre', 'serverroom']) and 'satellites' in account['permissions']:
@@ -416,11 +416,11 @@ def switch_light(light, state):
         if light == 'clasp' and 'satellites' in account['permissions']:
             return _toggle_leds(daemons.clasp_power, 'light', account, state)
 
-        if light == 'superwaspir' and 'satellites' in account['permissions']:
-            return _toggle_webcam_ir('10.2.6.172', app.config['WEBCAM_SUPERWASP_PASSWORD'], state == 'on')
+        if light == 'stingir' and 'satellites' in account['permissions']:
+            return _toggle_webcam_ir('10.2.6.172', app.config['WEBCAM_STING_PASSWORD'], state == 'on')
 
         if light == 'halfmetreir' and 'satellites' in account['permissions']:
-            return _toggle_webcam_ir('10.2.6.118', app.config['WEBCAM_SUPERWASP_PASSWORD'], state == 'on')
+            return _toggle_webcam_ir('10.2.6.118', app.config['WEBCAM_HALFMETRE_PASSWORD'], state == 'on')
 
         if light == 'w1mir' and 'w1m' in account['permissions']:
             return _toggle_webcam_ir('10.2.6.208', app.config['WEBCAM_W1M_PASSWORD'], state == 'on')
@@ -507,8 +507,8 @@ def halfmetre_log():
     })
 
 
-@app.route('/data/superwasp/log')
-def superwasp_log():
+@app.route('/data/sting/log')
+def sting_log():
     account = get_user_account()
     if 'satellites' not in account['permissions']:
         abort(404)
@@ -656,13 +656,13 @@ def goto_dashboard_data():
     return response
 
 
-@app.route('/data/superwasp/')
-def superwasp_dashboard_data():
+@app.route('/data/sting/')
+def sting_dashboard_data():
     account = get_user_account()
     if 'satellites' not in account['permissions']:
         abort(404)
 
-    response = send_from_directory(GENERATED_DATA_DIR, 'superwasp.json.gz')
+    response = send_from_directory(GENERATED_DATA_DIR, 'sting.json.gz')
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Content-Encoding'] = 'gzip'
     return response
