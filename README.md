@@ -29,14 +29,15 @@ CREATE TABLE `dashboard_sessions` (
 
 The `dashboard_config` table is expected to contain three rows:
 
-| `id` | `keyname`    | Description    |
-| ---- | ------------ | -------------- |
-| `1`  | `SECRET_KEY` | A complex random value used for encrypting cookies and other data.  This should be a string of at least 40 random characters.|
-| `2`  | `GITHUB_CLIENT_ID` | Part of the GitHub authentication support.  This should be set to the "Client ID" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
-| `3`  | `GITHUB_CLIENT_SECRET` | Part of the GitHub authentication support.  This should be set to the "Client Secret" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
-| `4`  | `WEBCAM_SUPERWASP_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
-| `5`  | `WEBCAM_W1M_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
-| `6`  | `WEBCAM_CLASP_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
+| `id` | `keyname`                   | Description    |
+|------|-----------------------------| -------------- |
+| `1`  | `SECRET_KEY`                | A complex random value used for encrypting cookies and other data.  This should be a string of at least 40 random characters.|
+| `2`  | `GITHUB_CLIENT_ID`          | Part of the GitHub authentication support.  This should be set to the "Client ID" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
+| `3`  | `GITHUB_CLIENT_SECRET`      | Part of the GitHub authentication support.  This should be set to the "Client Secret" listed in the "Warwick one-metre telescope" OAuth App in the organization settings on GitHub. |
+| `4`  | `WEBCAM_STING_PASSWORD`     | Webcam `root` accounnt password for toggling IR lights. |
+| `5`  | `WEBCAM_W1M_PASSWORD`       | Webcam `root` accounnt password for toggling IR lights. |
+| `6`  | `WEBCAM_CLASP_PASSWORD`     | Webcam `root` accounnt password for toggling IR lights. |
+| `7`  | `WEBCAM_HALFMETRE_PASSWORD` | Webcam `root` accounnt password for toggling IR lights. |
 
 Once that is working, you can configure the dashboard and web-serving infrastructure to run at startup using:
 ```

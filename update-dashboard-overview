@@ -24,7 +24,7 @@ import datetime
 import gzip
 import json
 import shutil
-from warwick.observatory.common import daemons, log
+from rockit.common import daemons, log
 
 BASE_OUTPUT_DIR = '/srv/dashboard/generated'
 STATUS_FILE = BASE_OUTPUT_DIR + '/update-dashboard-overview.json'
@@ -115,7 +115,7 @@ def generate_json(output_path, date):
         (daemons.clasp_dome, daemons.clasp_operations, 'clasp'),
         (daemons.halfmetre_roof, daemons.halfmetre_operations, 'halfmetre'),
         (daemons.onemetre_dome, daemons.onemetre_operations, 'onemetre'),
-        (daemons.superwasp_dome, daemons.superwasp_operations, 'superwasp')
+        (daemons.sting_dome, daemons.sting_operations, 'sting')
     ]
 
     for dome_daemon, ops_daemon, key in rockit_telescopes:

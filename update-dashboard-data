@@ -209,8 +209,8 @@ def generate_onemetre_json(output_path, date, environment, status):
     write_output(output, output_path)
 
 
-def generate_superwasp_json(output_path, date, environment, status):
-    """Queries daemons to generate the public data for the SuperWASP dashboard page"""
+def generate_sting_json(output_path, date, environment, status):
+    """Queries daemons to generate the public data for the STING dashboard page"""
     output = {'date': date}
     if environment:
         output.update(extract_environment_data(environment, {
@@ -219,25 +219,25 @@ def generate_superwasp_json(output_path, date, environment, status):
                 'pressure', 'median_wind_speed'
             ],
             'rain': ['unsafe_boards'],
-            'clasp_domealert': ['superwasp_temperature', 'superwasp_humidity'],
-            'superwasp_diskspace_das1': ['data_fs_available_bytes'],
-            'superwasp_diskspace_das2': ['data_fs_available_bytes'],
+            'clasp_domealert': ['sting_temperature', 'sting_humidity'],
+            'sting_diskspace_das1': ['data_fs_available_bytes'],
+            'sting_diskspace_das2': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
 
     output.update(extract_daemon_data([
-        (daemons.superwasp_operations, 'superwasp_ops', lambda d: d.status()),
-        (daemons.superwasp_telescope, 'superwasp_telescope', lambda d: d.report_status()),
-        (daemons.superwasp_dome, 'superwasp_dome', lambda d: d.status()),
-        (daemons.superwasp_pipeline, 'superwasp_pipeline', lambda d: d.report_status()),
-        (daemons.superwasp_camvirt_das1, 'superwasp_cam_1', lambda d: d.report_camera_status('cam1')),
-        (daemons.superwasp_camvirt_das1, 'superwasp_cam_2', lambda d: d.report_camera_status('cam2')),
-        (daemons.superwasp_camvirt_das2, 'superwasp_cam_3', lambda d: d.report_camera_status('cam3')),
-        (daemons.superwasp_camvirt_das2, 'superwasp_cam_4', lambda d: d.report_camera_status('cam4')),
-        (daemons.superwasp_lensheater, 'superwasp_lensheater', lambda d: d.report_status()),
-        (daemons.superwasp_power, 'superwasp_power', lambda d: d.last_measurement()),
-        (daemons.superwasp_dehumidifier, 'superwasp_dehumidifier', lambda d: d.status())
+        (daemons.sting_operations, 'sting_ops', lambda d: d.status()),
+        (daemons.sting_telescope, 'sting_telescope', lambda d: d.report_status()),
+        (daemons.sting_dome, 'sting_dome', lambda d: d.status()),
+        (daemons.sting_pipeline, 'sting_pipeline', lambda d: d.report_status()),
+        (daemons.sting_camvirt_das1, 'sting_cam_1', lambda d: d.report_camera_status('cam1')),
+        (daemons.sting_camvirt_das1, 'sting_cam_2', lambda d: d.report_camera_status('cam2')),
+        (daemons.sting_camvirt_das2, 'sting_cam_3', lambda d: d.report_camera_status('cam3')),
+        (daemons.sting_camvirt_das2, 'sting_cam_4', lambda d: d.report_camera_status('cam4')),
+        (daemons.sting_lensheater, 'sting_lensheater', lambda d: d.report_status()),
+        (daemons.sting_power, 'sting_power', lambda d: d.last_measurement()),
+        (daemons.sting_dehumidifier, 'sting_dehumidifier', lambda d: d.status())
     ], status))
 
     output.update(extract_preview_data({
@@ -339,7 +339,7 @@ def generate_data():
 
     generate_onemetre_json('onemetre.json.gz', date, environment, status)
     generate_goto_json('goto.json.gz', date, environment, status)
-    generate_superwasp_json('superwasp.json.gz', date, environment, status)
+    generate_sting_json('sting.json.gz', date, environment, status)
     generate_clasp_json('clasp.json.gz', date, environment, status)
     generate_halfmetre_json('halfmetre.json.gz', date, environment, status)
 

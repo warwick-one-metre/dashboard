@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+{% set title = 'STING &raquo; Dashboard' -%}
+{% set active_page = 'sting-dashboard' -%}
+{% set preview_cameras = ['cam1', 'cam2', 'cam3', 'cam4'] %}
+{% block body %}
+    <div class="row dashboard-stats">
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["sting_ops", "environment"]' data-generator="opsConditions" data-bs-toggle="tooltip" data-bs-placement="right">Environment</span>
+                <span class="list-group-item" data-index='["clasp_domealert", "sting_temperature"]' data-generator="envLatestMinMax" data-units=" &deg;C">Int. Temp.</span>
+                <span class="list-group-item" data-index='["clasp_domealert", "sting_humidity"]' data-generator="envLatestMinMax" data-units=" %RH">Int. Humidity</span>
+                <span class="list-group-item" data-mode-index='["sting_dehumidifier", "mode"]' data-power-index='["sting_power", "dehumidifier"]' data-generator="dehumidifierState">Dehumidifier</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["sting_power"]' data-generator="powerUPS" data-prefix="ups1">UPS 1</span>
+                <span class="list-group-item" data-index='["sting_power"]' data-generator="powerUPS" data-prefix="ups2">UPS 2</span>
+                <span class="list-group-item" data-index='["sting_power", "ats_source"]' data-generator="powerATS">ATS</span>
+                <span class="list-group-item" data-index='["sting_power", "light"]' data-generator="powerOffOn">Dome Light</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-mount-index='["sting_telescope"]' data-power-index='["sting_power", "mount"]' data-generator="mountState">Mount</span>
+                <span class="list-group-item" data-index='["sting_telescope"]' data-generator="mountRADec">RA / Dec</span>
+                <span class="list-group-item" data-index='["sting_telescope"]' data-generator="mountAltAz">Alt / Az</span>
+                <span class="list-group-item" data-index='["sting_telescope"]' data-generator="mountSunMoon">Sun / Moon Sep.</span>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-xs-12 g-2">
+            <div class="list-group rounded-0">
+                <span class="list-group-item" data-index='["ephem", "sun_alt"]' data-generator="envLatestMinMax" data-units="&deg;">Sun Altitude</span>
+                <span class="list-group-item" data-index='["sting_dome", "shutter_a"]' data-generator="domeShutter">N. Shutter</span>
+                <span class="list-group-item" data-index='["sting_dome", "shutter_b"]' data-generator="domeShutter">S. Shutter</span>
+                <span class="list-group-item" data-index='["sting_dome"]' data-generator="domeHeartbeat">Heartbeat</span>
+            </div>
+        </div>
+    </div>
+    <div class="row dashboard-stats">
+        <div class="col-lg-6 col-md-12">
+            <div class="row">
+                <div class="col-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item text-center fw-bold">Action Queue</span>
+                        <div class="list-group-item overflow-y-scroll" style="height: 156px" data-index='["sting_ops", "telescope"]' data-notify="opsActionsQueue">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["sting_ops", "dome"]' data-type="open" data-generator="opsDomeTime">Dome Open</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xs-12 g-2">
+                    <div class="list-group rounded-0">
+                        <span class="list-group-item" data-index='["sting_ops", "dome"]' data-type="close" data-generator="opsDomeTime">Dome Close</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 g-2">
+            <div class="list-group rounded-0">
+                <table class="table table-bordered my-0">
+                  <tbody>
+                  <tr>
+                    <td></td>
+                    <td class="text-center fw-bold">CAM1 (B)</td>
+                    <td class="text-center fw-bold">CAM2 (G)</td>
+                    <td class="text-center fw-bold">CAM3 (R)</td>
+                    <td class="text-center fw-bold">CAM4 (i)</td>
+                  </tr>
+                  <tr>
+                    <td>State</td>
+                    <td data-cam-index='["sting_cam_1", "state"]' data-camvirt-index='["sting_cam_1", "vm_active"]' data-power-index='["sting_power", "cam1"]' data-generator="qhyState"></td>
+                    <td data-cam-index='["sting_cam_2", "state"]' data-camvirt-index='["sting_cam_2", "vm_active"]' data-power-index='["sting_power", "cam2"]' data-generator="qhyState"></td>
+                    <td data-cam-index='["sting_cam_3", "state"]' data-camvirt-index='["sting_cam_3", "vm_active"]' data-power-index='["sting_power", "cam3"]' data-generator="qhyState"></td>
+                    <td data-cam-index='["sting_cam_4", "state"]' data-camvirt-index='["sting_cam_4", "vm_active"]' data-power-index='["sting_power", "cam4"]' data-generator="qhyState"></td>
+                  </tr>
+                  <tr>
+                    <td>Exposure</td>
+                    <td data-index='["sting_cam_1"]' data-generator="qhyExposure"></td>
+                    <td data-index='["sting_cam_2"]' data-generator="qhyExposure"></td>
+                    <td data-index='["sting_cam_3"]' data-generator="qhyExposure"></td>
+                    <td data-index='["sting_cam_4"]' data-generator="qhyExposure"></td>
+                  </tr>
+                  <tr>
+                    <td>Cooling</td>
+                    <td data-index='["sting_cam_1"]' data-generator="qhyCooling"></td>
+                    <td data-index='["sting_cam_2"]' data-generator="qhyCooling"></td>
+                    <td data-index='["sting_cam_3"]' data-generator="qhyCooling"></td>
+                    <td data-index='["sting_cam_4"]' data-generator="qhyCooling"></td>
+                  </tr>
+                  <tr>
+                    <td>Temp.&nbsp;/&nbsp;RH.</td>
+                    <td data-index='["sting_cam_1"]' data-generator="qhyTemperature"></td>
+                    <td data-index='["sting_cam_2"]' data-generator="qhyTemperature"></td>
+                    <td data-index='["sting_cam_3"]' data-generator="qhyTemperature"></td>
+                    <td data-index='["sting_cam_4"]' data-generator="qhyTemperature"></td>
+                  </tr>
+                  <tr>
+                    <td>Lens Temp.</td>
+                    <td data-index='["sting_lensheater", "temp_1"]' data-generator="lensTemperature"></td>
+                    <td data-index='["sting_lensheater", "temp_2"]' data-generator="lensTemperature"></td>
+                    <td data-index='["sting_lensheater", "temp_3"]' data-generator="lensTemperature"></td>
+                    <td data-index='["sting_lensheater", "temp_4"]' data-generator="lensTemperature"></td>
+                  </tr>
+                  <tr>
+                    <td>Disk Space</td>
+                    <td colspan="2" data-index='["sting_diskspace_das1", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB"></td>
+                    <td colspan="2" data-index='["sting_diskspace_das2", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB"></td>
+                  </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="preview-container" class="row dashboard-stats">
+        <div id="container" class="col-lg-6 col-md-12 g-2">
+            <div class="list-group list-group-item h-100 p-0 rounded-0" style="max-height: 376px">
+                <img id="preview-image" src="/data/sting/{{ preview_cameras[0] }}/thumb" data-url="/data/sting/{{ preview_cameras[0] }}/thumb" data-notify="previewImage" data-cam="{{ preview_cameras[0] }}" width="100%" height="100%" class="bg-black object-fit-contain">
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12 g-2 pb-0 ps-1">
+            <div class="row flex-nowrap">
+                <div class="col-auto pe-0">
+                    {% for c in preview_cameras %}
+                        <div class="mb-2">
+                            <a class="btn list-group list-group-item sting-thumb-panel" href="#{{ c }}" onclick="selectPreview('{{ c }}')">
+                                <img id="thumb-{{ c }}" src="/data/sting/{{ c }}/thumb" class="object-fit-contain" data-url="/data/sting/{{ c }}/thumb" data-notify="previewRefresh" data-cam="{{ c }}" width="100%" height="100%">
+                                <div class="camera-label">{{ c | upper }}</div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="col ps-2">
+                    <div id="preview-info" class="list-group rounded-0 mb-2">
+                        <span class="list-group-item fw-bold text-center" data-notify="previewHeader" data-cam="cam1">Preview: CAM1</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewTimestamp" data-cam="cam1" data-gps="['cam1', 'cam2', 'cam3', 'cam4']">Exposure started</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewExposure" data-cam="cam1">Exposure length</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewType" data-cam="cam1">Type</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewOverheads" data-cam="cam1">Overheads</span>
+                        <span class="list-group-item" data-index='["previews"]' data-generator="previewFilename" data-cam="cam1">Saved as</span>
+                    </div>
+                    <div class="list-group rounded-0">
+                        <div class="list-group-item overflow-y-scroll pt-0" style="height: 169px">
+                            <table id="log-table" class="w-100"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex flex-row-reverse mb-2">
+        <span class="m-0 dashboard-stats" id="data-updated">Loading...</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='rockit-dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            const initial_camera = $(location).attr('hash').substr(1);
+            if ($("#thumb-" + initial_camera).length > 0)
+                selectPreview(initial_camera);
+
+            pollDashboard('{{ url_for('sting_dashboard_data') }}');
+            pollLog('{{ url_for('sting_log') }}');
+        });
+    </script>
+{% endblock %}
