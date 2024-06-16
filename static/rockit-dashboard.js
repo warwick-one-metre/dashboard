@@ -242,23 +242,20 @@ function mountState(row, cell, data) {
 
   const state = [
     ['DISABLED', 'text-danger'],
+    ['NOT HOMED', 'text-danger'],
     ['PARKED', ''],
     ['STOPPED', 'text-danger'],
     ['SLEWING', 'text-warning'],
     ['TRACKING', 'text-success'],
+    ['HOMING', 'text-warning']
   ];
 
   if (!powered) {
     cell.html('POWER OFF');
     cell.addClass('text-danger');
   } else if (mount_data && 'state' in mount_data) {
-    if ('axes_homed' in mount_data && !mount_data['axes_homed']) {
-      cell.html('NOT HOMED');
-      cell.addClass('text-danger');
-    } else {
-      cell.html(state[mount_data['state']][0]);
-      cell.addClass(state[mount_data['state']][1]);
-    }
+    cell.html(state[mount_data['state']][0]);
+    cell.addClass(state[mount_data['state']][1]);
   } else {
     cell.html('ERROR');
     cell.addClass('text-danger');
