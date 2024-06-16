@@ -473,7 +473,7 @@ function qhyCooling(row, cell, data) {
     label = 'N/A';
     style = '';
   } else if (cooler_power !== undefined && cooler_mode !== undefined) {
-    label = '<span class="' + cooler_labels[cooler_mode][1] + ' d-inline-block text-truncate">' + cooler_labels[cooler_mode][0] + '</span>'
+    label = '<span class="' + cooler_labels[cooler_mode][1] + '">' + cooler_labels[cooler_mode][0] + '</span>'
     if (cooler_mode !== 1)
       label += '<span class="d-none d-xl-inline">&nbsp;(' + cooler_power.toFixed(0) + '%)</span>';
     style = '';
