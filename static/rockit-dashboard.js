@@ -649,7 +649,7 @@ function andorExposure(row, cell, data) {
 }
 
 function lensTemperature(row, cell, data) {
-  if (data === undefined) {
+  if (data === undefined || data === null) {
     cell.html('ERROR');
     cell.addClass('text-danger');
   } else {
