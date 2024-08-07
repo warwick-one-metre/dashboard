@@ -27,7 +27,8 @@
                 <span class="list-group-item" data-index='["halfmetre_telescope"]' data-generator="mountRADec">RA / Dec</span>
                 <span class="list-group-item" data-index='["halfmetre_telescope"]' data-generator="mountAltAz">Alt / Az</span>
                 <span class="list-group-item" data-index='["halfmetre_telescope"]' data-generator="mountSunMoon">Sun / Moon Sep.</span>
-                <span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-generator="halfmetreMirrorTemperature">Mirrors Temp.</span>
+                <!-- span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-generator="halfmetreMirrorTemperature">Mirrors Temp.</span -->
+                <span class="list-group-item">Mirrors Temp.<span class="float-end">N/A</span></span>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 col-xs-12 g-2">
@@ -68,11 +69,14 @@
             <div class="list-group rounded-0">
                 <span class="list-group-item" data-cam-index='["halfmetre_cam","state"]' data-power-index='["halfmetre_power", "camera"]'  data-generator="qhyState">Camera</span>
                 <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyExposure">Exposure</span>
-                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyCooling">Cooling</span>
-                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyTemperature">Temp.&nbsp;/&nbsp;RH.</span>
+                <!-- span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyCooling">Cooling</span>
+                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyTemperature">Temp.&nbsp;/&nbsp;RH.</span -->
+                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="h400Cooling">Cooling</span>
+                <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="h400Temperature">Temp.&nbsp;/&nbsp;RH.</span>
                 <span class="list-group-item" data-index='["halfmetre_cam"]' data-generator="qhyFilter">Filter</span>
                 <span class="list-group-item" data-index='["halfmetre_diskspace", "data_fs_available_bytes"]' data-generator="diskSpaceGB" data-units=" GB">Disk Space</span>
-                <span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-focuser="1" data-generator="focusState">Focus</span>
+                <!-- span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-focuser="1" data-generator="focusState">Focus</span -->
+                <span class="list-group-item" data-focuser-index='["halfmetre_focus"]' data-power-index='["halfmetre_power", "focuser"]' data-generator="h400FocusState">Focus</span>
             </div>
         </div>
     </div>
@@ -114,6 +118,85 @@
     <script src="{{ url_for('static', filename='rockit-dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='fetch-logs.js') }}"></script>
     <script>
+
+        function h400Temperature(row, cell, data) {
+          const state = getData(data, ["state"]);
+          const temperature = getData(data, ["chip_temp"]);
+
+          let label = 'ERROR';
+          let style = 'text-danger';
+          if (state === 0) {
+            label = 'N/A';
+            style = '';
+          } else if (temperature !== undefined) {
+            label = temperature.toFixed(1) + '&nbsp;&deg;C';
+            style = '';
+          }
+
+          cell.html(label);
+          cell.addClass(style);
+        }
+
+        function h400Cooling(row, cell, data) {
+          const state = getData(data, ["state"]);
+          const cooler_power = getData(data, ["cooler_power"]);
+          const cooler_locked = getData(data, ["temperature_locked"]);
+
+          const cooler_labels = [
+            ['WARM', 'text-danger'],
+            ['LOCKED', 'text-success'],
+          ];
+
+          let label = 'ERROR';
+          let style = 'text-danger';
+          if (state === 0) {
+            label = 'N/A';
+            style = '';
+          } else if (cooler_power !== undefined) {
+            if (cooler_locked) {
+              label = '<span class="text-success">LOCKED</span>'
+            } else {
+              label = '';
+            }
+            label += '<span class="d-none d-xl-inline">&nbsp;(' + (cooler_power * 100).toFixed(0) + '%)</span>';
+            style = '';
+          }
+
+          cell.html(label);
+          cell.addClass(style);
+        }
+
+        function h400FocusState(row, cell, data) {
+          const focuser_data = getData(data, row.data('focuser-index'));
+          const powered = getData(data, row.data('power-index'));
+          const status = getData(focuser_data, ['status']);
+          const current_steps = getData(focuser_data, ['current_steps']);
+
+          let label, style;
+          if (powered === 0) {
+            label = 'POWER OFF';
+            style = 'text-danger';
+          } else if (status === 0) {
+            label = 'OFFLINE';
+            style = 'text-danger';
+          } else if (status === 1) {
+            label = 'INITIALIZING';
+            style = 'text-warning';
+          } else if (status === 2 && current_steps !== undefined) {
+            label = current_steps + ' steps';
+            style = '';
+          } else if (status === 3) {
+            label = 'MOVING';
+            style = 'text-warning';
+          } else {
+            label = 'ERROR';
+            style = 'text-danger';
+          }
+
+          cell.html(label);
+          cell.addClass(style);
+        }
+
         $(document).ready(function () {
             const initial_camera = $(location).attr('hash').substr(1);
             if ($("#thumb-" + initial_camera).length > 0)
