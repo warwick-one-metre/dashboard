@@ -164,10 +164,6 @@ def generate_goto_json(output_path, date, environment, status):
         (daemons.goto_dome2_gtecs_conditions, 'goto_dome2_conditions', lambda d: d.get_info(force_update=False))
     ], status))
 
-    for key in ['acceleration_history', 'encoder_position_history', 'motor_current_history', 'position_error_history', 'tracking_error_history', 'velocity_history']:
-        del output['goto_dome1_mnt'][key]
-        del output['goto_dome2_mnt'][key]
-
     write_output(output, output_path)
 
 
