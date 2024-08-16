@@ -582,7 +582,6 @@ function andorState(row, cell, data) {
 }
 
 function andorCooling(row, cell, data) {
-  console.log('here');
   const state = getData(data, ["state"]);
   const temperature = getData(data, ["temperature"]);
   const temperature_locked = getData(data, ["temperature_locked"]);
@@ -815,13 +814,20 @@ function onemetreState(row, cell, data) {
     ['LIMITING', 'text-warning'],
   ];
 
-  if (data && 'state' in data) {
-    if ('axes_homed' in data && !data['axes_homed']) {
+  const mount_data = getData(data, row.data('mount-index'));
+  const power_data = getData(data, row.data('power-index'));
+
+  if (power_data && 'tel80' in power_data && 'tel12' in power_data && (!power_data['tel80'] || !power_data['tel12'])) {
+      cell.html('POWER OFF');
+      cell.addClass('text-danger');
+  }
+  if (mount_data && 'state' in mount_data) {
+    if ('axes_homed' in mount_data && !mount_data['axes_homed']) {
       cell.html('NOT HOMED');
       cell.addClass('text-danger');
     } else {
-      cell.html(state[data['state']][0]);
-      cell.addClass(state[data['state']][1]);
+      cell.html(state[mount_data['state']][0]);
+      cell.addClass(state[mount_data['state']][1]);
     }
   } else {
     cell.html('ERROR');
@@ -888,7 +894,29 @@ function onemetreFocus(row, cell, data) {
 }
 
 function onemetreRedFocus(row, cell, data) {
-  cell.html('N/A');
+  const status = getData(data, ['status']);
+  const current_steps = getData(data, ['current_steps']);
+
+  let label, style;
+  if (status === 0) {
+    label = 'OFFLINE';
+    style = 'text-danger';
+  } else if (status === 1) {
+    label = 'INITIALIZING';
+    style = 'text-warning';
+  } else if (status === 3) {
+    label = 'MOVING';
+    style = 'text-warning';
+  } else if (status === 2 && current_steps !== undefined) {
+    label = current_steps + ' steps';
+    style = '';
+  } else {
+    label = 'ERROR';
+    style = 'text-danger';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
 }
 
 function previewHeader(row, data) {

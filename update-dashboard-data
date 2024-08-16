@@ -193,6 +193,7 @@ def generate_onemetre_json(output_path, date, environment, status):
         (daemons.onemetre_pipeline, 'w1m_pipeline', lambda d: d.report_status()),
         (daemons.onemetre_blue_camera, 'w1m_blue', lambda d: d.report_status()),
         (daemons.onemetre_red_camera, 'w1m_red', lambda d: d.report_status()),
+        (daemons.onemetre_red_focuser, 'w1m_red_focuser', lambda d: d.report_status()),
         (daemons.onemetre_power, 'w1m_power', lambda d: d.last_measurement()),
         (daemons.onemetre_dehumidifier, 'w1m_dehumidifier', lambda d: d.status())
     ], status))
