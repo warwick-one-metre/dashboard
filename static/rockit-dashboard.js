@@ -8,6 +8,9 @@ function diskSpaceGB(row, cell, data) {
       display += units;
     cell.html(display);
     cell.addClass(fieldLimitsColor(data, data['latest']));
+  } else {
+    cell.html('ERROR');
+    cell.addClass('text-danger');
   }
 }
 
