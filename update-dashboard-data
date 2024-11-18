@@ -296,8 +296,8 @@ def generate_clasp_json(output_path, date, environment, status):
             'clasp_domealert': [
                 'internal_humidity', 'internal_temperature'
             ],
-            'clasp_diskspace_cam1': ['data_fs_available_bytes'],
-            'clasp_diskspace_cam2': ['data_fs_available_bytes'],
+            'clasp_diskspace_cmos': ['data_fs_available_bytes'],
+            'clasp_diskspace_swir': ['data_fs_available_bytes'],
             'tng': ['dust', 'seeing', 'solarimeter'],
             'ephem': ['sun_alt', 'moon_alt', 'moon_percent_illumination']
         }))
@@ -308,8 +308,8 @@ def generate_clasp_json(output_path, date, environment, status):
         (daemons.clasp_focus, 'clasp_focus', lambda d: d.report_status()),
         (daemons.clasp_dome, 'clasp_dome', lambda d: d.status()),
         (daemons.clasp_pipeline, 'clasp_pipeline', lambda d: d.report_status()),
-        (daemons.clasp_camvirt_1, 'clasp_cam1', lambda d: d.report_camera_status('cam1')),
-        (daemons.clasp_camera_2, 'clasp_cam2', lambda d: d.report_status()),
+        (daemons.clasp_camvirt_cmos, 'clasp_cmos', lambda d: d.report_camera_status('cmos')),
+        (daemons.clasp_camvirt_swir, 'clasp_swir', lambda d: d.report_camera_status('swir')),
         (daemons.clasp_power, 'clasp_power', lambda d: d.last_measurement()),
         (daemons.clasp_dehumidifier, 'clasp_dehumidifier', lambda d: d.status()),
         (daemons.clasp_chiller, 'clasp_chiller', lambda d: d.report_status())
