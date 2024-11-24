@@ -119,13 +119,13 @@ def generate_json(output_path, date):
     ]
 
     for dome_daemon, ops_daemon, key in rockit_telescopes:
-        dome_data = query_daemon(dome_daemon, f'{key}_dome', lambda d: d.status())
-        ops_data = query_daemon(ops_daemon, f'{key}_operations', lambda d: d.status())
+        dome_data = query_daemon(dome_daemon, f'{key}_dome', lambda d: d.status()) or {}
+        ops_data = query_daemon(ops_daemon, f'{key}_operations', lambda d: d.status()) or {}
         output[f'{key}_ops'] = {
-            'dome_closed': dome_data.get('closed', None),
-            'dome_auto': ops_data.get('dome').get('mode', 0) == 1,
-            'safe': ops_data.get('environment', {}).get('safe', None),
-            'observable': ops_data.get('environment', {}).get('safe', None),
+            'dome_closed': dome_data.get('closed', False),
+            'dome_auto': ops_data.get('dome', {}).get('mode', 0) == 1,
+            'safe': ops_data.get('environment', {}).get('safe', False),
+            'observable': ops_data.get('environment', {}).get('safe', False),
             'conditions': ops_data.get('environment', {}).get('conditions', {})
         }
 
