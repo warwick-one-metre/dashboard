@@ -30,7 +30,7 @@ BASE_OUTPUT_DIR = '/srv/dashboard/generated'
 STATUS_FILE = BASE_OUTPUT_DIR + '/update-dashboard-overview.json'
 
 try:
-    with open(STATUS_FILE, 'r') as infile:
+    with open(STATUS_FILE, 'r', encoding='utf-8') as infile:
         status = json.load(infile)
 except Exception:
     status = {}
@@ -45,18 +45,18 @@ def query_daemon(daemon, key, query):
         # Some daemons will return None on error
         if response is None:
             if not key in status or status[key]:
-                print('received empty response from ' + key + '')
-                log.error('dashboardd', 'Lost contact with ' + key + ' (empty response)')
+                print(f'received empty response from {key}')
+                log.error('dashboardd', f'Lost contact with {key} (empty response)')
             status[key] = False
         else:
             if key in status and not status[key]:
-                log.info('dashboardd', 'Restored contact with ' + key)
+                log.info('dashboardd', f'Restored contact with {key}')
             status[key] = True
             return response
     except Exception as e:
-        print('failed to query ' + key + ' with error: ' + str(e))
+        print(f'failed to query {key} with error: {e}')
         if not key in status or status[key]:
-            log.error('dashboardd', 'Lost contact with ' + key + ' (' + str(e) + ')')
+            log.error('dashboardd', f'Lost contact with {key} ({e})')
         status[key] = False
 
     return None
@@ -81,7 +81,7 @@ def extract_environment_data(data, data_map):
                         if s in daemon_data[sensor]:
                             ret[daemon][sensor][s] = daemon_data[sensor][s]
         return ret
-    except:
+    except Exception:
         return {}
 
 
@@ -154,7 +154,8 @@ def generate_json(output_path, date):
 
     for dome_daemon, conditions_daemon, key in goto_telescopes:
         dome_data = query_daemon(dome_daemon, f'{key}_dome', lambda d: d.get_info(force_update=False)) or {}
-        conditions_data = query_daemon(conditions_daemon, f'{key}_conditions', lambda d: d.get_info(force_update=False)) or {}
+        conditions_data = query_daemon(conditions_daemon, f'{key}_conditions',
+                                       lambda d: d.get_info(force_update=False)) or {}
         output[f'{key}_ops'] = {
             'dome_closed': dome_data.get('dome', None) == 'closed',
             'dome_auto': dome_data.get('mode') == 'robotic',
@@ -183,12 +184,11 @@ def generate_json(output_path, date):
 
         shutil.move(output_path + '.tmp', output_path)
 
-        with open(STATUS_FILE, 'w') as output_file:
+        with open(STATUS_FILE, 'w', encoding='utf-8') as output_file:
             json.dump(status, output_file)
     except Exception as e:
-        print('failed to write json with error: ' + str(e))
-        log.error('dashboardd', 'Failed to write json (' + str(e) + ')')
+        print(f'failed to write json with error: {e}')
+        log.error('dashboardd', f'Failed to write json ({e})')
 
-
-date = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')
-generate_json(BASE_OUTPUT_DIR + '/overview.json.gz', date)
+generate_json(BASE_OUTPUT_DIR + '/overview.json.gz',
+              datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f'))
