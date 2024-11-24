@@ -555,6 +555,68 @@ function swirCooling(row, cell, data) {
   cell.addClass(style);
 }
 
+function moravianState(row, cell, data) {
+  // Moravian uses the same state dictionary as QHY
+  qhyState(row, cell, data);
+}
+
+function moravianExposure(row, cell, data) {
+  // Moravian uses the same state dictionary as QHY
+  qhyExposure(row, cell, data);
+}
+
+function moravianTemperature(row, cell, data) {
+  const state = getData(data, ["state"]);
+  const temperature = getData(data, ["chip_temp"]);
+
+  let label = 'ERROR';
+  let style = 'text-danger';
+  if (state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (temperature !== undefined) {
+    label = temperature.toFixed(1) + '&nbsp;&deg;C';
+    style = '';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function moravianCooling(row, cell, data) {
+  const state = getData(data, ["state"]);
+  const cooler_power = getData(data, ["cooler_power"]);
+  const cooler_locked = getData(data, ["temperature_locked"]);
+
+  const cooler_labels = [
+    ['WARM', 'text-danger'],
+    ['LOCKED', 'text-success'],
+  ];
+
+  let label = 'ERROR';
+  let style = 'text-danger';
+  if (state === 0) {
+    label = 'N/A';
+    style = '';
+  } else if (cooler_power !== undefined) {
+    if (cooler_locked) {
+      label = '<span class="text-success">LOCKED</span>'
+    } else {
+      label = '';
+    }
+    label += '<span class="d-none d-xl-inline">&nbsp;(' + (cooler_power * 100).toFixed(0) + '%)</span>';
+    style = '';
+  }
+
+  cell.html(label);
+  cell.addClass(style);
+}
+
+function moravianFilter(row, cell, data) {
+  // Moravian uses the same state dictionary as QHY
+  qhyFilter(row, cell, data);
+}
+
 function andorState(row, cell, data) {
   const cam_state = getData(data, row.data('cam-index'));
   const powered = getData(data, row.data('power-index'));
