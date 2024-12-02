@@ -468,6 +468,7 @@ function qhyCooling(row, cell, data) {
     ['COOLING', 'text-info'],
     ['LOCKING', 'text-warning'],
     ['LOCKED', 'text-success'],
+    ['UVLO&nbsp;ERR', 'text-danger'],
   ];
 
   let label = 'ERROR';
