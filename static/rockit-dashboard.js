@@ -626,6 +626,7 @@ function andorState(row, cell, data) {
     ['OFFLINE', 'text-danger'],
     ['INITIALIZING', 'text-danger'],
     ['IDLE'],
+    ['WAITING', 'text-warning'],
     ['EXPOSING', 'text-success'],
     ['READING', 'text-warning'],
     ['ABORTING', 'text-danger']
