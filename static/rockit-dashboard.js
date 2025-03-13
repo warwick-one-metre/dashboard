@@ -985,6 +985,39 @@ function onemetreRedFocus(row, cell, data) {
   cell.addClass(style);
 }
 
+function onemetreCovers(row, cell, data) {
+  const state = [
+    ['OFFLINE', 'text-danger'],
+    ['UNKNOWN', 'text-danger'],
+    ['OPEN', 'text-success'],
+    ['CLOSED', 'text-danger'],
+    ['OPENING', 'text-warning'],
+    ['CLOSING', 'text-warning']
+  ];
+
+  if (data !== undefined)
+  {
+    cell.html(state[data][0]);
+    cell.addClass(state[data][1]);
+  }
+  else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
+function onemetreTrapHatch(row, cell, data) {
+  const trap_closed = getData(data, ["trap_closed", "latest"]);
+  const hatch_closed = getData(data, ["hatch_closed", "latest"]);
+
+  if (trap_closed !== undefined && hatch_closed !== undefined)
+    cell.html((trap_closed ? 'CLOSED' : 'OPEN') + '&nbsp;/&nbsp;' + (hatch_closed ? 'CLOSED' : 'OPEN'))
+  else {
+    cell.html('NO DATA');
+    cell.addClass('text-danger');
+  }
+}
+
 function previewHeader(row, data) {
   row.html('Preview: ' + row.data('cam').toUpperCase());
 }
