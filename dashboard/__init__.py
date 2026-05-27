@@ -33,7 +33,7 @@ from flask import send_from_directory
 from flask import session
 from flask import url_for
 from flask_github import GitHub
-from warwick.observatory.common import daemons
+from rockit.common import daemons
 from werkzeug.exceptions import NotFound
 
 # pylint: disable=missing-docstring
